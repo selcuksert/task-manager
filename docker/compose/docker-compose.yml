@@ -23,6 +23,7 @@ services:
       - "--providers.docker.endpoint=tcp://socket-proxy:2375"      
       - "--providers.file=true"
       - "--providers.file.filename=/etc/traefik/rules.toml"
+      - "--providers.file.watch=true"
       - "--entrypoints.http.address=:80"
       - "--entrypoints.db.address=:5432"
       - "--entrypoints.zk.address=:2181"

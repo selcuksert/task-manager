@@ -30,7 +30,6 @@ class ListUsers extends Component {
                 <table className="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
                             <th scope="col">Username</th>
                             <th scope="col">First Name</th>
                             <th scope="col">Last Name</th>
@@ -39,11 +38,10 @@ class ListUsers extends Component {
                     {this.state.loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
                         <tbody>
                             {this.state.users.map((user) =>
-                                <tr key={user.user_id}>
-                                    <th scope="row">{user.user_id}</th>
-                                    <td>{user.username}</td>
-                                    <td>{user.first_name}</td>
-                                    <td>{user.last_name}</td>
+                                <tr key={user.id}>
+                                    <th scope="row">{user.id}</th>
+                                    <td>{user.firstname}</td>
+                                    <td>{user.lastname}</td>
                                 </tr>
                             )}
                         </tbody>

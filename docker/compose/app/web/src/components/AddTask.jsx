@@ -50,14 +50,14 @@ const AddTaskHook = () => {
 
         addTask(username, title, details, duedate)
             .then(response => {
-                if (response && response.errno && response.code) {
+                if (!response || (response && response.error)) {
                     setModalTitle('Error')
-                    setModalText('Unable to add task: ' + response.code);
+                    setModalText('Unable to add task: ' + response.message);
                     setShowInfo(true);
                 }
-                else {
-                    setModalTitle('Task Added')
-                    setModalText(`Task added for ${response.username}`);
+                else if(response){
+                    setModalTitle('Completed')
+                    setModalText(`${response.message}`);
                     setShowInfo(true);
                 }
                 setLoading(false);

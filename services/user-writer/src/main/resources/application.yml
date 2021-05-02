@@ -1,0 +1,35 @@
+debug: false
+logging:
+  #file:
+    #name: app.log
+  level:
+    root: info
+    '[org.apache.kafka]': error
+    '[org.springframework.kafka.config]': info
+server:
+  port: 8091
+spring:
+  cloud:
+    stream:
+      function:
+        definition: output
+      kafka:
+        binder:
+          auto-create-topics: false
+          autoAddPartitions: false
+          brokers:
+          - localhost:19093
+          - localhost:19094   
+          producer-properties:
+            '[key.serializer]': org.apache.kafka.common.serialization.LongSerializer
+            '[value.serializer]': io.confluent.kafka.serializers.KafkaAvroSerializer
+            '[schema.registry.url]': http://web.poc.local:8081
+      bindings:
+        output-out-0:
+          destination: users
+          content-type: application/*+avro
+          producer:
+            useNativeEncoding: true
+  application:
+    name: task-writer
+                 

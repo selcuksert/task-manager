@@ -21,6 +21,8 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.endpoint=tcp://socket-proxy:2375"      
+      - "--providers.file=true"
+      - "--providers.file.filename=/etc/traefik/rules.toml"
       - "--entrypoints.http.address=:80"
       - "--entrypoints.db.address=:5432"
       - "--entrypoints.zk.address=:2181"
@@ -30,6 +32,11 @@ services:
       - "--entrypoints.gf.address=:3000"
       - "--entrypoints.prom.address=:9090"
       - "--entrypoints.pgadm.address=:9080"
+      - "--entrypoints.sr.address=:8081"
+      - "--entrypoints.rp.address=:8082"
+      - "--entrypoints.kc.address=:8083"
+    volumes:
+      - "./traefik/config/rules.toml:/etc/traefik/rules.toml"    
     depends_on:
       - socket-proxy
     ports:
@@ -45,6 +52,7 @@ services:
       - "3000:3000"
       - "9090:9090"
       - "9080:9080"
+      - "8081:8081"
 
   zookeeper:
     build: 
@@ -180,8 +188,8 @@ services:
     command: ["zookeeper", "2181", "avro-schema-topic", "PLAINTEXT:\\/\\/kafka-broker-1:9091, PLAINTEXT:\\/\\/kafka-broker-2:9092, PLAINTEXT:\\/\\/kafka-broker-3:9093"]
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.sr.rule=Host(`web.poc.local`) && Path(`/schemaregistry`)"
-      - "traefik.http.routers.sr.entrypoints=http"
+      - "traefik.http.routers.sr.rule=Host(`web.poc.local`)"
+      - "traefik.http.routers.sr.entrypoints=sr"
       - "traefik.http.routers.sr.service=sr-service"
       - "traefik.http.services.sr-service.loadbalancer.server.port=8081"
 
@@ -200,8 +208,8 @@ services:
     command: ["zookeeper", "2181", "PLAINTEXT:\\/\\/kafka-broker-1:9091, PLAINTEXT:\\/\\/kafka-broker-2:9092, PLAINTEXT:\\/\\/kafka-broker-3:9093"]
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.restproxy.rule=Host(`web.poc.local`) && Path(`/restproxy`)"
-      - "traefik.http.routers.restproxy.entrypoints=http"
+      - "traefik.http.routers.restproxy.rule=Host(`web.poc.local`)"
+      - "traefik.http.routers.restproxy.entrypoints=rp"
       - "traefik.http.routers.restproxy.service=restproxy-service"
       - "traefik.http.services.restproxy-service.loadbalancer.server.port=8082"
 
@@ -222,15 +230,15 @@ services:
     environment:
       TOPIC_NAMES: tasks,users
       PK_FIELDS: id
-      DB_NAME: kafkaconnect
+      DB_NAME: taskdb
       CONNECTION_USER: dbuser
       CONNECTION_PASSWORD: db1234
       KEY_CONVERTER: org.apache.kafka.connect.converters.LongConverter
       VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.kafkaconnect.rule=Host(`web.poc.local`) && Path(`/kafkaconnect`)"
-      - "traefik.http.routers.kafkaconnect.entrypoints=http"
+      - "traefik.http.routers.kafkaconnect.rule=Host(`web.poc.local`)"
+      - "traefik.http.routers.kafkaconnect.entrypoints=kc"
       - "traefik.http.routers.kafkaconnect.service=kafkaconnect-service"
       - "traefik.http.services.kafkaconnect-service.loadbalancer.server.port=8083"
     command: ["zookeeper", "2181", "kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093", "http://schemaregistry:8081" , "dbservice", "5432","postgresql"]

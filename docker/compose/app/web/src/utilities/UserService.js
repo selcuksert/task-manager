@@ -1,11 +1,11 @@
 // Utilities
 export function addUser(_username, _firstName, _lastName) {
-    return fetch(`http://${window.location.hostname}/api/user`, {
+    return fetch(`http://${window.location.hostname}/api/user/writer`, {
             method: 'post',
             body: JSON.stringify({
-                username: _username,
-                firstName: _firstName,
-                lastName: _lastName
+                id: _username,
+                firstname: _firstName,
+                lastname: _lastName
             }),
             headers: {
                 "Content-Type": "application/json",
@@ -17,7 +17,7 @@ export function addUser(_username, _firstName, _lastName) {
 }
 
 export function getUsers() {
-    return fetch(`http://${window.location.hostname}/api/user`, {
+    return fetch(`http://${window.location.hostname}/api/user/reader`, {
             method: 'get',
             headers: {
                 "Content-Type": "application/json",

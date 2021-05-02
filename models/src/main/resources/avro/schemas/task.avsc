@@ -1,0 +1,63 @@
+[
+    {
+        "type": "enum",
+        "name": "TaskState",
+        "namespace": "com.corp.concepts.taskmanager.models",
+        "symbols": [
+            "COMPLETED",
+            "INPROGRESS",
+            "DEFERRED",
+            "NOTSTARTED"
+        ]
+    },
+    {
+        "type": "record",
+        "name": "Task",
+        "namespace": "com.corp.concepts.taskmanager.models",
+        "fields": [
+            {
+                "name": "id",
+                "type": "string"
+            },
+            {
+                "name": "userid",
+                "type": "long"
+            },
+            {
+                "name": "duedate",
+                "type": "string"
+            },
+            {
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "name": "details",
+                "type": "string"
+            },
+            {
+                "name": "status",
+                "type": "TaskState"
+            }
+        ]
+    },
+    {
+        "type": "record",
+        "name": "User",
+        "namespace": "com.corp.concepts.taskmanager.models",
+        "fields": [
+            {
+                "name": "id",
+                "type": "string"
+            },
+            {
+                "name": "firstname",
+                "type": "string"
+            },
+            {
+                "name": "lastname",
+                "type": "string"
+            }
+        ]
+    }
+]

@@ -1,3 +1,5 @@
 # Task Management App
 
-This project is an event driven task management application based on Apache Kafka ecosystem tools, PostgreSQL DB and ReactJS.
+This project is an event driven task management application that comprises of PostgreSQL DB and ReactJS, Apache Kafka, Kafka Streams (based on single writer principle) and the major ecosystem components like SchemaRegistry, Kafka Connect.
+
+

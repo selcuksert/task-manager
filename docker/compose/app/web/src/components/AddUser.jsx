@@ -18,14 +18,14 @@ const AddUserHook = () => {
         setLoading(true);
         addUser(username, firstName, lastName)
             .then(response => {
-                if (response && response.errno && response.code) {
+                if (!response || (response && response.error)) {
                     setModalTitle('Error')
-                    setModalText('Unable to add user: ' + response.code);
+                    setModalText('Unable to add user: ' + response.message);
                     setShowInfo(true);
                 }
-                else {
-                    setModalTitle('User Added')
-                    setModalText(`User added: ${response.username}`);
+                else if(response){
+                    setModalTitle('Completed')
+                    setModalText(`${response.message}`);
                     setShowInfo(true);
                 }
                 setLoading(false);

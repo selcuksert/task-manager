@@ -1,12 +1,65 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.corp.concepts</groupId>
-    <artifactId>task-manager</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-  <groupId>com.corp.concepts.taskmanager</groupId>
-  <artifactId>models</artifactId>
-  <name>models</name>
-  <description>Avro based models</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.corp.concepts</groupId>
+		<artifactId>task-manager</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<groupId>com.corp.concepts.taskmanager</groupId>
+	<artifactId>models</artifactId>
+	<name>models</name>
+	<description>Avro based models</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro-maven-plugin</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro-compiler</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro-ipc</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>${avro.version}</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>schema</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${project.basedir}/src/main/resources/avro/schemas</sourceDirectory>
+							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+							<fieldVisibility>PRIVATE</fieldVisibility>
+							<stringType>String</stringType>
+							<includes>
+								<include>**/*.avsc</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>

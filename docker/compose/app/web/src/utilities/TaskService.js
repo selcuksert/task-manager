@@ -1,6 +1,6 @@
 // Utilities
 export function addTask(_username, _title, _details, _date) {
-    return fetch(`http://${window.location.hostname}/api/task`, {
+    return fetch(`http://${window.location.hostname}/api/task/writer`, {
             method: 'post',
             body: JSON.stringify({
                 username: _username,
@@ -18,7 +18,7 @@ export function addTask(_username, _title, _details, _date) {
 }
 
 export function getTasks() {
-    return fetch(`http://${window.location.hostname}/api/task`, {
+    return fetch(`http://${window.location.hostname}/api/task/reader`, {
             method: 'get',
             headers: {
                 "Content-Type": "application/json",

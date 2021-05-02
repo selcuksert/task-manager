@@ -1,0 +1,16 @@
+[http.routers]
+  [http.routers.task-router]
+    rule = "Host(`web.poc.local`) && PathPrefix(`/api/task/writer`)"
+    service = "task-writer-service"
+  [http.routers.user-router]
+    rule = "Host(`web.poc.local`) && PathPrefix(`/api/user/writer`)"
+    service = "user-writer-service"
+
+[http.services]
+  [http.services.user-writer-service]
+    [[http.services.user-writer-service.loadBalancer.servers]]
+      url = "http://host.docker.internal:8091"
+  [http.services.task-writer-service]
+    [[http.services.task-writer-service.loadBalancer.servers]]
+      url = "http://host.docker.internal:8090"
+    

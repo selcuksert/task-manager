@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "taskdb",
+            "Group": "Servers",
+            "Host": "dbservice",
+            "Port": 5432,
+            "MaintenanceDB": "taskdb",
+            "Username": "dbuser",
+            "SSLMode": "prefer"
+        }
+    }
+}

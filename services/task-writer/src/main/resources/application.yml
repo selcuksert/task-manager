@@ -14,6 +14,10 @@ spring:
       function:
         definition: output
       kafka:
+        bindings:
+          output-out-0:
+            producer:
+              messageKeyExpression: payload['id']
         binder:
           auto-create-topics: false
           autoAddPartitions: false
@@ -21,7 +25,7 @@ spring:
           - localhost:19093
           - localhost:19094   
           producer-properties:
-            '[key.serializer]': org.apache.kafka.common.serialization.LongSerializer
+            '[key.serializer]': org.apache.kafka.common.serialization.StringSerializer
             '[value.serializer]': io.confluent.kafka.serializers.KafkaAvroSerializer
             '[schema.registry.url]': http://web.poc.local:8081
       bindings:

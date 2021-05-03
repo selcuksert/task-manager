@@ -229,12 +229,12 @@ services:
       - dbservice
       - schemaregistry
     environment:
-      TOPIC_NAMES: tasks,users
+      TOPIC_NAMES: tasks,users,tasksd
       PK_FIELDS: id
       DB_NAME: taskdb
       CONNECTION_USER: dbuser
       CONNECTION_PASSWORD: db1234
-      KEY_CONVERTER: org.apache.kafka.connect.converters.LongConverter
+      KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
     labels:
       - "traefik.enable=true"
@@ -285,7 +285,7 @@ services:
       TZ: Europe/Istanbul
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`web.poc.local`)"
+      - "traefik.http.routers.web.rule=Host(`web.poc.local`) && PathPrefix (`/`)"
       - "traefik.http.routers.web.entrypoints=http"
       - "traefik.http.routers.web.service=web-service"
       - "traefik.http.services.web-service.loadbalancer.server.port=80"

@@ -12,9 +12,7 @@
 	<artifactId>user-writer</artifactId>
 	<name>user-writer</name>
 	<description>Task manager application based on EDA paradigm</description>
-	<properties>
-		<java.version>11</java.version>
-	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

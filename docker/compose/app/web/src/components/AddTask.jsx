@@ -29,9 +29,8 @@ const AddTaskHook = () => {
             else {
                 setUsers(users);
                 if (!username && users && users.length > 0) {
-                    setUsername(users[0].username);
+                    setUsername(users[0].id);
                 }
-
             }
             setLoading(false);
         });
@@ -73,7 +72,7 @@ const AddTaskHook = () => {
                     <select className="form-control" id="username" aria-describedby="usernameHelp"
                         onChange={setUsernameOnSelect}>
                         {users.map(user =>
-                            <option key={user.user_id} value={user.username}>{user.first_name} {user.last_name}</option>
+                            <option key={user.id} value={user.id}>{user.firstname} {user.lastname}</option>
                         )}
                     </select>
                     <small id="usernameHelp" className="form-text text-muted">Please select user to assign the task</small>

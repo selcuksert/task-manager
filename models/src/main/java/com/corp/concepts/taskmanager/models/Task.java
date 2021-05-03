@@ -14,8 +14,8 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class Task extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -6551384604603663402L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Task\",\"namespace\":\"com.corp.concepts.taskmanager.models\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"userid\",\"type\":\"long\"},{\"name\":\"duedate\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"details\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"status\",\"type\":{\"type\":\"enum\",\"name\":\"TaskState\",\"symbols\":[\"COMPLETED\",\"INPROGRESS\",\"DEFERRED\",\"NOTSTARTED\"]}}]}");
+  private static final long serialVersionUID = 338157185825269122L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Task\",\"namespace\":\"com.corp.concepts.taskmanager.models\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"userid\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"duedate\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"details\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"status\",\"type\":{\"type\":\"enum\",\"name\":\"TaskState\",\"symbols\":[\"COMPLETED\",\"STARTED\",\"NOTSTARTED\"]}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -72,7 +72,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
   }
 
    private java.lang.String id;
-   private long userid;
+   private java.lang.String userid;
    private java.lang.String duedate;
    private java.lang.String title;
    private java.lang.String details;
@@ -94,7 +94,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
    * @param details The new value for details
    * @param status The new value for status
    */
-  public Task(java.lang.String id, java.lang.Long userid, java.lang.String duedate, java.lang.String title, java.lang.String details, com.corp.concepts.taskmanager.models.TaskState status) {
+  public Task(java.lang.String id, java.lang.String userid, java.lang.String duedate, java.lang.String title, java.lang.String details, com.corp.concepts.taskmanager.models.TaskState status) {
     this.id = id;
     this.userid = userid;
     this.duedate = duedate;
@@ -123,7 +123,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: id = value$ != null ? value$.toString() : null; break;
-    case 1: userid = (java.lang.Long)value$; break;
+    case 1: userid = value$ != null ? value$.toString() : null; break;
     case 2: duedate = value$ != null ? value$.toString() : null; break;
     case 3: title = value$ != null ? value$.toString() : null; break;
     case 4: details = value$ != null ? value$.toString() : null; break;
@@ -153,7 +153,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
    * Gets the value of the 'userid' field.
    * @return The value of the 'userid' field.
    */
-  public long getUserid() {
+  public java.lang.String getUserid() {
     return userid;
   }
 
@@ -162,7 +162,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
    * Sets the value of the 'userid' field.
    * @param value the value to set.
    */
-  public void setUserid(long value) {
+  public void setUserid(java.lang.String value) {
     this.userid = value;
   }
 
@@ -276,7 +276,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
     implements org.apache.avro.data.RecordBuilder<Task> {
 
     private java.lang.String id;
-    private long userid;
+    private java.lang.String userid;
     private java.lang.String duedate;
     private java.lang.String title;
     private java.lang.String details;
@@ -395,7 +395,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
       * Gets the value of the 'userid' field.
       * @return The value.
       */
-    public long getUserid() {
+    public java.lang.String getUserid() {
       return userid;
     }
 
@@ -405,7 +405,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
       * @param value The value of 'userid'.
       * @return This builder.
       */
-    public com.corp.concepts.taskmanager.models.Task.Builder setUserid(long value) {
+    public com.corp.concepts.taskmanager.models.Task.Builder setUserid(java.lang.String value) {
       validate(fields()[1], value);
       this.userid = value;
       fieldSetFlags()[1] = true;
@@ -426,6 +426,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
       * @return This builder.
       */
     public com.corp.concepts.taskmanager.models.Task.Builder clearUserid() {
+      userid = null;
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -596,7 +597,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
       try {
         Task record = new Task();
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.String) defaultValue(fields()[0]);
-        record.userid = fieldSetFlags()[1] ? this.userid : (java.lang.Long) defaultValue(fields()[1]);
+        record.userid = fieldSetFlags()[1] ? this.userid : (java.lang.String) defaultValue(fields()[1]);
         record.duedate = fieldSetFlags()[2] ? this.duedate : (java.lang.String) defaultValue(fields()[2]);
         record.title = fieldSetFlags()[3] ? this.title : (java.lang.String) defaultValue(fields()[3]);
         record.details = fieldSetFlags()[4] ? this.details : (java.lang.String) defaultValue(fields()[4]);
@@ -635,7 +636,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
   {
     out.writeString(this.id);
 
-    out.writeLong(this.userid);
+    out.writeString(this.userid);
 
     out.writeString(this.duedate);
 
@@ -654,7 +655,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
     if (fieldOrder == null) {
       this.id = in.readString();
 
-      this.userid = in.readLong();
+      this.userid = in.readString();
 
       this.duedate = in.readString();
 
@@ -672,7 +673,7 @@ public class Task extends org.apache.avro.specific.SpecificRecordBase implements
           break;
 
         case 1:
-          this.userid = in.readLong();
+          this.userid = in.readString();
           break;
 
         case 2:

@@ -24,8 +24,7 @@ public class UserMessageGenerator {
 	private final Many<Message<?>> processor = Sinks.many().multicast().onBackpressureBuffer();
 
 	public void emitMessage(User user) {
-		Message<User> message = MessageBuilder.withPayload(user).setHeader(KafkaHeaders.MESSAGE_KEY, user.getId())
-				.build();
+		Message<User> message = MessageBuilder.withPayload(user).build();
 
 		processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 

@@ -1,8 +1,8 @@
-import { Component } from 'react';
-import { getTasks, updateTaskStatus } from '../utilities/TaskService';
+import { faCheck, faPlay, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import Moment from 'moment';
+import { Component } from 'react';
+import { getTasks, updateTask } from '../utilities/TaskService';
 
 class ListTasks extends Component {
 
@@ -25,17 +25,17 @@ class ListTasks extends Component {
         });
     }
 
-    setStatus = (taskId, completed) => (e) => {
-        updateTaskStatus(taskId, completed).then(res => {
-            if (res && res.task_id) {
-                let _tasks = this.state.tasks.map((task) => {
-                    if (taskId === task.task_id) {
-                        task.completed = res.completed;
+    setStatus = (_id, _username, _title, _details, _date, _status) => (e) => {
+        this.setState({ loading: true });
+        updateTask(_id, _username, _title, _details, _date, _status).then(res => {
+            setTimeout(() => {
+                getTasks().then(_tasks => {
+                    if (!_tasks) {
+                        _tasks = [];
                     }
-                    return task;
-                })
-                this.setState({ tasks: _tasks });
-            }
+                    this.setState({ tasks: _tasks, loading: false });
+                });        
+            }, 2000);
         });
     }
 
@@ -53,6 +53,7 @@ class ListTasks extends Component {
                             <th scope="col">Details</th>
                             <th scope="col">Due Date</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Start Task</th>
                             <th scope="col">Complete Task</th>
                             <th scope="col">Reset Task</th>
                         </tr>
@@ -60,15 +61,16 @@ class ListTasks extends Component {
                     {this.state.loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
                         <tbody>
                             {this.state.tasks.map((task) =>
-                                <tr key={task.task_id}>
-                                    <th scope="row">{task.task_id}</th>
-                                    <td>{task.username}</td>
+                                <tr key={task.id}>
+                                    <th scope="row">{task.id}</th>
+                                    <td>{task.userid}</td>
                                     <td>{task.title}</td>
                                     <td>{task.details}</td>
                                     <td>{Moment(task.duedate).format('DD.MM.YYYY')}</td>
-                                    <td>{task.completed === 1 ? 'Completed' : 'Not Completed'}</td>
-                                    <td id="setcomplete"><FontAwesomeIcon key={`${task.task_id}-completed`} icon={faCheck} style={{ marginRight: "2vmin" }} onClick={this.setStatus(task.task_id, 1)} /></td>
-                                    <td id="setreset"><FontAwesomeIcon key={`${task.task_id}-not-completed`} icon={faTimes} style={{ marginLeft: "2vmin" }} onClick={this.setStatus(task.task_id, 0)} /></td>
+                                    <td>{task.status}</td>
+                                    <td id="setstart"><FontAwesomeIcon key={`${task.task_id}-started`} icon={faPlay} style={{ marginRight: "2vmin" }} onClick={this.setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'STARTED')} /></td>
+                                    <td id="setcomplete"><FontAwesomeIcon key={`${task.task_id}-completed`} icon={faCheck} style={{ marginRight: "2vmin" }} onClick={this.setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'COMPLETED')} /></td>
+                                    <td id="setreset"><FontAwesomeIcon key={`${task.task_id}-not-completed`} icon={faTimes} style={{ marginLeft: "2vmin" }} onClick={this.setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'NOTSTARTED')} /></td>
                                 </tr>
                             )}
                         </tbody>

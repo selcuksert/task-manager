@@ -24,15 +24,14 @@ public class TaskMessageGenerator {
 	private final Many<Message<?>> processor = Sinks.many().multicast().onBackpressureBuffer();
 
 	public void emitMessage(Task task) {
-		Message<Task> message = MessageBuilder.withPayload(task).setHeader(KafkaHeaders.MESSAGE_KEY, task.getId())
-				.build();
+		Message<Task> message = MessageBuilder.withPayload(task).build();
 
 		processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 
 		log.info("Message sent");
 	}
 
-	public void deleteMessage(Long taskId) {
+	public void deleteMessage(String taskId) {
 		// Use tombstone message to remove item data from Kafka
 		Message<KafkaNull> message = MessageBuilder.withPayload(KafkaNull.INSTANCE)
 				.setHeader(KafkaHeaders.MESSAGE_KEY, taskId).build();

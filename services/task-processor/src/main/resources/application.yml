@@ -1,0 +1,46 @@
+debug: false
+
+server:
+  port: 8094
+
+custom:
+  ktable:
+    tasks: task-ktable
+    users: user-ktable
+ 
+spring:
+  cloud:    stream:
+      function:        definition: process
+      bindings:
+        process-in-0:
+          destination: tasks
+          consumer:
+            use-native-decoding: true
+        process-in-1:
+          destination: users
+          consumer:
+            use-native-decoding: true
+      kafka:
+        streams:
+          binder:
+            functions:
+              process:
+                applicationId: ${spring.application.name}-${random.uuid}
+            brokers:
+            - localhost:19093
+            - localhost:19094
+            configuration:
+              '[schema.registry.url]': http://web.poc.local:8081
+              '[default.key.serde]': org.apache.kafka.common.serialization.Serdes$StringSerde
+              '[default.value.serde]': io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+              '[default.deserialization.exception.handler]': org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
+              '[processing.guarantee]': exactly_once
+            autoCreateTopics: false
+            autoAddPartitions: false
+          bindings:
+            process-in-0:
+              consumer:
+                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
+            process-in-1:
+              consumer:
+                valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde  application:    name: task-processor

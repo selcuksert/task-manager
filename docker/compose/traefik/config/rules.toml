@@ -8,6 +8,12 @@
   [http.routers.user-reader-router]
     rule = "Host(`web.poc.local`) && PathPrefix(`/api/user/reader`)"
     service = "user-reader-service"
+  [http.routers.task-reader-router]
+    rule = "Host(`web.poc.local`) && PathPrefix(`/api/task/reader`)"
+    service = "task-reader-service"
+  [http.routers.task-processor-router]
+    rule = "Host(`web.poc.local`) && PathPrefix(`/api/task/processor`)"
+    service = "task-processor-service"
 
 [http.services]
   [http.services.task-writer-service]
@@ -19,4 +25,10 @@
   [http.services.user-reader-service]
     [[http.services.user-reader-service.loadBalancer.servers]]
       url = "http://host.docker.internal:8092"
-    
+  [http.services.task-reader-service]
+    [[http.services.task-reader-service.loadBalancer.servers]]
+      url = "http://host.docker.internal:8093"
+  [http.services.task-processor-service]
+    [[http.services.task-processor-service.loadBalancer.servers]]
+      url = "http://host.docker.internal:8094"
+        

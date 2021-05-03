@@ -5,6 +5,7 @@ import ListTasks from './components/ListTasks';
 import ListUsers from './components/ListUsers';
 import AddTask from './components/AddTask';
 import AddUser from './components/AddUser';
+import GetTaskDetail from './components/GetTaskDetail';
 
 import {
   BrowserRouter as Router,
@@ -43,6 +44,9 @@ class App extends Component {
             </Route>
             <Route path="/add/user">
               <AddUser />
+            </Route>
+            <Route path="/get/task">
+              <GetTaskDetail />
             </Route>
           </Switch>
         </main>

@@ -1,5 +1,5 @@
 // Utilities
-export function addTask(_username, _title, _details, _date) {
+export function addTask(_username, _title, _details, _date, token) {
     return fetch(`http://${window.location.hostname}/api/task/writer`, {
         method: 'post',
         body: JSON.stringify({
@@ -10,14 +10,25 @@ export function addTask(_username, _title, _details, _date) {
         }),
         headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`
         }
     })
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            }
+            else if (res.status === 401) {
+                return { error: 'Unauthorized', message: 'Unauthorized to add task' };
+            }
+            else if (res.status === 403) {
+                return { error: 'Forbidden', message: 'Forbidden to add task' };
+            }
+        })
         .catch(err => console.error(err));
 }
 
-export function updateTask(_id, _username, _title, _details, _date, _status) {
+export function updateTask(_id, _username, _title, _details, _date, _status, token) {
     return fetch(`http://${window.location.hostname}/api/task/writer`, {
         method: 'put',
         body: JSON.stringify({
@@ -30,26 +41,45 @@ export function updateTask(_id, _username, _title, _details, _date, _status) {
         }),
         headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`
         }
     })
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            }
+            else if (res.status === 401) {
+                return { error: 'Unauthorized', message: 'Unauthorized to update task' };
+            }
+            else if (res.status === 403) {
+                return { error: 'Forbidden', message: 'Forbidden to update task' };
+            }
+        })
         .catch(err => console.error(err));
 }
 
-export function getTasks() {
+export function getTasks(token) {
     return fetch(`http://${window.location.hostname}/api/task/reader`, {
         method: 'get',
         headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`
         }
     })
-    .then(res => res.json())
-    .catch(err => console.error(err));
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            }
+            else if (res.status === 401 || res.status === 403) {
+                return [];
+            }
+        })
+        .catch(err => console.error(err));
 }
 
-export function getTaskById(_taskId) {
+export function getTaskById(_taskId, token) {
     let url = new URL(`http://${window.location.hostname}/api/task/processor`);
     url.searchParams.set('taskId', _taskId);
 
@@ -57,9 +87,20 @@ export function getTaskById(_taskId) {
         method: 'get',
         headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`
         }
     })
-    .then(res => res.json())
-    .catch(err => console.error(err));
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            }
+            else if (res.status === 401) {
+                return { error: 'Unauthorized', message: 'Unauthorized to add user' };
+            }
+            else if (res.status === 403) {
+                return { error: 'Forbidden', message: 'Forbidden to add user' };
+            }
+        })
+        .catch(err => console.error(err));
 }

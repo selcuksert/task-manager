@@ -17,7 +17,7 @@ class ListTasks extends Component {
     componentDidMount() {
         this.setState({ loading: true });
 
-        getTasks().then(_tasks => {
+        getTasks(this.props.keycloak.token).then(_tasks => {
             if (!_tasks) {
                 _tasks = [];
             }
@@ -27,9 +27,9 @@ class ListTasks extends Component {
 
     setStatus = (_id, _username, _title, _details, _date, _status) => (e) => {
         this.setState({ loading: true });
-        updateTask(_id, _username, _title, _details, _date, _status).then(res => {
+        updateTask(_id, _username, _title, _details, _date, _status, this.props.keycloak.token).then(res => {
             setTimeout(() => {
-                getTasks().then(_tasks => {
+                getTasks(this.props.keycloak.token).then(_tasks => {
                     if (!_tasks) {
                         _tasks = [];
                     }

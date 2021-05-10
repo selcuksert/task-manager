@@ -1,0 +1,8 @@
+{
+  "realm": "corpauth",
+  "auth-server-url": "http://web.poc.local:8180/auth/",
+  "ssl-required": "external",
+  "resource": "task-manager",
+  "public-client": true,
+  "confidential-port": 0
+}

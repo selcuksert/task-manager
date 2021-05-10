@@ -15,7 +15,7 @@ class ListUsers extends Component {
 
     componentDidMount() {
         this.setState({ loading: true });
-        getUsers().then(_users => {
+        getUsers(this.props.keycloak.token).then(_users => {
             if (!_users) {
                 _users = [];
             }

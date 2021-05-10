@@ -5,7 +5,7 @@ import { Component, useState } from 'react';
 import { getTaskById } from '../utilities/TaskService';
 import InfoModal from './InfoModal';
 
-const GetTaskHook = () => {
+const GetTaskHook = (props) => {
     const [task, setTask] = useState({});
     const [loading, setLoading] = useState(false);
     const [showTable, setShowTable] = useState(false);
@@ -13,6 +13,7 @@ const GetTaskHook = () => {
     const [modalTitle, setModalTitle] = useState("");
     const [modalText, setModalText] = useState("");
     const [showInfo, setShowInfo] = useState(false);
+    const [token, setToken] = useState(props.keycloak.token);
 
     Moment.locale('tr');
 
@@ -21,7 +22,7 @@ const GetTaskHook = () => {
         setLoading(true);
 
         if (taskId) {
-            getTaskById(taskId.trim())
+            getTaskById(taskId.trim(), token)
                 .then(response => {
                     if (!response || (response && response.error)) {
                         setModalTitle('Error')
@@ -113,14 +114,15 @@ class GetTaskDetail extends Component {
             showTable: false,
             modalText: "",
             modalTitle: "",
-            showInfo: false
+            showInfo: false,
+            token: ""
         }
     }
 
     render() {
         return (
             <div>
-                <GetTaskHook />
+                <GetTaskHook {...this.props} />
             </div>
         )
     }

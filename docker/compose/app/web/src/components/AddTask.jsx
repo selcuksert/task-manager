@@ -6,7 +6,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 import InfoModal from './InfoModal';
 
-const AddTaskHook = () => {
+const AddTaskHook = (props) => {
     const [username, setUsername] = useState("");
     const [duedate, setDuedate] = useState("");
     const [title, setTitle] = useState("");
@@ -16,10 +16,11 @@ const AddTaskHook = () => {
     const [showInfo, setShowInfo] = useState(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState(props.keycloak.token);
 
     useEffect(() => {
         setLoading(true);
-        getUsers().then((users) => {
+        getUsers(token).then((users) => {
             if (!users) {
                 setModalTitle('Error')
                 setModalText('Unable to get user list');
@@ -47,14 +48,14 @@ const AddTaskHook = () => {
         setShowInfo(false);
         setLoading(true);
 
-        addTask(username, title, details, duedate)
+        addTask(username, title, details, duedate, token)
             .then(response => {
                 if (!response || (response && response.error)) {
                     setModalTitle('Error')
                     setModalText('Unable to add task: ' + response.message);
                     setShowInfo(true);
                 }
-                else if(response){
+                else if (response) {
                     setModalTitle('Completed')
                     setModalText(`${response.message}`);
                     setShowInfo(true);
@@ -138,14 +139,15 @@ class AddTask extends Component {
             modalTitle: "",
             showInfo: false,
             users: [],
-            loading: false
+            loading: false,
+            token: ""
         }
     }
 
     render() {
         return (
             <div>
-                <AddTaskHook />
+                <AddTaskHook {...this.props} />
             </div>
         )
     }

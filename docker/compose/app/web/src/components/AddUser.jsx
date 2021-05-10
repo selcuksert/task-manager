@@ -4,7 +4,7 @@ import InfoModal from './InfoModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
-const AddUserHook = () => {
+const AddUserHook = (props) => {
     const [username, setUsername] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -12,11 +12,12 @@ const AddUserHook = () => {
     const [modalText, setModalText] = useState("");
     const [showInfo, setShowInfo] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [token, setToken] = useState(props.keycloak.token);
 
     const submitUser = () => {
         setShowInfo(false);
         setLoading(true);
-        addUser(username, firstName, lastName)
+        addUser(username, firstName, lastName, token)
             .then(response => {
                 if (!response || (response && response.error)) {
                     setModalTitle('Error')
@@ -97,14 +98,15 @@ class AddUser extends Component {
             modalText: "",
             modalTitle: "",
             showInfo: false,
-            loading: false
+            loading: false,
+            token: ""
         }
     }
 
     render() {
         return (
             <div>
-                <AddUserHook />
+                <AddUserHook {...this.props}/>
             </div>
         )
     }

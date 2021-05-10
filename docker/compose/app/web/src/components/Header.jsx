@@ -3,6 +3,21 @@ import { Link } from "react-router-dom";
 
 class Header extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: ""
+        }
+    }
+
+    componentDidMount() {
+        this.setState({ name: this.props.keycloak.idTokenParsed.name });
+    }
+
+    logout = () => {
+        this.props.keycloak.logout();
+    }
+
     render() {
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -26,6 +41,11 @@ class Header extends Component {
                         </li>
                         <li className="nav-item">
                             <Link to="/get/task" className="nav-link">Get Task Detail</Link>
+                        </li>
+                    </ul>
+                    <ul className="navbar-nav ml-auto">
+                        <li className="nav-item">
+                            <a className="nav-link" href="#" onClick={this.logout}>Logout ({this.state.name})</a>
                         </li>
                     </ul>
                 </div>

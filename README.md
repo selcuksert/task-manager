@@ -4,4 +4,4 @@ This project is an event driven task management application that comprises of Po
 
 The UI is based on ReactJS and Bootstrap.
 
-Keycloak is used as IdP to enable OAuth2 and OIDC driven AAA.
+Keycloak with OpenLDAP is used as IdP to enable OAuth2 and OIDC driven AAA.

@@ -20,3 +20,7 @@ code {
 #setreset:hover {
   color: red;
 }
+
+#setstart:hover {
+  color: darkblue;
+}

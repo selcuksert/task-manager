@@ -36,6 +36,8 @@ services:
       - "--entrypoints.sr.address=:8081"
       - "--entrypoints.rp.address=:8082"
       - "--entrypoints.kc.address=:8083"
+      - "--entrypoints.keyc.address=:8180"
+      - "--entrypoints.ldap.address=:389"
     volumes:
       - "./traefik/config/rules.toml:/etc/traefik/rules.toml"    
     depends_on:
@@ -45,6 +47,9 @@ services:
       - "80:80"
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
       - "2181:2181"      
       - "5432:5432"
       - "19091:19091"
@@ -53,7 +58,8 @@ services:
       - "3000:3000"
       - "9090:9090"
       - "9080:9080"
-      - "8081:8081"
+      - "8180:8180"
+      - "389:389"
 
   zookeeper:
     build: 
@@ -289,4 +295,37 @@ services:
       - "traefik.http.routers.web.entrypoints=http"
       - "traefik.http.routers.web.service=web-service"
       - "traefik.http.services.web-service.loadbalancer.server.port=80"
+
+  keycloak:
+    container_name: keycloak
+    image: jboss/keycloak
+    environment:
+      - KEYCLOAK_USER=kcadm
+      - KEYCLOAK_PASSWORD=Kc1234
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`web.poc.local`)"
+      - "traefik.http.routers.keycloak.entrypoints=keyc"
+      - "traefik.http.routers.keycloak.service=keycloak-service"
+      - "traefik.http.services.keycloak-service.loadbalancer.server.port=8080"
+
+  openldap:
+    container_name: openldap
+    image: osixia/openldap:1.3.0
+    volumes:
+      - ./ldap/config/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
+      - ./ldap/config/modify.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/modify.ldif
+    environment:
+      - LDAP_ORGANISATION=The Corporation
+      - LDAP_DOMAIN=corp.com
+      - LDAP_ADMIN_PASSWORD=Ladm1234
+      - LDAP_LOG_LEVEL=256
+      - TZ=Europe/Istanbul
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.ldap.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.ldap.entrypoints=ldap"
+      - "traefik.tcp.routers.ldap.service=ldap-service"
+      - "traefik.tcp.services.ldap-service.loadbalancer.server.port=389"
+    command: ["--copy-service"]
       

@@ -8,6 +8,16 @@ logging:
     '[org.springframework.kafka.config]': info
 server:
   port: 8090
+  
+custom:
+  security:
+    provider:
+      jwt:
+        role:
+          key: roles
+        claim:
+          key: realm_access  
+  
 spring:
   cloud:
     stream:
@@ -36,4 +46,8 @@ spring:
             useNativeEncoding: true
   application:
     name: task-writer
-                 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://web.poc.local:8180/auth/realms/corpauth/protocol/openid-connect/certs

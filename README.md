@@ -36,7 +36,16 @@ Prometheus and Grafana based monitoring stack is available to view status of Kaf
 ![monitoring](./docs/images/monitoring.png)
 
 ### Identity Provider for OAuth2 & OIDC
-Keycloak Identity Provider for OAuth2 & OIDC based AAA enablement. The IdP is backed by an OpenLDAP instance which is initiated by a designated [user database](./docker/compose/ldap/config/bootstrap.ldif).
-![login](./docs/images/login.png)
+Keycloak Identity Provider for OAuth2 & OIDC based AAA enablement. The IdP is backed by an OpenLDAP instance which is initiated by a designated [user database](./docker/compose/ldap/config/bootstrap.ldif)
+
+<p float="center">
+  <img src="./docs/images/login.png" width="50%" />
+  <img src="./docs/images/keycloak/realm.png" width="50%" />
+  <img src="./docs/images/keycloak/client.png" width="50%" />
+  <img src="./docs/images/keycloak/ldap.png" width="50%" />
+  <img src="./docs/images/keycloak/mapper.png" width="50%" />
+  <img src="./docs/images/keycloak/users.png" width="50%" />
+</p>
+
 
 

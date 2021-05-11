@@ -32,7 +32,7 @@ public class UserMessageGenerator {
 	}
 
 	public void deleteMessage(String id) {
-		// Use tombstone message to remove item data from Kafka
+		// Use tombstone message to remove user data from Kafka
 		Message<KafkaNull> message = MessageBuilder.withPayload(KafkaNull.INSTANCE)
 				.setHeader(KafkaHeaders.MESSAGE_KEY, id).build();
 

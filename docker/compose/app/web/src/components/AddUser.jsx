@@ -1,10 +1,11 @@
-import { Component, useState } from 'react';
-import { addUser } from '../utilities/UserService';
+import {Component, useContext, useState} from 'react';
+import {addUser} from '../utilities/UserService';
 import InfoModal from './InfoModal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+import {Context} from "../Store";
 
-const AddUserHook = (props) => {
+const AddUserHook = () => {
     const [username, setUsername] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -12,7 +13,10 @@ const AddUserHook = (props) => {
     const [modalText, setModalText] = useState("");
     const [showInfo, setShowInfo] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [token, setToken] = useState(props.keycloak.token);
+
+    const [state, dispatch] = useContext(Context);
+
+    let token = state.keycloak.token;
 
     const submitUser = () => {
         setShowInfo(false);
@@ -23,8 +27,7 @@ const AddUserHook = (props) => {
                     setModalTitle('Error')
                     setModalText('Unable to add user: ' + response.message);
                     setShowInfo(true);
-                }
-                else if(response){
+                } else if (response) {
                     setModalTitle('Completed')
                     setModalText(`${response.message}`);
                     setShowInfo(true);
@@ -74,14 +77,14 @@ const AddUserHook = (props) => {
                     <small id="lastNameHelp" className="form-text text-muted">Please enter last name.</small>
                 </div>
 
-                {loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
+                {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
                     <button
                         type="button"
                         className="btn btn-primary"
                         onClick={submitUser}>Submit</button>
                 }
             </form>
-            <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle} />
+            <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>
         </div>
     )
 }
@@ -98,15 +101,14 @@ class AddUser extends Component {
             modalText: "",
             modalTitle: "",
             showInfo: false,
-            loading: false,
-            token: ""
+            loading: false
         }
     }
 
     render() {
         return (
             <div>
-                <AddUserHook {...this.props}/>
+                <AddUserHook/>
             </div>
         )
     }

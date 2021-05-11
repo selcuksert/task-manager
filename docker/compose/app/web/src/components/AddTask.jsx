@@ -1,12 +1,13 @@
-import { Component, useState, useEffect } from 'react';
-import { addTask } from '../utilities/TaskService';
-import { getUsers } from '../utilities/UserService';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import {Component, useContext, useEffect, useState} from 'react';
+import {addTask} from '../utilities/TaskService';
+import {getUsers} from '../utilities/UserService';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 
 import InfoModal from './InfoModal';
+import {Context} from "../Store";
 
-const AddTaskHook = (props) => {
+const AddTaskHook = () => {
     const [username, setUsername] = useState("");
     const [duedate, setDuedate] = useState("");
     const [title, setTitle] = useState("");
@@ -16,7 +17,10 @@ const AddTaskHook = (props) => {
     const [showInfo, setShowInfo] = useState(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [token, setToken] = useState(props.keycloak.token);
+
+    const [state, dispatch] = useContext(Context);
+
+    let token = state.keycloak.token;
 
     useEffect(() => {
         setLoading(true);
@@ -26,8 +30,7 @@ const AddTaskHook = (props) => {
                 setModalText('Unable to get user list');
                 setShowInfo(true);
                 setUsers([]);
-            }
-            else {
+            } else {
                 setUsers(users);
                 if (!username && users && users.length > 0) {
                     setUsername(users[0].id);
@@ -54,8 +57,7 @@ const AddTaskHook = (props) => {
                     setModalTitle('Error')
                     setModalText('Unable to add task: ' + response.message);
                     setShowInfo(true);
-                }
-                else if (response) {
+                } else if (response) {
                     setModalTitle('Completed')
                     setModalText(`${response.message}`);
                     setShowInfo(true);
@@ -71,12 +73,13 @@ const AddTaskHook = (props) => {
                 <div className="form-group">
                     <label htmlFor="username">Select user</label>
                     <select className="form-control" id="username" aria-describedby="usernameHelp"
-                        onChange={setUsernameOnSelect}>
+                            onChange={setUsernameOnSelect}>
                         {users.map(user =>
                             <option key={user.id} value={user.id}>{user.firstname} {user.lastname}</option>
                         )}
                     </select>
-                    <small id="usernameHelp" className="form-text text-muted">Please select user to assign the task</small>
+                    <small id="usernameHelp" className="form-text text-muted">Please select user to assign the
+                        task</small>
                 </div>
                 <div className="form-group">
                     <label htmlFor="duedate">Due Date</label>
@@ -113,14 +116,14 @@ const AddTaskHook = (props) => {
                     </textarea>
                     <small id="detailsHelp" className="form-text text-muted">Please enter task details</small>
                 </div>
-                {loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
+                {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
                     <button
                         type="button"
                         className="btn btn-primary"
                         onClick={submitTask}>Submit</button>
                 }
             </form>
-            <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle} />
+            <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>
         </div>
     )
 }
@@ -139,15 +142,14 @@ class AddTask extends Component {
             modalTitle: "",
             showInfo: false,
             users: [],
-            loading: false,
-            token: ""
+            loading: false
         }
     }
 
     render() {
         return (
             <div>
-                <AddTaskHook {...this.props} />
+                <AddTaskHook/>
             </div>
         )
     }

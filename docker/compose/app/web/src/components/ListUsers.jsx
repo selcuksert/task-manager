@@ -1,7 +1,62 @@
-import { Component } from 'react';
-import { getUsers } from '../utilities/UserService';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import {Component, useContext, useEffect, useState} from 'react';
+import {getUsers} from '../utilities/UserService';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+import {Context} from "../Store";
+
+const ListUsersHook = () => {
+
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const [state, dispatch] = useContext(Context);
+
+    let token = state.keycloak.token;
+
+    const getUserList = () => {
+        setLoading(true);
+        getUsers(token).then(users => {
+            if (!users) {
+                setUsers([]);
+            }
+            setLoading(false);
+            setUsers(users);
+        }).catch(error => {
+            console.error(error);
+            setLoading(false);
+        });
+    }
+
+    useEffect(() => {
+        getUserList();
+    }, []);
+
+    return (
+        <div className="container-fluid mt-3">
+            <h1 className="mb-2">User List</h1>
+            <table className="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                </tr>
+                </thead>
+                {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
+                    <tbody>
+                    {users.map((user) =>
+                        <tr key={user.id}>
+                            <th scope="row">{user.id}</th>
+                            <td>{user.firstname}</td>
+                            <td>{user.lastname}</td>
+                        </tr>
+                    )}
+                    </tbody>
+                }
+            </table>
+        </div>
+    )
+}
 
 class ListUsers extends Component {
 
@@ -13,41 +68,9 @@ class ListUsers extends Component {
         }
     }
 
-    componentDidMount() {
-        this.setState({ loading: true });
-        getUsers(this.props.keycloak.token).then(_users => {
-            if (!_users) {
-                _users = [];
-            }
-            this.setState({ users: _users, loading: false });
-        });
-    }
-
     render() {
         return (
-            <div className="container-fluid mt-3">
-                <h1 className="mb-2">User List</h1>
-                <table className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">Username</th>
-                            <th scope="col">First Name</th>
-                            <th scope="col">Last Name</th>
-                        </tr>
-                    </thead>
-                    {this.state.loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
-                        <tbody>
-                            {this.state.users.map((user) =>
-                                <tr key={user.id}>
-                                    <th scope="row">{user.id}</th>
-                                    <td>{user.firstname}</td>
-                                    <td>{user.lastname}</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    }
-                </table>
-            </div>
+            <ListUsersHook/>
         )
     }
 }

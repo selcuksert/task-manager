@@ -1,11 +1,13 @@
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Moment from 'moment';
-import { Component, useState } from 'react';
-import { getTaskById } from '../utilities/TaskService';
+import {Component, useContext, useState} from 'react';
+import {getTaskById} from '../utilities/TaskService';
 import InfoModal from './InfoModal';
 
-const GetTaskHook = (props) => {
+import {Context} from "../Store";
+
+const GetTaskHook = () => {
     const [task, setTask] = useState({});
     const [loading, setLoading] = useState(false);
     const [showTable, setShowTable] = useState(false);
@@ -13,7 +15,10 @@ const GetTaskHook = (props) => {
     const [modalTitle, setModalTitle] = useState("");
     const [modalText, setModalText] = useState("");
     const [showInfo, setShowInfo] = useState(false);
-    const [token, setToken] = useState(props.keycloak.token);
+
+    const [state, dispatch] = useContext(Context);
+
+    let token = state.keycloak.token;
 
     Moment.locale('tr');
 
@@ -29,8 +34,7 @@ const GetTaskHook = (props) => {
                         setModalText('Unable to get task details: ' + response.message);
                         setShowInfo(true);
                         setShowTable(false);
-                    }
-                    else if (response) {
+                    } else if (response) {
                         setTask(response);
                         setShowTable(response.id !== null);
                     }
@@ -56,11 +60,12 @@ const GetTaskHook = (props) => {
                                 onChange={(e) => setTaskId(e.target.value)}
                                 value={taskId}>
                             </input>
-                            <small id="taskIdHelp" className="form-text text-muted">Please enter task ID to search</small>
+                            <small id="taskIdHelp" className="form-text text-muted">Please enter task ID to
+                                search</small>
                         </div>
                     </form>
 
-                    {loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
+                    {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
                         <button
                             type="button"
                             className="btn btn-primary"
@@ -72,32 +77,32 @@ const GetTaskHook = (props) => {
                 {showTable ?
                     <table className="table table-hover">
                         <thead>
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">User First Name</th>
-                                <th scope="col">User Last Name</th>
-                                <th scope="col">Title</th>
-                                <th scope="col">Details</th>
-                                <th scope="col">Due Date</th>
-                                <th scope="col">Status</th>
-                            </tr>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">User First Name</th>
+                            <th scope="col">User Last Name</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Details</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Status</th>
+                        </tr>
                         </thead>
-                        {loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
+                        {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
                             <tbody>
-                                <tr key={task.id}>
-                                    <th scope="row">{task.id}</th>
-                                    <td>{task.firstName}</td>
-                                    <td>{task.lastName}</td>
-                                    <td>{task.title}</td>
-                                    <td>{task.details}</td>
-                                    <td>{Moment(task.duedate).format('DD.MM.YYYY')}</td>
-                                    <td>{task.status}</td>
-                                </tr>
+                            <tr key={task.id}>
+                                <th scope="row">{task.id}</th>
+                                <td>{task.firstName}</td>
+                                <td>{task.lastName}</td>
+                                <td>{task.title}</td>
+                                <td>{task.details}</td>
+                                <td>{Moment(task.duedate).format('DD.MM.YYYY')}</td>
+                                <td>{task.status}</td>
+                            </tr>
                             </tbody>
                         }
                     </table> : ''}
 
-                <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle} />
+                <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>
             </div>
         </div>
     )
@@ -114,15 +119,14 @@ class GetTaskDetail extends Component {
             showTable: false,
             modalText: "",
             modalTitle: "",
-            showInfo: false,
-            token: ""
+            showInfo: false
         }
     }
 
     render() {
         return (
             <div>
-                <GetTaskHook {...this.props} />
+                <GetTaskHook/>
             </div>
         )
     }

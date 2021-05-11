@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker compose -f $(dirname $0)/docker-compose.yml up --build
+docker compose -f $(dirname $0)/docker-compose.yml up --build --remove-orphans

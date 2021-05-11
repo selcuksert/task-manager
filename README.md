@@ -13,7 +13,7 @@ As this is a PoC project a local domain is used for Traefik edge router. Followi
 ```
 
 ## Components
-The project comprises of following components as [containerized deployments:
+The project comprises of following components as [containerized deployments](./docker/compose/docker-compose.yml):
 
 ### Web UI
 ReactJS based Web UI to provide basic portal to manage tasks. React Hook and Context API are also used for state management:

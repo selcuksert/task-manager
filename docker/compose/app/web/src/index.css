@@ -24,3 +24,7 @@ code {
 #setstart:hover {
   color: darkblue;
 }
+
+.dropdown-item:hover {
+  cursor: pointer;
+}

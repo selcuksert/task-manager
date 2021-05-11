@@ -10,6 +10,25 @@ const HeaderHook = () => {
         state.keycloak.logout();
     }
 
+    const openTool = (tool) => (e) => {
+        switch (tool) {
+            case 'PG_ADMIN':
+                window.open(`${window.location.origin}:9080`, "_blank");
+                break;
+            case 'GRAFANA':
+                window.open(`${window.location.origin}:3000`, "_blank");
+                break;
+            case 'PROMETHEUS':
+                window.open(`${window.location.origin}:9090`, "_blank");
+                break;
+            case 'KC_ADM':
+                window.open(`${window.location.origin}:8180/auth/admin`, "_blank");
+                break;
+            default:
+                window.location = '#';
+        }
+    }
+
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -36,6 +55,18 @@ const HeaderHook = () => {
                         </li>
                         <li className="nav-item">
                             <Link to="/get/task" className="nav-link">Get Task Detail</Link>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Tools
+                            </a>
+                            <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a className="dropdown-item" onClick={openTool('PG_ADMIN')}>PgAdmin</a>
+                                <a className="dropdown-item" onClick={openTool('GRAFANA')}>Grafana</a>
+                                <a className="dropdown-item" onClick={openTool('PROMETHEUS')}>Prometheus</a>
+                                <a className="dropdown-item" onClick={openTool('KC_ADM')}>Keycloak Admin</a>
+                            </div>
                         </li>
                     </ul>
                     <ul className="navbar-nav ml-auto">

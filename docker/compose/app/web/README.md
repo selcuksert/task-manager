@@ -1,6 +1,6 @@
 # Task Management UI
 
-This UI comprises of ReactJS UI to simulate a basic task management portal and bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This UI comprises of ReactJS and React Hooks to simulate a basic task management portal and bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 

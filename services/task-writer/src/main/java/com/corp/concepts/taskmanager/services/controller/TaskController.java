@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/api/task/writer")
 public class TaskController {
 	private final TaskMessageGenerator taskMessageGenerator;
-	private static final String SUCCESS_MESSAGE = "Processed request";
+	private static final String SUCCESS_MESSAGE = "Request processed";
 	private static final String ERROR_MESSAGE = "Error during sending message to broker:";
 
 	public TaskController(TaskMessageGenerator taskMessageGenerator) {

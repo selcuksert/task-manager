@@ -9,8 +9,10 @@ custom:
     users: user-ktable
  
 spring:
-  cloud:    stream:
-      function:        definition: process
+  cloud:
+    stream:
+      function:
+        definition: process
       bindings:
         process-in-0:
           destination: tasks
@@ -27,8 +29,9 @@ spring:
               process:
                 applicationId: ${spring.application.name}-${random.uuid}
             brokers:
+            - localhost:19091
+            - localhost:19092
             - localhost:19093
-            - localhost:19094
             configuration:
               '[schema.registry.url]': http://web.poc.local:8081
               '[default.key.serde]': org.apache.kafka.common.serialization.Serdes$StringSerde
@@ -43,4 +46,6 @@ spring:
                 keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
             process-in-1:
               consumer:
-                valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde  application:    name: task-processor
+                valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+  application:
+    name: task-processor

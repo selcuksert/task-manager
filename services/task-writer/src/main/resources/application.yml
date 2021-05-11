@@ -32,8 +32,9 @@ spring:
           auto-create-topics: false
           autoAddPartitions: false
           brokers:
+          - localhost:19091
+          - localhost:19092
           - localhost:19093
-          - localhost:19094   
           producer-properties:
             '[key.serializer]': org.apache.kafka.common.serialization.StringSerializer
             '[value.serializer]': io.confluent.kafka.serializers.KafkaAvroSerializer

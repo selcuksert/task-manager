@@ -40,12 +40,5 @@ spring:
               '[processing.guarantee]': exactly_once
             autoCreateTopics: false
             autoAddPartitions: false
-          bindings:
-            process-in-0:
-              consumer:
-                keySerde: org.apache.kafka.common.serialization.Serdes$StringSerde
-            process-in-1:
-              consumer:
-                valueSerde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
   application:
     name: task-processor

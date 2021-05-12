@@ -1,18 +1,16 @@
 package com.corp.concepts.taskmanager.services.controller;
 
-import java.util.Collections;
-
+import com.corp.concepts.taskmanager.services.model.Task;
+import com.corp.concepts.taskmanager.services.repo.TaskRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.corp.concepts.taskmanager.services.model.Task;
-import com.corp.concepts.taskmanager.services.repo.TaskRepository;
+import java.util.Collections;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
+@Log4j2
 @RestController
 @RequestMapping(value = "/api/task/reader")
 public class TaskController {

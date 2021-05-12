@@ -1,19 +1,12 @@
 package com.corp.concepts.taskmanager.services.controller;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.corp.concepts.taskmanager.common.Response;
 import com.corp.concepts.taskmanager.models.User;
 import com.corp.concepts.taskmanager.services.source.UserMessageGenerator;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
+@Log4j2
 @RestController
 @RequestMapping(value = "/api/user/writer")
 public class UserController {

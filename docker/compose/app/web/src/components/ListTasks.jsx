@@ -12,16 +12,17 @@ const ListTasksHook = () => {
 
     const [state, dispatch] = useContext(Context);
 
-    let token = state.keycloak.token;
+    let secObj = state.keycloak;
 
     const getTaskList = () => {
         setLoading(true);
-        getTasks(token).then(tasks => {
+        getTasks(secObj).then(tasks => {
             if (!tasks) {
                 setTasks([]);
+            } else {
+                setTasks(tasks);
             }
 
-            setTasks(tasks);
             setLoading(false);
         }).catch(error => {
             console.error(error);
@@ -30,7 +31,7 @@ const ListTasksHook = () => {
     }
     const setStatus = (_id, _username, _title, _details, _date, _status) => (e) => {
         setLoading(true);
-        updateTask(_id, _username, _title, _details, _date, _status, token).then(res => {
+        updateTask(_id, _username, _title, _details, _date, _status, secObj).then(res => {
             setTimeout(() => {
                 getTaskList();
             }, state.updateTimeout);
@@ -38,7 +39,11 @@ const ListTasksHook = () => {
     }
 
     useEffect(() => {
-        getTaskList();
+        if (!state.authenticated) {
+            state.keycloak.logout();
+        } else {
+            getTaskList();
+        }
     }, []);
 
     Moment.locale('tr');

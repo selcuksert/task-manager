@@ -16,12 +16,12 @@ const AddUserHook = () => {
 
     const [state, dispatch] = useContext(Context);
 
-    let token = state.keycloak.token;
+    let secObj = state.keycloak;
 
     const submitUser = () => {
         setShowInfo(false);
         setLoading(true);
-        addUser(username, firstName, lastName, token)
+        addUser(username, firstName, lastName, secObj)
             .then(response => {
                 if (!response || (response && response.error)) {
                     setModalTitle('Error')

@@ -11,16 +11,17 @@ const ListUsersHook = () => {
 
     const [state, dispatch] = useContext(Context);
 
-    let token = state.keycloak.token;
+    let secObj = state.keycloak;
 
     const getUserList = () => {
         setLoading(true);
-        getUsers(token).then(users => {
+        getUsers(secObj).then(users => {
             if (!users) {
                 setUsers([]);
+            } else {
+                setUsers(users);
             }
             setLoading(false);
-            setUsers(users);
         }).catch(error => {
             console.error(error);
             setLoading(false);
@@ -28,7 +29,11 @@ const ListUsersHook = () => {
     }
 
     useEffect(() => {
-        getUserList();
+        if (!secObj.authenticated) {
+            secObj.logout();
+        } else {
+            getUserList();
+        }
     }, []);
 
     return (

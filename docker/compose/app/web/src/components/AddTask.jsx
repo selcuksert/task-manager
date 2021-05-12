@@ -20,11 +20,11 @@ const AddTaskHook = () => {
 
     const [state, dispatch] = useContext(Context);
 
-    let token = state.keycloak.token;
+    let secObj = state.keycloak;
 
     useEffect(() => {
         setLoading(true);
-        getUsers(token).then((users) => {
+        getUsers(secObj).then((users) => {
             if (!users) {
                 setModalTitle('Error')
                 setModalText('Unable to get user list');
@@ -51,7 +51,7 @@ const AddTaskHook = () => {
         setShowInfo(false);
         setLoading(true);
 
-        addTask(username, title, details, duedate, token)
+        addTask(username, title, details, duedate, secObj)
             .then(response => {
                 if (!response || (response && response.error)) {
                     setModalTitle('Error')

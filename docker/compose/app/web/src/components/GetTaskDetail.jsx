@@ -18,7 +18,7 @@ const GetTaskHook = () => {
 
     const [state, dispatch] = useContext(Context);
 
-    let token = state.keycloak.token;
+    let secObj = state.keycloak;
 
     Moment.locale('tr');
 
@@ -27,7 +27,7 @@ const GetTaskHook = () => {
         setLoading(true);
 
         if (taskId) {
-            getTaskById(taskId.trim(), token)
+            getTaskById(taskId.trim(), secObj)
                 .then(response => {
                     if (!response || (response && response.error)) {
                         setModalTitle('Error')

@@ -1,14 +1,14 @@
 debug: false
 logging:
   #file:
-    #name: app.log
+  #name: app.log
   level:
     root: info
     '[org.apache.kafka]': error
     '[org.springframework.kafka.config]': info
 server:
   port: 8090
-  
+
 custom:
   security:
     provider:
@@ -16,8 +16,8 @@ custom:
         role:
           key: roles
         claim:
-          key: realm_access  
-  
+          key: realm_access
+
 spring:
   cloud:
     stream:
@@ -28,9 +28,9 @@ spring:
           auto-create-topics: false
           autoAddPartitions: false
           brokers:
-          - localhost:19091
-          - localhost:19092
-          - localhost:19093
+            - localhost:19091
+            - localhost:19092
+            - localhost:19093
           producer-properties:
             '[key.serializer]': org.apache.kafka.common.serialization.StringSerializer
             '[value.serializer]': io.confluent.kafka.serializers.KafkaAvroSerializer

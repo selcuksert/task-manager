@@ -17,12 +17,32 @@ export function addTask(_username, _title, _details, _date, secObj) {
         .then(res => {
             if (res.status === 200) {
                 return res.json();
-            }
-            else if (res.status === 401) {
+            } else if (res.status === 401) {
                 secObj.logout();
+            } else if (res.status === 403) {
+                return {error: 'Forbidden', message: 'Forbidden to add task'};
             }
-            else if (res.status === 403) {
-                return { error: 'Forbidden', message: 'Forbidden to add task' };
+        })
+        .catch(err => console.error(err));
+}
+
+export function deleteTaskById(id, secObj) {
+    return fetch(`http://${window.location.hostname}/api/task/writer`, {
+        method: 'delete',
+        body: id,
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${secObj.token}`
+        }
+    })
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            } else if (res.status === 401) {
+                secObj.logout();
+            } else if (res.status === 403) {
+                return {error: 'Forbidden', message: 'Forbidden to delete task'};
             }
         })
         .catch(err => console.error(err));
@@ -48,12 +68,10 @@ export function updateTask(_id, _username, _title, _details, _date, _status, sec
         .then(res => {
             if (res.status === 200) {
                 return res.json();
-            }
-            else if (res.status === 401) {
+            } else if (res.status === 401) {
                 secObj.logout();
-            }
-            else if (res.status === 403) {
-                return { error: 'Forbidden', message: 'Forbidden to update task' };
+            } else if (res.status === 403) {
+                return {error: 'Forbidden', message: 'Forbidden to update task'};
             }
         })
         .catch(err => console.error(err));
@@ -71,11 +89,9 @@ export function getTasks(secObj) {
         .then(res => {
             if (res.status === 200) {
                 return res.json();
-            }
-            else if (res.status === 401) {
+            } else if (res.status === 401) {
                 secObj.logout();
-            }
-            else if (res.status === 403) {
+            } else if (res.status === 403) {
                 return [];
             }
         })
@@ -97,12 +113,10 @@ export function getTaskById(_taskId, secObj) {
         .then(res => {
             if (res.status === 200) {
                 return res.json();
-            }
-            else if (res.status === 401) {
+            } else if (res.status === 401) {
                 secObj.logout();
-            }
-            else if (res.status === 403) {
-                return { error: 'Forbidden', message: 'Forbidden to get task details' };
+            } else if (res.status === 403) {
+                return {error: 'Forbidden', message: 'Forbidden to get task details'};
             }
         })
         .catch(err => console.error(err));

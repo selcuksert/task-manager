@@ -1,8 +1,8 @@
-import {faCheck, faPlay, faSpinner, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faCheck, faPlay, faSpinner, faTimes, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Moment from 'moment';
 import {Component, useContext, useEffect, useState} from 'react';
-import {getTasks, updateTask} from '../utilities/TaskService';
+import {deleteTaskById, getTasks, updateTask} from '../utilities/TaskService';
 import {Context} from "../Store";
 
 const ListTasksHook = () => {
@@ -29,9 +29,19 @@ const ListTasksHook = () => {
             setLoading(false);
         });
     }
+
     const setStatus = (_id, _username, _title, _details, _date, _status) => (e) => {
         setLoading(true);
         updateTask(_id, _username, _title, _details, _date, _status, secObj).then(res => {
+            setTimeout(() => {
+                getTaskList();
+            }, state.updateTimeout);
+        });
+    }
+
+    const deleteTask = (id) => (e) => {
+        setLoading(true);
+        deleteTaskById(id, secObj).then(res => {
             setTimeout(() => {
                 getTaskList();
             }, state.updateTimeout);
@@ -62,6 +72,7 @@ const ListTasksHook = () => {
                     <th scope="col">Start Task</th>
                     <th scope="col">Complete Task</th>
                     <th scope="col">Reset Task</th>
+                    <th scope="col">Delete Task</th>
                 </tr>
                 </thead>
                 {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
@@ -85,6 +96,10 @@ const ListTasksHook = () => {
                             <td id="setreset"><FontAwesomeIcon key={`${task.task_id}-not-completed`} icon={faTimes}
                                                                style={{marginLeft: "2vmin"}}
                                                                onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'NOTSTARTED')}/>
+                            </td>
+                            <td id="delete"><FontAwesomeIcon key={`${task.task_id}-delete`} icon={faTrash}
+                                                             style={{marginLeft: "2vmin"}}
+                                                             onClick={deleteTask(task.id)}/>
                             </td>
                         </tr>
                     )}

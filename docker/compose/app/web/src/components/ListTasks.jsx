@@ -2,9 +2,10 @@ import {faCheck, faPlay, faRedo, faSpinner, faTimes, faTrash} from '@fortawesome
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Moment from 'moment';
 import {Component, useContext, useEffect, useState} from 'react';
-import {deleteTaskById, getTasks, updateTask} from '../utilities/TaskService';
+import {deleteTaskById, getTaskById, getTasks, updateTask} from '../utilities/TaskService';
 import {Context} from "../Store";
 import InfoModal from "./InfoModal";
+import TaskDetailModal from "./TaskDetailModal";
 
 const ListTasksHook = () => {
 
@@ -13,6 +14,8 @@ const ListTasksHook = () => {
     const [modalTitle, setModalTitle] = useState("");
     const [modalText, setModalText] = useState("");
     const [showInfo, setShowInfo] = useState(false);
+    const [showDetails, setShowDetails] = useState(false);
+    const [taskToShow, setTaskToShow] = useState({});
 
     const [state, dispatch] = useContext(Context);
 
@@ -67,7 +70,7 @@ const ListTasksHook = () => {
         setLoading(true);
         setShowInfo(false);
         deleteTaskById(id, secObj).then(res => {
-            if (res.error) {
+            if (res && res.error) {
                 setModalTitle(res.error)
                 setModalText(res.message);
                 setShowInfo(true);
@@ -81,6 +84,28 @@ const ListTasksHook = () => {
         }).catch(err => {
             setModalTitle('Error')
             setModalText('Unable to delete task: ' + err.error);
+            setShowInfo(true);
+            setLoading(false);
+        });
+    }
+
+    const getTaskDetail = (taskId) => (e) => {
+        setShowDetails(false);
+        setLoading(true);
+
+        getTaskById(taskId.trim(), secObj).then(res => {
+            if (res && res.error) {
+                setModalTitle('Error')
+                setModalText('Unable to get task details: ' + res.message);
+                setShowInfo(true);
+            } else if (res) {
+                setTaskToShow(res);
+                setShowDetails(true);
+            }
+            setLoading(false);
+        }).catch(err => {
+            setModalTitle('Error')
+            setModalText('Unable to get task details: ' + err.error);
             setShowInfo(true);
             setLoading(false);
         });
@@ -125,25 +150,28 @@ const ListTasksHook = () => {
                         <tbody>
                         {tasks.map((task) =>
                             <tr key={task.id}>
-                                <th scope="row">{task.id}</th>
+                                <th scope="row">
+                                    <a href="#" onClick={getTaskDetail(task.id)}
+                                       key={`${task.id}-detail`}>{task.id}</a>
+                                </th>
                                 <td>{task.userid}</td>
                                 <td>{task.title}</td>
                                 <td>{task.details}</td>
                                 <td>{Moment(task.duedate).format('DD.MM.YYYY')}</td>
                                 <td>{task.status}</td>
-                                <td id="setstart"><FontAwesomeIcon key={`${task.task_id}-started`} icon={faPlay}
+                                <td id="setstart"><FontAwesomeIcon key={`${task.id}-started`} icon={faPlay}
                                                                    style={{marginRight: "2vmin"}}
                                                                    onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'STARTED')}/>
                                 </td>
-                                <td id="setcomplete"><FontAwesomeIcon key={`${task.task_id}-completed`} icon={faCheck}
+                                <td id="setcomplete"><FontAwesomeIcon key={`${task.id}-completed`} icon={faCheck}
                                                                       style={{marginRight: "2vmin"}}
                                                                       onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'COMPLETED')}/>
                                 </td>
-                                <td id="setreset"><FontAwesomeIcon key={`${task.task_id}-not-completed`} icon={faTimes}
+                                <td id="setreset"><FontAwesomeIcon key={`${task.id}-not-completed`} icon={faTimes}
                                                                    style={{marginLeft: "2vmin"}}
                                                                    onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'NOTSTARTED')}/>
                                 </td>
-                                <td id="delete"><FontAwesomeIcon key={`${task.task_id}-delete`} icon={faTrash}
+                                <td id="delete"><FontAwesomeIcon key={`${task.id}-delete`} icon={faTrash}
                                                                  style={{marginLeft: "2vmin"}}
                                                                  onClick={deleteTask(task.id)}/>
                                 </td>
@@ -152,6 +180,7 @@ const ListTasksHook = () => {
                         </tbody>
                     }
                 </table>
+                <TaskDetailModal showModal={showDetails} task={taskToShow}/>
                 <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>
             </div>
         </div>
@@ -160,6 +189,10 @@ const ListTasksHook = () => {
 
 class ListTasks extends Component {
 
+    export
+    default
+    ListTasks;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -167,7 +200,9 @@ class ListTasks extends Component {
             loading: false,
             modalText: "",
             modalTitle: "",
-            showInfo: false
+            showInfo: false,
+            showDetails: false,
+            taskToShow: {}
         }
     }
 

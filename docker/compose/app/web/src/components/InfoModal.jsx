@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import $ from 'jquery/dist/jquery';
-
 
 class Modal extends Component {
     constructor(props) {
@@ -22,8 +21,7 @@ class Modal extends Component {
         if (prevProps.showModal !== this.props.showModal) {
             if (this.props.showModal) {
                 this.showModal();
-            }
-            else {
+            } else {
                 this.hideModal();
             }
         }
@@ -33,7 +31,7 @@ class Modal extends Component {
     render() {
         return (
             <div>
-                <div className="modal fade" ref={this.modalRef} id="infoModal" tabIndex="1" >
+                <div className="modal fade" ref={this.modalRef} id="infoModal" tabIndex="1">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">

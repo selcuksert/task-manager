@@ -19,33 +19,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
-	private final JwtGrantedAuthoritiesConverter defaultGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+    private final JwtGrantedAuthoritiesConverter defaultGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
-	@Value("${custom.security.provider.jwt.claim.key}")
-	private String resourceKey;
+    @Value("${custom.security.provider.jwt.claim.key}")
+    private String resourceKey;
 
-	@Value("${custom.security.provider.jwt.role.key}")
-	private String roleKey;
+    @Value("${custom.security.provider.jwt.role.key}")
+    private String roleKey;
 
-	private Collection<? extends GrantedAuthority> extractResourceRoles(final Jwt jwt) {
-		Map<String, Collection<String>> resourceAccess = jwt.getClaim(resourceKey);
-		Collection<String> resourceRoles;
-		
-		if (resourceAccess != null && (resourceRoles = (Collection<String>) resourceAccess.get(roleKey)) != null) {
-			return resourceRoles.stream().map(x -> new SimpleGrantedAuthority("ROLE_" + x)).collect(Collectors.toSet());
-		}
-		
-		return Collections.emptySet();
-	}
+    private Collection<? extends GrantedAuthority> extractResourceRoles(final Jwt jwt) {
+        Map<String, Collection<String>> resourceAccess = jwt.getClaim(resourceKey);
+        Collection<String> resourceRoles;
 
-	@Override
-	public AbstractAuthenticationToken convert(Jwt source) {
-		Collection<GrantedAuthority> authorities = Stream
-				.concat(defaultGrantedAuthoritiesConverter.convert(source).stream(),
-						extractResourceRoles(source).stream())
-				.collect(Collectors.toSet());
+        if (resourceAccess != null && (resourceRoles = resourceAccess.get(roleKey)) != null) {
+            return resourceRoles.stream().map(x -> new SimpleGrantedAuthority("ROLE_" + x)).collect(Collectors.toSet());
+        }
 
-		return new JwtAuthenticationToken(source, authorities);
-	}
+        return Collections.emptySet();
+    }
+
+    @Override
+    public AbstractAuthenticationToken convert(Jwt source) {
+        Collection<GrantedAuthority> authorities = Stream
+                .concat(defaultGrantedAuthoritiesConverter.convert(source).stream(),
+                        extractResourceRoles(source).stream())
+                .collect(Collectors.toSet());
+
+        return new JwtAuthenticationToken(source, authorities);
+    }
 
 }

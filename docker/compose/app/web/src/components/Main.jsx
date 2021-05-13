@@ -6,7 +6,6 @@ import ListTasks from "./ListTasks";
 import AddTask from "./AddTask";
 import ListUsers from "./ListUsers";
 import AddUser from "./AddUser";
-import GetTaskDetail from "./GetTaskDetail";
 import Keycloak from "keycloak-js";
 import {Context} from "../Store";
 
@@ -51,9 +50,6 @@ const MainHook = () => {
                             </Route>
                             <Route key="add-user" path="/add/user">
                                 <AddUser/>
-                            </Route>
-                            <Route key="get-task" path="/get/task">
-                                <GetTaskDetail/>
                             </Route>
                         </Switch>
                     </main>

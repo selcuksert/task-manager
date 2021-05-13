@@ -4,7 +4,7 @@ import Reducer from './Reducer';
 const initialState = {
     keycloak: null,
     authenticated: false,
-    updateTimeout: 2000
+    updateTimeout: 1000
 }
 
 export const Context = createContext(initialState);

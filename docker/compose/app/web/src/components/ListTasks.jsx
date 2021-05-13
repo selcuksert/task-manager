@@ -4,11 +4,15 @@ import Moment from 'moment';
 import {Component, useContext, useEffect, useState} from 'react';
 import {deleteTaskById, getTasks, updateTask} from '../utilities/TaskService';
 import {Context} from "../Store";
+import InfoModal from "./InfoModal";
 
 const ListTasksHook = () => {
 
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalText, setModalText] = useState("");
+    const [showInfo, setShowInfo] = useState(false);
 
     const [state, dispatch] = useContext(Context);
 
@@ -16,35 +20,65 @@ const ListTasksHook = () => {
 
     const getTaskList = () => {
         setLoading(true);
+        setShowInfo(false);
         getTasks(secObj).then(tasks => {
             if (!tasks) {
                 setTasks([]);
             } else {
                 setTasks(tasks);
             }
-
             setLoading(false);
-        }).catch(error => {
-            console.error(error);
+        }).catch(err => {
+            setModalTitle('Error')
+            setModalText('Unable to get tasks: ' + err.error);
+            setShowInfo(true);
             setLoading(false);
         });
     }
 
     const setStatus = (_id, _username, _title, _details, _date, _status) => (e) => {
         setLoading(true);
+        setShowInfo(false);
         updateTask(_id, _username, _title, _details, _date, _status, secObj).then(res => {
-            setTimeout(() => {
-                getTaskList();
-            }, state.updateTimeout);
+            if (res.error) {
+                setModalTitle(res.error)
+                setModalText(res.message);
+                setShowInfo(true);
+                setLoading(false);
+            } else {
+                setTimeout(() => {
+                    getTaskList();
+                    setLoading(false);
+                }, state.updateTimeout);
+            }
+        }).catch(err => {
+            setModalTitle('Error')
+            setModalText('Unable to update task: ' + err.error);
+            setShowInfo(true);
+            setLoading(false);
         });
     }
 
     const deleteTask = (id) => (e) => {
         setLoading(true);
+        setShowInfo(false);
         deleteTaskById(id, secObj).then(res => {
-            setTimeout(() => {
-                getTaskList();
-            }, state.updateTimeout);
+            if (res.error) {
+                setModalTitle(res.error)
+                setModalText(res.message);
+                setShowInfo(true);
+                setLoading(false);
+            } else {
+                setTimeout(() => {
+                    getTaskList();
+                    setLoading(false);
+                }, state.updateTimeout);
+            }
+        }).catch(err => {
+            setModalTitle('Error')
+            setModalText('Unable to delete task: ' + err.error);
+            setShowInfo(true);
+            setLoading(false);
         });
     }
 
@@ -107,6 +141,7 @@ const ListTasksHook = () => {
                         </tbody>
                     }
                 </table>
+                <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>
             </div>
         </div>
     )
@@ -118,7 +153,10 @@ class ListTasks extends Component {
         super(props);
         this.state = {
             tasks: [],
-            loading: false
+            loading: false,
+            modalText: "",
+            modalTitle: "",
+            showInfo: false
         }
     }
 

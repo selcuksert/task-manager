@@ -6,6 +6,8 @@ The UI is based on ReactJS and Bootstrap.
 
 Keycloak with OpenLDAP is used as IdP (Identity Provider) to enable OAuth2 and OIDC driven AAA (AuthN, AuthZ, Accounting).
 
+The Kafka Stream source, processor and sink implementations are based on Spring Cloud Stream Kafka Binder.
+
 ## Basic Setup
 As this is a PoC project a local domain is used for Traefik edge router. Following entry should be entered in `/etc/hosts`:
 ```

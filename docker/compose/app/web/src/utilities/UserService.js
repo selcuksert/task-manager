@@ -1,11 +1,11 @@
 // Utilities
-export function addUser(_username, _firstName, _lastName, secObj) {
+export function addUser(selectedUser, secObj) {
     return fetch(`http://${window.location.hostname}/api/user/writer`, {
         method: 'post',
         body: JSON.stringify({
-            id: _username,
-            firstname: _firstName,
-            lastname: _lastName
+            id: selectedUser.username,
+            firstname: selectedUser.firstName,
+            lastname: selectedUser.lastName
         }),
         headers: {
             "Content-Type": "application/json",
@@ -27,6 +27,25 @@ export function addUser(_username, _firstName, _lastName, secObj) {
 
 export function getUsers(secObj) {
     return fetch(`http://${window.location.hostname}/api/user/reader`, {
+        method: 'get',
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${secObj.token}`
+        }
+    })
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return [];
+            }
+        })
+        .catch(err => console.error(err));
+}
+
+export function getUsersFromIdp(secObj) {
+    return fetch(`http://${window.location.hostname}:8180/auth/admin/realms/${secObj.realm}/users`, {
         method: 'get',
         headers: {
             "Content-Type": "application/json",

@@ -1,28 +1,46 @@
-import {Component, useContext, useState} from 'react';
-import {addUser} from '../utilities/UserService';
+import {Component, useContext, useEffect, useState} from 'react';
+import {addUser, getUsersFromIdp} from '../utilities/UserService';
 import InfoModal from './InfoModal';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {Context} from "../Store";
 
 const AddUserHook = () => {
-    const [username, setUsername] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
     const [modalTitle, setModalTitle] = useState("");
     const [modalText, setModalText] = useState("");
     const [showInfo, setShowInfo] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [selectedUser, setSelectedUser] = useState({});
+    const [users, setUsers] = useState([]);
 
     const [state, dispatch] = useContext(Context);
 
     let secObj = state.keycloak;
 
+    const loadUsersFromIdp = () => {
+        getUsersFromIdp(secObj).then(res => {
+            if (res.length === 0) {
+                setModalTitle('Error')
+                setModalText('Unable to get users from identity server. Please add view-users role on user');
+                setShowInfo(true);
+                setSelectedUser({});
+            } else if (res) {
+                setUsers(res);
+                setSelectedUser(res[0]);
+            }
+            setLoading(false);
+        })
+    }
+
+    useEffect(() => {
+        loadUsersFromIdp()
+    }, []);
+
     const submitUser = () => {
         setShowInfo(false);
         setLoading(true);
 
-        addUser(username, firstName, lastName, secObj)
+        addUser(selectedUser, secObj)
             .then(res => {
                 if (!res || (res && res.error)) {
                     setModalTitle('Error')
@@ -37,45 +55,59 @@ const AddUserHook = () => {
             });
     }
 
+    const setUserDataOnSelect = (e) => {
+        let options = (e.target.options);
+        let userId = options[options.selectedIndex].value;
+
+        let selectedUser = users.find(user => user.id === userId);
+
+        setSelectedUser(selectedUser);
+    }
+
     return (
         <div className="container mt-3">
             <h1 className="mb-2">Add User</h1>
             <form>
                 <div className="form-group">
+                    <label htmlFor="user">Select user</label>
+                    <select className="form-control" id="user" aria-describedby="usernameHelp"
+                            onChange={setUserDataOnSelect}>
+                        {users.map(user =>
+                            <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
+                        )}
+                    </select>
+                    <small id="usernameHelp" className="form-text text-muted">Please select user to assign the
+                        task</small>
+                </div>
+                <div className="form-group">
                     <label htmlFor="username">Username</label>
-                    <input
+                    <input disabled
                         type="text"
                         className="form-control"
                         id="username"
                         aria-describedby="usernameHelp"
-                        onChange={(e) => setUsername(e.target.value)}
-                        value={username}>
+                        value={selectedUser.username}>
                     </input>
-                    <small id="usernameHelp" className="form-text text-muted">Please enter user name</small>
                 </div>
                 <div className="form-group">
                     <label htmlFor="firstName">First Name</label>
-                    <input
+                    <input disabled
                         type="text"
                         className="form-control"
                         id="firstName"
                         aria-describedby="firstNameHelp"
-                        onChange={(e) => setFirstName(e.target.value)}
-                        value={firstName}>
+                        value={selectedUser.firstName}>
                     </input>
-                    <small id="firstNameHelp" className="form-text text-muted">Please enter first name.</small>
                 </div>
                 <div className="form-group">
                     <label htmlFor="title">Last Name</label>
-                    <input
+                    <input disabled
                         type="text"
                         className="form-control"
                         id="title"
                         aria-describedby="lastNameHelp"
-                        onChange={(e) => setLastName(e.target.value)}
-                        value={lastName}>
+                        value={selectedUser.lastName}>
                     </input>
-                    <small id="lastNameHelp" className="form-text text-muted">Please enter last name.</small>
                 </div>
 
                 {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
@@ -96,13 +128,12 @@ class AddUser extends Component {
         super(props);
 
         this.state = {
-            username: "",
-            firstName: "",
-            lastName: "",
+            selectedUser: {},
             modalText: "",
             modalTitle: "",
             showInfo: false,
-            loading: false
+            loading: false,
+            users: []
         }
     }
 

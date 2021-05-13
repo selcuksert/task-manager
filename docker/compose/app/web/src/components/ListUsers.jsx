@@ -39,26 +39,28 @@ const ListUsersHook = () => {
     return (
         <div className="container-fluid mt-3">
             <h1 className="mb-2">User List</h1>
-            <table className="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">Username</th>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                </tr>
-                </thead>
-                {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
-                    <tbody>
-                    {users.map((user) =>
-                        <tr key={user.id}>
-                            <th scope="row">{user.id}</th>
-                            <td>{user.firstname}</td>
-                            <td>{user.lastname}</td>
-                        </tr>
-                    )}
-                    </tbody>
-                }
-            </table>
+            <div className="table-responsive">
+                <table className="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Username</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                    </tr>
+                    </thead>
+                    {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
+                        <tbody>
+                        {users.map((user) =>
+                            <tr key={user.id}>
+                                <th scope="row">{user.id}</th>
+                                <td>{user.firstname}</td>
+                                <td>{user.lastname}</td>
+                            </tr>
+                        )}
+                        </tbody>
+                    }
+                </table>
+            </div>
         </div>
     )
 }

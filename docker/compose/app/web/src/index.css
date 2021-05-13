@@ -18,11 +18,15 @@ code {
 }
 
 #setreset:hover {
-  color: red;
+  color: darkcyan;
 }
 
 #setstart:hover {
   color: darkblue;
+}
+
+#delete:hover {
+  color: red;
 }
 
 .dropdown-item:hover {

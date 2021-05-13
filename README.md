@@ -38,7 +38,7 @@ Prometheus and Grafana based monitoring stack is available to view status of Kaf
 ![monitoring](./docs/images/monitoring.png)
 
 ### Identity Provider for OAuth2 & OIDC
-Keycloak Identity Provider for OAuth2 & OIDC based AAA enablement. The IdP is backed by an OpenLDAP instance which is initiated by a designated [user database](./docker/compose/ldap/config/bootstrap.ldif)
+Keycloak Identity Provider for OAuth2 & OIDC based AAA enablement. The IdP is backed by an OpenLDAP instance which is initiated by a designated [user database](./docker/compose/ldap/config/bootstrap.ldif).
 
 <p float="center">
   <img src="./docs/images/login.png" width="49%" />
@@ -49,5 +49,5 @@ Keycloak Identity Provider for OAuth2 & OIDC based AAA enablement. The IdP is ba
   <img src="./docs/images/keycloak/users.png" width="49%" />
 </p>
 
-
-
+The task user list on Add User screen is retrieved via Keycloak REST API that is populated from LDAP. To enable this functionality Keycloak admin should assign realm-management client role view-users to all client users:
+![view-users](./docs/images/keycloak/view-users.png)

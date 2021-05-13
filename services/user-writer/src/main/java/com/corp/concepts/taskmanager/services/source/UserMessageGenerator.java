@@ -21,29 +21,29 @@ import reactor.core.publisher.Sinks.Many;
 @Slf4j(topic = "User Message Generator")
 public class UserMessageGenerator {
 
-	private final Many<Message<?>> processor = Sinks.many().multicast().onBackpressureBuffer();
+    private final Many<Message<?>> processor = Sinks.many().multicast().onBackpressureBuffer();
 
-	public void emitMessage(User user) {
-		Message<User> message = MessageBuilder.withPayload(user).build();
+    public void emitMessage(User user) {
+        Message<User> message = MessageBuilder.withPayload(user).setHeader(KafkaHeaders.MESSAGE_KEY, user.getId()).build();
 
-		processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
+        processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 
-		log.info("Message sent");
-	}
+        log.info("Message sent");
+    }
 
-	public void deleteMessage(String id) {
-		// Use tombstone message to remove user data from Kafka
-		Message<KafkaNull> message = MessageBuilder.withPayload(KafkaNull.INSTANCE)
-				.setHeader(KafkaHeaders.MESSAGE_KEY, id).build();
+    public void deleteMessage(String id) {
+        // Use tombstone message to remove user data from Kafka
+        Message<KafkaNull> message = MessageBuilder.withPayload(KafkaNull.INSTANCE)
+                .setHeader(KafkaHeaders.MESSAGE_KEY, id).build();
 
-		processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
+        processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 
-		log.info("Message sent");
-	}
+        log.info("Message sent");
+    }
 
-	@Bean
-	public Supplier<Flux<?>> output() {
-		return () -> processor.asFlux();
-	}
+    @Bean
+    public Supplier<Flux<Message<?>>> output() {
+        return () -> processor.asFlux();
+    }
 
 }

@@ -24,10 +24,6 @@ spring:
       function:
         definition: output
       kafka:
-        bindings:
-          output-out-0:
-            producer:
-              messageKeyExpression: payload['id']
         binder:
           auto-create-topics: false
           autoAddPartitions: false

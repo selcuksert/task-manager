@@ -37,22 +37,22 @@ const MainHook = () => {
                             */
                         }
                         <Switch>
-                            <Route exact path="/">
+                            <Route key="root" exact path="/">
                                 <Home/>
                             </Route>
-                            <Route path="/list/tasks">
+                            <Route key="list-tasks" path="/list/tasks">
                                 <ListTasks/>
                             </Route>
-                            <Route path="/add/task">
+                            <Route key="add-task" path="/add/task">
                                 <AddTask/>
                             </Route>
-                            <Route path="/list/users">
+                            <Route key="list-users" path="/list/users">
                                 <ListUsers/>
                             </Route>
-                            <Route path="/add/user">
+                            <Route key="add-user" path="/add/user">
                                 <AddUser/>
                             </Route>
-                            <Route path="/get/task">
+                            <Route key="get-task" path="/get/task">
                                 <GetTaskDetail/>
                             </Route>
                         </Switch>

@@ -1,7 +1,7 @@
 import {Component, useContext, useEffect, useState} from 'react';
 import {getUsers} from '../utilities/UserService';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+import {faRedo, faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {Context} from "../Store";
 
 const ListUsersHook = () => {
@@ -27,6 +27,10 @@ const ListUsersHook = () => {
         });
     }
 
+    const refreshUserList = (e) => {
+        getUserList();
+    }
+
     useEffect(() => {
         if (!secObj.authenticated) {
             secObj.logout();
@@ -37,7 +41,14 @@ const ListUsersHook = () => {
 
     return (
         <div className="container-fluid mt-3">
-            <h1 className="mb-2">User List</h1>
+            <h1 className="mb-2">
+                User List
+                {!loading ? <FontAwesomeIcon key="refresh" icon={faRedo}
+                                             title="Refresh"
+                                             id="refresh-icon"
+                                             style={{marginLeft: "2vmin"}}
+                                             onClick={refreshUserList}/> : ''}
+            </h1>
             <div className="table-responsive">
                 <table className="table table-hover">
                     <thead>

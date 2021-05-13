@@ -1,4 +1,4 @@
-import {faCheck, faPlay, faSpinner, faTimes, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {faCheck, faPlay, faRedo, faSpinner, faTimes, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Moment from 'moment';
 import {Component, useContext, useEffect, useState} from 'react';
@@ -34,6 +34,10 @@ const ListTasksHook = () => {
             setShowInfo(true);
             setLoading(false);
         });
+    }
+
+    const refreshTaskList = (e) => {
+        getTaskList();
     }
 
     const setStatus = (_id, _username, _title, _details, _date, _status) => (e) => {
@@ -93,7 +97,14 @@ const ListTasksHook = () => {
     Moment.locale('tr');
     return (
         <div className="container-fluid mt-3">
-            <h1 className="mb-2">Task List</h1>
+            <h1 className="mb-2">
+                Task List
+                {!loading ? <FontAwesomeIcon key="refresh" icon={faRedo}
+                                             title="Refresh"
+                                             id="refresh-icon"
+                                             style={{marginLeft: "2vmin"}}
+                                             onClick={refreshTaskList}/> : ''}
+            </h1>
             <div className="table-responsive">
                 <table className="table table-hover">
                     <thead>

@@ -29,6 +29,14 @@ code {
   color: red;
 }
 
+#refresh-icon {
+  color: indigo;
+}
+
+#refresh-icon:hover {
+  color: green;
+  cursor: pointer;
+}
 .dropdown-item:hover {
   cursor: pointer;
 }

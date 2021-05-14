@@ -5,23 +5,23 @@ server:
 
 custom:
   ktable:
-    tasks: task-ktable
-    users: user-ktable
- 
+    detail: detail-ktable
+
 spring:
   cloud:
     stream:
       function:
-        definition: process
+        definition: detail
       bindings:
-        process-in-0:
+        detail-in-0:
           destination: tasks
           consumer:
             use-native-decoding: true
-        process-in-1:
+        detail-in-1:
           destination: users
           consumer:
             use-native-decoding: true
+            materialized-as: user-table
       kafka:
         streams:
           binder:

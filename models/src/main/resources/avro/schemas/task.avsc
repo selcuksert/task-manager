@@ -6,7 +6,9 @@
         "symbols": [
             "COMPLETED",
             "STARTED",
-            "NOTSTARTED"
+            "NOTSTARTED",
+            "DEFERRED",
+            "INPROGRESS"
         ]
     },
     {
@@ -20,6 +22,41 @@
             },
             {
                 "name": "userid",
+                "type": "string"
+            },
+            {
+                "name": "duedate",
+                "type": "string"
+            },
+            {
+                "name": "title",
+                "type": "string"
+            },
+            {
+                "name": "details",
+                "type": "string"
+            },
+            {
+                "name": "status",
+                "type": "TaskState"
+            }
+        ]
+    },
+    {
+        "type": "record",
+        "name": "DetailedTask",
+        "namespace": "com.corp.concepts.taskmanager.models",
+        "fields": [
+            {
+                "name": "id",
+                "type": "string"
+            },
+            {
+                "name": "firstname",
+                "type": "string"
+            },
+            {
+                "name": "lastname",
                 "type": "string"
             },
             {

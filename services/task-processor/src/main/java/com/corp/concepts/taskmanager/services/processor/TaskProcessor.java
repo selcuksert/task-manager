@@ -1,31 +1,31 @@
 package com.corp.concepts.taskmanager.services.processor;
 
+import com.corp.concepts.taskmanager.models.DetailedTask;
 import com.corp.concepts.taskmanager.models.Task;
 import com.corp.concepts.taskmanager.models.TaskState;
 import com.corp.concepts.taskmanager.models.User;
 import lombok.extern.log4j.Log4j2;
+import org.apache.kafka.streams.kstream.GlobalKTable;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.KafkaStreamBrancher;
 import org.springframework.stereotype.Component;
 
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 @Component
 @Log4j2
 public class TaskProcessor {
 
-    @Value("${custom.ktable.tasks}")
-    private String taskTable;
-
-    @Value("${custom.ktable.users}")
-    private String userTable;
+    @Value("${custom.ktable.detail}")
+    private String detailTable;
 
     @Bean
-    public BiConsumer<KStream<String, Task>, KStream<String, User>> process() {
-        return (taskStream, userStream) -> {
+    public BiFunction<KStream<String, Task>, GlobalKTable<String, User>, KTable<String, DetailedTask>> detail() {
+        return (taskStream, userTable) -> {
             KafkaStreamBrancher<String, Task> taskStreamBrancher = new KafkaStreamBrancher<>();
 
             taskStreamBrancher
@@ -36,10 +36,18 @@ public class TaskProcessor {
                     .defaultBranch(ks -> ks.peek((key, task) -> log.info("DELETED | key: {}", key)))
                     .onTopOf(taskStream);
 
-            taskStream.toTable(Materialized.as(taskTable)).toStream();
+            return taskStream.leftJoin(userTable, (key, task) -> task.getUserid(), (task, user) -> {
+                DetailedTask dt = new DetailedTask();
+                dt.setFirstname(user.getFirstname());
+                dt.setLastname(user.getLastname());
+                dt.setDetails(task.getDetails());
+                dt.setDuedate(task.getDuedate());
+                dt.setId(task.getId());
+                dt.setTitle(task.getTitle());
+                dt.setStatus(task.getStatus());
 
-            userStream.peek((key, user) -> log.info("key: {} | user: {}", key, user))
-                    .toTable(Materialized.as(userTable)).toStream();
+                return dt;
+            }).toTable(Materialized.as(detailTable));
         };
     }
 }

@@ -49,11 +49,11 @@ class TaskDetailModal extends Component {
                                     </div>
                                     <div className="row">
                                         <div className="col-md-2 d-inline p-2 bg-primary text-white">First Name:</div>
-                                        <div className="col-md-10 ml-auto d-inline p-2 bg-light text-dark">{this.props.task.firstName}</div>
+                                        <div className="col-md-10 ml-auto d-inline p-2 bg-light text-dark">{this.props.task.firstname}</div>
                                     </div>
                                     <div className="row">
                                         <div className="col-md-2 d-inline p-2 bg-primary text-white">Last Name:</div>
-                                        <div className="col-md-10 ml-auto d-inline p-2 bg-light text-dark">{this.props.task.lastName}</div>
+                                        <div className="col-md-10 ml-auto d-inline p-2 bg-light text-dark">{this.props.task.lastname}</div>
                                     </div>
                                     <div className="row">
                                         <div className="col-md-2 d-inline p-2 bg-primary text-white">Title:</div>

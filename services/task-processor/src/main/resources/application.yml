@@ -27,7 +27,7 @@ spring:
           binder:
             functions:
               process:
-                applicationId: ${spring.application.name}-${random.uuid}
+                applicationId: ${spring.application.name}
             brokers:
             - localhost:19091
             - localhost:19092

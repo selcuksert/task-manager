@@ -29,10 +29,11 @@ public class TaskProcessor {
             KafkaStreamBrancher<String, Task> taskStreamBrancher = new KafkaStreamBrancher<>();
 
             taskStreamBrancher
-                    .branch((key, task) -> task.getStatus().compareTo(TaskState.COMPLETED) == 0,
+                    .branch((key, task) -> (task != null && task.getStatus().compareTo(TaskState.COMPLETED) == 0),
                             ks -> ks.peek((key, task) -> log.info("COMPLETED | key: {} | task: {}", key, task)))
-                    .branch((key, task) -> task.getStatus().compareTo(TaskState.COMPLETED) != 0,
+                    .branch((key, task) -> (task != null && task.getStatus().compareTo(TaskState.COMPLETED) != 0),
                             ks -> ks.peek((key, task) -> log.info("IN-COMPLETE | key: {} | task: {}", key, task)))
+                    .defaultBranch(ks -> ks.peek((key, task) -> log.info("DELETED | key: {}", key)))
                     .onTopOf(taskStream);
 
             taskStream.toTable(Materialized.as(taskTable)).toStream();

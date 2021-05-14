@@ -33,10 +33,14 @@ code {
   color: indigo;
 }
 
-#refresh-icon:hover {
-  color: green;
+.svg-inline--fa {
   cursor: pointer;
 }
+
+#refresh-icon:hover {
+  color: green;
+}
+
 .dropdown-item:hover {
   cursor: pointer;
 }

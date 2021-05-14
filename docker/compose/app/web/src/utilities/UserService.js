@@ -37,7 +37,9 @@ export function getUsers(secObj) {
         .then(res => {
             if (res.status === 200) {
                 return res.json();
-            } else {
+            } else if (res.status === 401) {
+                secObj.logout();
+            } else if (res.status === 403) {
                 return [];
             }
         })

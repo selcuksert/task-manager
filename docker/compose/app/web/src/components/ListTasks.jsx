@@ -91,8 +91,6 @@ const ListTasksHook = () => {
 
     const getTaskDetail = (taskId) => (e) => {
         setShowDetails(false);
-        setLoading(true);
-
         getTaskById(taskId.trim(), secObj).then(res => {
             if (res && res.error) {
                 setModalTitle('Error')
@@ -102,12 +100,10 @@ const ListTasksHook = () => {
                 setTaskToShow(res);
                 setShowDetails(true);
             }
-            setLoading(false);
         }).catch(err => {
             setModalTitle('Error')
             setModalText('Unable to get task details: ' + err.error);
             setShowInfo(true);
-            setLoading(false);
         });
     }
 

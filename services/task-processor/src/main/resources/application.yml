@@ -11,8 +11,16 @@ spring:
   cloud:
     stream:
       function:
-        definition: detail
+        definition: log;detail
       bindings:
+        log-in-0:
+          destination: tasks
+          consumer:
+            use-native-decoding: true
+        log-in-1:
+          destination: users
+          consumer:
+            use-native-decoding: true
         detail-in-0:
           destination: tasks
           consumer:
@@ -26,8 +34,10 @@ spring:
         streams:
           binder:
             functions:
-              process:
-                applicationId: ${spring.application.name}
+              log:
+                applicationId: ${spring.application.name}-log
+              detail:
+                applicationId: ${spring.application.name}-detail
             brokers:
             - localhost:19091
             - localhost:19092

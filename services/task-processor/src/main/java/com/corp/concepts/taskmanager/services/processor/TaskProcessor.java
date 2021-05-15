@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.KafkaStreamBrancher;
 import org.springframework.stereotype.Component;
 
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 @Component
@@ -24,8 +25,8 @@ public class TaskProcessor {
     private String detailTable;
 
     @Bean
-    public BiFunction<KStream<String, Task>, GlobalKTable<String, User>, KTable<String, DetailedTask>> detail() {
-        return (taskStream, userTable) -> {
+    public BiConsumer<KStream<String, Task>, KStream<String, User>> log() {
+        return (taskStream, userStream) -> {
             KafkaStreamBrancher<String, Task> taskStreamBrancher = new KafkaStreamBrancher<>();
 
             taskStreamBrancher
@@ -36,18 +37,24 @@ public class TaskProcessor {
                     .defaultBranch(ks -> ks.peek((key, task) -> log.info("DELETED | key: {}", key)))
                     .onTopOf(taskStream);
 
-            return taskStream.leftJoin(userTable, (key, task) -> task.getUserid(), (task, user) -> {
-                DetailedTask dt = new DetailedTask();
-                dt.setFirstname(user.getFirstname());
-                dt.setLastname(user.getLastname());
-                dt.setDetails(task.getDetails());
-                dt.setDuedate(task.getDuedate());
-                dt.setId(task.getId());
-                dt.setTitle(task.getTitle());
-                dt.setStatus(task.getStatus());
-
-                return dt;
-            }).toTable(Materialized.as(detailTable));
+            userStream.peek((key, user) -> log.info("USER ADDED | key: {} | user: {}", key, user));
         };
+    }
+
+    @Bean
+    public BiFunction<KStream<String, Task>, GlobalKTable<String, User>, KTable<String, DetailedTask>> detail() {
+        return (taskStream, userTable) ->
+                taskStream.leftJoin(userTable, (key, task) -> task.getUserid(), (task, user) -> {
+                    DetailedTask dt = new DetailedTask();
+                    dt.setFirstname(user.getFirstname());
+                    dt.setLastname(user.getLastname());
+                    dt.setDetails(task.getDetails());
+                    dt.setDuedate(task.getDuedate());
+                    dt.setId(task.getId());
+                    dt.setTitle(task.getTitle());
+                    dt.setStatus(task.getStatus());
+
+                    return dt;
+                }).toTable(Materialized.as(detailTable));
     }
 }

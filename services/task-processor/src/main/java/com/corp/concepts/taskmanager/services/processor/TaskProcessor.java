@@ -41,6 +41,19 @@ public class TaskProcessor {
         };
     }
 
+    /**
+     * Processor topology to join task stream with global KTable of user data.
+     * When a message on task topic is consumed it is left joined with global KTable of users
+     * in case of userId of task has matches with the id of user in KTable.
+     *
+     * As the keyspace of user data (key: username) is not so big and has low cardinality,
+     * the un-partitioned version of KTable, GlobalKTable is selected.
+     *
+     * As the detailed task data has high cardinality (key: uuid) and expected to grow into a
+     * large keyspace the output of processing is materialized as KTable
+     *
+     * @return KTable of detailed task table.
+     */
     @Bean
     public BiFunction<KStream<String, Task>, GlobalKTable<String, User>, KTable<String, DetailedTask>> detail() {
         return (taskStream, userTable) ->

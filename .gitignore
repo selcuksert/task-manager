@@ -33,3 +33,6 @@ build/
 .vscode/
 
 .DS_Store
+
+## PostgreSQL DB Data content
+/docker/compose/db/data/**

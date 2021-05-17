@@ -1,10 +1,19 @@
-import {Component, useContext} from 'react';
+import {Component, useContext, useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 import {Context} from "../Store";
 
 const HeaderHook = () => {
 
     const [state, dispatch] = useContext(Context);
+    const [manager, setManager] = useState(false);
+    const [name, setName] = useState("");
+
+    let secObj = state.keycloak;
+
+    useEffect(() => {
+        setManager(secObj.hasRealmRole('manager'));
+        setName(secObj.tokenParsed.name);
+    }, [])
 
     const logout = () => {
         state.keycloak.logout();
@@ -43,16 +52,25 @@ const HeaderHook = () => {
                             <Link to="/list/tasks" className="nav-link">List Tasks <span
                                 className="sr-only">(current)</span></Link>
                         </li>
-                        <li className="nav-item">
-                            <Link to="/add/task" className="nav-link">Add Task</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/list/users" className="nav-link">List Users <span
-                                className="sr-only">(current)</span></Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/add/user" className="nav-link">Add User</Link>
-                        </li>
+                        {manager ?
+                            <li className="nav-item">
+                                <Link to="/add/task" className="nav-link">Add Task</Link>
+                            </li>
+                            : ''
+                        }
+                        {manager ?
+                            <li className="nav-item">
+                                <Link to="/list/users" className="nav-link">List Users <span
+                                    className="sr-only">(current)</span></Link>
+                            </li>
+                            : ''
+                        }
+                        {manager ?
+                            <li className="nav-item">
+                                <Link to="/add/user" className="nav-link">Add User</Link>
+                            </li>
+                            : ''
+                        }
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -69,7 +87,7 @@ const HeaderHook = () => {
                     <ul className="navbar-nav ml-auto">
                         <li className="nav-item">
                             <a className="nav-link" href="#" onClick={logout}>Logout
-                                ({state.keycloak.idTokenParsed.name})</a>
+                                ({name})</a>
                         </li>
                     </ul>
                 </div>
@@ -84,7 +102,8 @@ class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: ""
+            name: "",
+            manager: false
         }
     }
 

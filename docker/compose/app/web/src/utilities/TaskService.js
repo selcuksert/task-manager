@@ -49,7 +49,7 @@ export function deleteTaskById(id, secObj) {
 }
 
 export function updateTask(_id, _username, _title, _details, _date, _status, secObj) {
-    return fetch(`http://${window.location.hostname}/api/task/writer`, {
+    return fetch(`http://${window.location.hostname}/api/task/writer/update`, {
         method: 'put',
         body: JSON.stringify({
             id: _id,
@@ -77,8 +77,29 @@ export function updateTask(_id, _username, _title, _details, _date, _status, sec
         .catch(err => console.error(err));
 }
 
-export function getTasks(secObj) {
-    return fetch(`http://${window.location.hostname}/api/task/reader`, {
+export function getAllTasks(secObj) {
+    return fetch(`http://${window.location.hostname}/api/task/reader/all`, {
+        method: 'get',
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${secObj.token}`
+        }
+    })
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            } else if (res.status === 401) {
+                secObj.logout();
+            } else if (res.status === 403) {
+                return [];
+            }
+        })
+        .catch(err => console.error(err));
+}
+
+export function getOwnedTasks(secObj) {
+    return fetch(`http://${window.location.hostname}/api/task/reader/owned`, {
         method: 'get',
         headers: {
             "Content-Type": "application/json",

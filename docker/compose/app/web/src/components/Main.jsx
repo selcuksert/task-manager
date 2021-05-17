@@ -16,6 +16,7 @@ const MainHook = () => {
     useEffect(() => {
         let keycloak = Keycloak('/keycloak.json');
         keycloak.init({onLoad: 'login-required'}).then(authenticated => {
+            console.log(keycloak);
             dispatch({type: 'LOGGED_IN', payload: {keycloak: keycloak, authenticated: authenticated}})
         })
     }, [])

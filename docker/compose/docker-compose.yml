@@ -150,8 +150,10 @@ services:
     environment:
       POSTGRES_USER: dbuser
       POSTGRES_PASSWORD: db1234
-      POSTGRES_DB: taskdb
+      POSTGRES_DB: appdb
       TZ: Europe/Istanbul
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.db.rule=HostSNI(`*`)"
@@ -237,7 +239,7 @@ services:
     environment:
       TOPIC_NAMES: tasks,users,tasksd
       PK_FIELDS: id
-      DB_NAME: taskdb
+      DB_NAME: appdb
       CONNECTION_USER: dbuser
       CONNECTION_PASSWORD: db1234
       KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
@@ -300,8 +302,16 @@ services:
     container_name: keycloak
     image: jboss/keycloak
     environment:
-      - KEYCLOAK_USER=kcadm
-      - KEYCLOAK_PASSWORD=Kc1234
+      KEYCLOAK_USER: kcadm
+      KEYCLOAK_PASSWORD: Kc1234
+      DB_ADDR: dbservice
+      DB_PORT: 5432
+      DB_USER: dbuser
+      DB_PASSWORD: db1234
+      DB_DATABASE: appdb
+    depends_on:
+      - traefik
+      - dbservice
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.keycloak.rule=Host(`web.poc.local`)"

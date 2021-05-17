@@ -5,7 +5,7 @@
             "Group": "Servers",
             "Host": "dbservice",
             "Port": 5432,
-            "MaintenanceDB": "taskdb",
+            "MaintenanceDB": "appdb",
             "Username": "dbuser",
             "SSLMode": "prefer"
         }

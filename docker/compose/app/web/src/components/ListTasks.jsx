@@ -2,7 +2,7 @@ import {faCheck, faPlay, faRedo, faSpinner, faTimes, faTrash} from '@fortawesome
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Moment from 'moment';
 import {Component, useContext, useEffect, useState} from 'react';
-import {deleteTaskById, getTaskById, getTasks, updateTask} from '../utilities/TaskService';
+import {deleteTaskById, getTaskById, getAllTasks, updateTask, getOwnedTasks} from '../utilities/TaskService';
 import {Context} from "../Store";
 import InfoModal from "./InfoModal";
 import TaskDetailModal from "./TaskDetailModal";
@@ -24,19 +24,36 @@ const ListTasksHook = () => {
     const getTaskList = () => {
         setLoading(true);
         setShowInfo(false);
-        getTasks(secObj).then(tasks => {
-            if (!tasks) {
-                setTasks([]);
-            } else {
-                setTasks(tasks);
-            }
-            setLoading(false);
-        }).catch(err => {
-            setModalTitle('Error')
-            setModalText('Unable to get tasks: ' + err.error);
-            setShowInfo(true);
-            setLoading(false);
-        });
+        if(secObj.hasRealmRole('manager')) {
+            getAllTasks(secObj).then(tasks => {
+                if (!tasks) {
+                    setTasks([]);
+                } else {
+                    setTasks(tasks);
+                }
+                setLoading(false);
+            }).catch(err => {
+                setModalTitle('Error')
+                setModalText('Unable to get tasks: ' + err.error);
+                setShowInfo(true);
+                setLoading(false);
+            });
+        }
+        else {
+            getOwnedTasks(secObj).then(tasks => {
+                if (!tasks) {
+                    setTasks([]);
+                } else {
+                    setTasks(tasks);
+                }
+                setLoading(false);
+            }).catch(err => {
+                setModalTitle('Error')
+                setModalText('Unable to get tasks: ' + err.error);
+                setShowInfo(true);
+                setLoading(false);
+            });
+        }
     }
 
     const refreshTaskList = (e) => {
@@ -48,14 +65,18 @@ const ListTasksHook = () => {
         setShowInfo(false);
         updateTask(_id, _username, _title, _details, _date, _status, secObj).then(res => {
             if (res.error) {
-                setModalTitle(res.error)
+                setModalTitle('Error')
                 setModalText(res.message);
                 setShowInfo(true);
                 setLoading(false);
             } else {
                 setTimeout(() => {
-                    getTaskList();
+                    setModalTitle('Success')
+                    setModalText(res.message);
+                    setShowInfo(true);
                     setLoading(false);
+
+                    getTaskList();
                 }, state.updateTimeout);
             }
         }).catch(err => {

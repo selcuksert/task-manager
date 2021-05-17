@@ -13,7 +13,7 @@ NODE_PORT=$5
 cat ${KAFKA_HOME}/config/server.properties | \
 awk -v BROKER_ID=$BROKER_ID '{sub(/broker.id=0/,"broker.id="BROKER_ID)}1' | \
 awk -v NODE_HOST=$NODE_HOST -v NODE_PORT=$NODE_PORT '{sub(/#listeners=PLAINTEXT:\/\/:9092/,"listeners=INTERNAL:\/\/:"NODE_PORT",EXTERNAL:\/\/:1"NODE_PORT)}1' | \
-awk -v NODE_HOST=$NODE_HOST -v NODE_PORT=$NODE_PORT '{sub(/#advertised.listeners=PLAINTEXT:\/\/your.host.name:9092/,"advertised.listeners=INTERNAL:\/\/:"NODE_PORT",EXTERNAL:\/\/localhost:1"NODE_PORT)}1' | \
+awk -v NODE_HOST=$NODE_HOST -v NODE_PORT=$NODE_PORT '{sub(/#advertised.listeners=PLAINTEXT:\/\/your.host.name:9092/,"advertised.listeners=INTERNAL:\/\/:"NODE_PORT",EXTERNAL:\/\/"NODE_HOST":1"NODE_PORT)}1' | \
 awk -v BROKER_ID=$BROKER_ID '{sub(/log.dirs=\/tmp\/kafka-logs/,"log.dirs=\/tmp\/kafka-logs-"BROKER_ID)}1' | \
 awk -v ZOOKEEPER_HOST=$ZOOKEEPER_HOST -v ZOOKEEPER_PORT=$ZOOKEEPER_PORT '{sub(/zookeeper.connect=localhost:2181/,"zookeeper.connect="ZOOKEEPER_HOST":"ZOOKEEPER_PORT)}1' > ${KAFKA_HOME}/config/server-${BROKER_ID}.properties
 

@@ -32,11 +32,12 @@ public class TaskController {
 
             detailedTask = detailStore.get(taskId);
 
-            if (detailedTask == null) {
-                detailedTask = new DetailedTask();
-            }
         } catch (Exception e) {
             log.error("Error:", e);
+        }
+
+        if (detailedTask == null) {
+            detailedTask = new DetailedTask();
         }
 
         return detailedTask.toString();

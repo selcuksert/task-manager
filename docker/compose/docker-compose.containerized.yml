@@ -20,10 +20,7 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.endpoint=tcp://socket-proxy:2375"      
-      - "--providers.file=true"
-      - "--providers.file.filename=/etc/traefik/rules.toml"
-      - "--providers.file.watch=true"
+      - "--providers.docker.endpoint=tcp://socket-proxy:2375"
       - "--entrypoints.http.address=:80"
       - "--entrypoints.db.address=:5432"
       - "--entrypoints.zk.address=:2181"
@@ -38,8 +35,6 @@ services:
       - "--entrypoints.kc.address=:8083"
       - "--entrypoints.keyc.address=:8180"
       - "--entrypoints.ldap.address=:389"
-    volumes:
-      - "./traefik/config/rules.toml:/etc/traefik/rules.toml"    
     depends_on:
       - socket-proxy
     ports:
@@ -50,7 +45,7 @@ services:
       - "8081:8081"
       - "8082:8082"
       - "8083:8083"
-      - "2181:2181"      
+      - "2181:2181"
       - "5432:5432"
       - "19091:19091"
       - "19092:19092"
@@ -62,12 +57,12 @@ services:
       - "389:389"
 
   zookeeper:
-    build: 
+    build:
       context: ./kafka/base
       dockerfile: Dockerfile
     image: custom/kafka/base
     container_name: zookeeper
-    entrypoint: ["startKeeper.sh"]
+    entrypoint: [ "startKeeper.sh" ]
     depends_on:
       - traefik
     environment:
@@ -80,7 +75,7 @@ services:
       - "traefik.tcp.services.zk-service.loadbalancer.server.port=2181"
 
   kafka-broker-1:
-    build: 
+    build:
       context: ./kafka/base
       dockerfile: Dockerfile
     image: custom/kafka/base
@@ -90,7 +85,7 @@ services:
       - zookeeper
     environment:
       PROM_AGENT_PORT: 1123
-    command: ["zookeeper", "2181", "1", "localhost", "9091"]
+    command: [ "zookeeper", "2181", "1", "kafka-broker-1", "9091" ]
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.kb1.rule=HostSNI(`*`)"
@@ -99,7 +94,7 @@ services:
       - "traefik.tcp.services.kb1-service.loadbalancer.server.port=19091"
 
   kafka-broker-2:
-    build: 
+    build:
       context: ./kafka/base
       dockerfile: Dockerfile
     image: custom/kafka/base
@@ -109,7 +104,7 @@ services:
       - zookeeper
     environment:
       PROM_AGENT_PORT: 1123
-    command: ["zookeeper", "2181", "2", "localhost", "9092"]
+    command: [ "zookeeper", "2181", "2", "kafka-broker-2", "9092" ]
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.kb2.rule=HostSNI(`*`)"
@@ -118,7 +113,7 @@ services:
       - "traefik.tcp.services.kb2-service.loadbalancer.server.port=19092"
 
   kafka-broker-3:
-    build: 
+    build:
       context: ./kafka/base
       dockerfile: Dockerfile
     image: custom/kafka/base
@@ -128,7 +123,7 @@ services:
       - zookeeper
     environment:
       PROM_AGENT_PORT: 1123
-    command: ["zookeeper", "2181", "3", "localhost", "9093"]
+    command: [ "zookeeper", "2181", "3", "kafka-broker-3", "9093" ]
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.kb3.rule=HostSNI(`*`)"
@@ -140,7 +135,7 @@ services:
     image: custom/kafka/base
     depends_on:
       - kafka-broker-1
-    entrypoint: ["addTopic.sh", "kafka-broker-1", "9091", "3", "3", "tasks,users"]
+    entrypoint: [ "addTopic.sh", "kafka-broker-1", "9091", "3", "3", "tasks,users" ]
 
   dbservice:
     image: postgres:13-alpine
@@ -166,7 +161,7 @@ services:
     container_name: pgadmin
     depends_on:
       - traefik
-    volumes: 
+    volumes:
       - ./pgadmin/config/servers.json:/pgadmin4/servers.json
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@corp.com
@@ -183,7 +178,7 @@ services:
       - "traefik.http.services.pgadmin-service.loadbalancer.server.port=9080"
 
   schemaregistry:
-    build: 
+    build:
       context: ./kafka/schemaregistry
       dockerfile: Dockerfile
     image: custom/kafka/schemaregistry
@@ -194,7 +189,7 @@ services:
       - kafka-broker-1
       - kafka-broker-2
       - kafka-broker-3
-    command: ["zookeeper", "2181", "avro-schema-topic", "PLAINTEXT:\\/\\/kafka-broker-1:9091, PLAINTEXT:\\/\\/kafka-broker-2:9092, PLAINTEXT:\\/\\/kafka-broker-3:9093"]
+    command: [ "zookeeper", "2181", "avro-schema-topic", "PLAINTEXT:\\/\\/kafka-broker-1:9091, PLAINTEXT:\\/\\/kafka-broker-2:9092, PLAINTEXT:\\/\\/kafka-broker-3:9093" ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sr.rule=Host(`web.poc.local`)"
@@ -203,7 +198,7 @@ services:
       - "traefik.http.services.sr-service.loadbalancer.server.port=8081"
 
   restproxy:
-    build: 
+    build:
       context: ./kafka/restproxy
       dockerfile: Dockerfile
     image: custom/kafka/restproxy
@@ -214,7 +209,7 @@ services:
       - kafka-broker-1
       - kafka-broker-2
       - kafka-broker-3
-    command: ["zookeeper", "2181", "PLAINTEXT:\\/\\/kafka-broker-1:9091, PLAINTEXT:\\/\\/kafka-broker-2:9092, PLAINTEXT:\\/\\/kafka-broker-3:9093"]
+    command: [ "zookeeper", "2181", "PLAINTEXT:\\/\\/kafka-broker-1:9091, PLAINTEXT:\\/\\/kafka-broker-2:9092, PLAINTEXT:\\/\\/kafka-broker-3:9093" ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.restproxy.rule=Host(`web.poc.local`)"
@@ -223,7 +218,7 @@ services:
       - "traefik.http.services.restproxy-service.loadbalancer.server.port=8082"
 
   kafkaconnect:
-    build: 
+    build:
       context: ./kafka/connect
       dockerfile: Dockerfile
     image: custom/kafka/connect
@@ -250,10 +245,10 @@ services:
       - "traefik.http.routers.kafkaconnect.entrypoints=kc"
       - "traefik.http.routers.kafkaconnect.service=kafkaconnect-service"
       - "traefik.http.services.kafkaconnect-service.loadbalancer.server.port=8083"
-    command: ["zookeeper", "2181", "kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093", "http://schemaregistry:8081" , "dbservice", "5432","postgresql"]
+    command: [ "zookeeper", "2181", "kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093", "http://schemaregistry:8081" , "dbservice", "5432","postgresql" ]
 
   kmonitor:
-    build: 
+    build:
       context: ./kafka/monitor
       dockerfile: Dockerfile
     image: custom/kafka/monitor
@@ -276,7 +271,7 @@ services:
       - "traefik.http.routers.prom.entrypoints=prom"
       - "traefik.http.routers.prom.service=prom-service"
       - "traefik.http.services.prom-service.loadbalancer.server.port=9090"
-      
+
   web:
     image: nginx:stable-alpine
     container_name: web
@@ -337,5 +332,158 @@ services:
       - "traefik.tcp.routers.ldap.entrypoints=ldap"
       - "traefik.tcp.routers.ldap.service=ldap-service"
       - "traefik.tcp.services.ldap-service.loadbalancer.server.port=389"
-    command: ["--copy-service"]
-      
+    command: [ "--copy-service" ]
+
+  task-processor:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    image: custom/app/service
+    container_name: task-processor
+    depends_on:
+      - traefik
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+    volumes:
+      - ./app/service/bin/task-processor-0.0.1-SNAPSHOT.jar:/home/app.jar
+    environment:
+      DEPS: "kafka-broker-1:19091, kafka-broker-2:19092, kafka-broker-3:19093, schemaregistry:8081, keycloak:8080"
+      SERVER_PORT: 8080
+      BROKER_1: kafka-broker-1:19091
+      BROKER_2: kafka-broker-2:19092
+      BROKER_3: kafka-broker-3:19093
+      SR_PROT: http
+      SR_HOST: schemaregistry
+      SR_PORT: 8081
+      IDP_PROT: http
+      IDP_HOST: keycloak
+      IDP_PORT: 8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.task-processor.rule=Host(`web.poc.local`) && PathPrefix(`/api/task/processor`)"
+      - "traefik.http.routers.task-processor.entrypoints=http"
+      - "traefik.http.routers.task-processor.service=task-processor-service"
+      - "traefik.http.services.task-processor-service.loadbalancer.server.port=8080"
+
+  task-reader:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    image: custom/app/service
+    container_name: task-reader
+    depends_on:
+      - traefik
+      - dbservice
+    volumes:
+      - ./app/service/bin/task-reader-0.0.1-SNAPSHOT.jar:/home/app.jar
+    environment:
+      DEPS: "dbservice:5432, keycloak:8080"
+      SERVER_PORT: 8080
+      IDP_PROT: http
+      IDP_HOST: keycloak
+      IDP_PORT: 8080
+      DB_HOST: dbservice
+      DB_PORT: 5432
+      DB_NAME: appdb
+      DB_USER: dbuser
+      DB_PASS: db1234
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.task-reader.rule=Host(`web.poc.local`) && PathPrefix(`/api/task/reader`)"
+      - "traefik.http.routers.task-reader.entrypoints=http"
+      - "traefik.http.routers.task-reader.service=task-reader-service"
+      - "traefik.http.services.task-reader-service.loadbalancer.server.port=8080"
+
+  task-writer:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    image: custom/app/service
+    container_name: task-writer
+    depends_on:
+      - traefik
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+    volumes:
+      - ./app/service/bin/task-writer-0.0.1-SNAPSHOT.jar:/home/app.jar
+    environment:
+      DEPS: "kafka-broker-1:19091, kafka-broker-2:19092, kafka-broker-3:19093, schemaregistry:8081, keycloak:8080"
+      SERVER_PORT: 8080
+      BROKER_1: kafka-broker-1:19091
+      BROKER_2: kafka-broker-2:19092
+      BROKER_3: kafka-broker-3:19093
+      SR_PROT: http
+      SR_HOST: schemaregistry
+      SR_PORT: 8081
+      IDP_PROT: http
+      IDP_HOST: keycloak
+      IDP_PORT: 8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.task-writer.rule=Host(`web.poc.local`) && PathPrefix(`/api/task/writer`)"
+      - "traefik.http.routers.task-writer.entrypoints=http"
+      - "traefik.http.routers.task-writer.service=task-writer-service"
+      - "traefik.http.services.task-writer-service.loadbalancer.server.port=8080"
+
+  user-reader:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    image: custom/app/service
+    container_name: user-reader
+    depends_on:
+      - traefik
+      - dbservice
+    volumes:
+      - ./app/service/bin/user-reader-0.0.1-SNAPSHOT.jar:/home/app.jar
+    environment:
+      DEPS: "dbservice:5432, keycloak:8080"
+      SERVER_PORT: 8080
+      IDP_PROT: http
+      IDP_HOST: keycloak
+      IDP_PORT: 8080
+      DB_HOST: dbservice
+      DB_PORT: 5432
+      DB_NAME: appdb
+      DB_USER: dbuser
+      DB_PASS: db1234
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.user-reader.rule=Host(`web.poc.local`) && PathPrefix(`/api/user/reader`)"
+      - "traefik.http.routers.user-reader.entrypoints=http"
+      - "traefik.http.routers.user-reader.service=user-reader-service"
+      - "traefik.http.services.user-reader-service.loadbalancer.server.port=8080"
+
+  user-writer:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    image: custom/app/service
+    container_name: user-writer
+    depends_on:
+      - traefik
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+    volumes:
+      - ./app/service/bin/user-writer-0.0.1-SNAPSHOT.jar:/home/app.jar
+    environment:
+      DEPS: "kafka-broker-1:19091, kafka-broker-2:19092, kafka-broker-3:19093, schemaregistry:8081, keycloak:8080"
+      SERVER_PORT: 8080
+      BROKER_1: kafka-broker-1:19091
+      BROKER_2: kafka-broker-2:19092
+      BROKER_3: kafka-broker-3:19093
+      SR_PROT: http
+      SR_HOST: schemaregistry
+      SR_PORT: 8081
+      IDP_PROT: http
+      IDP_HOST: keycloak
+      IDP_PORT: 8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.user-writer.rule=Host(`web.poc.local`) && PathPrefix(`/api/user/writer`)"
+      - "traefik.http.routers.user-writer.entrypoints=http"
+      - "traefik.http.routers.user-writer.service=user-writer-service"
+      - "traefik.http.services.user-writer-service.loadbalancer.server.port=8080"

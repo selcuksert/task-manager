@@ -1,13 +1,13 @@
 debug: false
 logging:
   #file:
-    #name: app.log
+  #name: app.log
   level:
     root: info
     '[org.apache.kafka]': error
     '[org.springframework.kafka.config]': info
 server:
-  port: 8091
+  port: ${SERVER_PORT:8091}
 
 custom:
   security:
@@ -28,13 +28,13 @@ spring:
           auto-create-topics: false
           autoAddPartitions: false
           brokers:
-            - localhost:19091
-            - localhost:19092
-            - localhost:19093
+            - ${BROKER_1:localhost:19091}
+            - ${BROKER_2:localhost:19092}
+            - ${BROKER_3:localhost:19093}
           producer-properties:
             '[key.serializer]': org.apache.kafka.common.serialization.StringSerializer
             '[value.serializer]': io.confluent.kafka.serializers.KafkaAvroSerializer
-            '[schema.registry.url]': http://web.poc.local:8081
+            '[schema.registry.url]': ${SR_PROT:http}://${SR_HOST:web.poc.local}:${SR_PORT:8081}
       bindings:
         output-out-0:
           destination: users
@@ -47,4 +47,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://web.poc.local:8180/auth/realms/corpauth/protocol/openid-connect/certs
+          jwk-set-uri: ${IDP_PROT:http}://${IDP_HOST:web.poc.local}:${IDP_PORT:8180}/auth/realms/corpauth/protocol/openid-connect/certs

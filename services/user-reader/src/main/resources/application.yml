@@ -1,7 +1,7 @@
 debug: false
 server:
-  port: 8092
-  
+  port: ${SERVER_PORT:8092}
+
 custom:
   security:
     provider:
@@ -22,4 +22,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://web.poc.local:8180/auth/realms/corpauth/protocol/openid-connect/certs
+          jwk-set-uri: ${IDP_PROT:http}://${IDP_HOST:web.poc.local}:${IDP_PORT:8180}/auth/realms/corpauth/protocol/openid-connect/certs

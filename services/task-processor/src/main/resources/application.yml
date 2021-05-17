@@ -1,11 +1,19 @@
 debug: false
 
 server:
-  port: 8094
+  port: ${SERVER_PORT:8094}
 
 custom:
   ktable:
     detail: detail-ktable
+  security:
+    provider:
+      jwt:
+        role:
+          key: roles
+        claim:
+          key: realm_access
+
 
 spring:
   cloud:
@@ -38,12 +46,8 @@ spring:
                 applicationId: ${spring.application.name}-log
               detail:
                 applicationId: ${spring.application.name}-detail
-            brokers:
-            - localhost:19091
-            - localhost:19092
-            - localhost:19093
             configuration:
-              '[schema.registry.url]': http://web.poc.local:8081
+              '[schema.registry.url]': ${SR_PROT:http}://${SR_HOST:web.poc.local}:${SR_PORT:8081}
               '[default.key.serde]': org.apache.kafka.common.serialization.Serdes$StringSerde
               '[default.value.serde]': io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
               '[default.deserialization.exception.handler]': org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
@@ -51,5 +55,15 @@ spring:
               '[state.dir]': /tmp/state/kafka-streams
             autoCreateTopics: false
             autoAddPartitions: false
+            brokers:
+              - ${BROKER_1:localhost:19091}
+              - ${BROKER_2:localhost:19092}
+              - ${BROKER_3:localhost:19093}
+
   application:
     name: task-processor
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${IDP_PROT:http}://${IDP_HOST:web.poc.local}:${IDP_PORT:8180}/auth/realms/corpauth/protocol/openid-connect/certs

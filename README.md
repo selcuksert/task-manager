@@ -17,8 +17,11 @@ As this is a PoC project a local domain is used for Traefik edge router. Followi
 ## Components
 The project is shipped with of two different deployment modes as [fully containerized deployment](./docker/compose/docker-compose.containerized.yml) and [hybrid deployment](./docker/compose/docker-compose.yml):
 
-* ***Fully Containerized:*** All of the components including SpringBoot based microservices are containerized. Can be [started](./docker/compose/start-cont.sh) and [stopped](./docker/compose/stop-cont.sh) using shell scripts.
-* ***Hybrid Mode:*** All of the components **except** SpringBoot based microservices are containerized. Can be used for development and be [started](./docker/compose/start.sh) and [stopped](./docker/compose/stop.sh) using shell scripts.
+* ***Fully Containerized:*** All of the components including SpringBoot based microservices are containerized. Can 
+  be [started](./docker/compose/start-cont.sh) and [stopped](./docker/compose/down-cont.sh) using shell scripts.
+* ***Hybrid Mode:*** All of the components **except** SpringBoot based microservices are containerized. Can be used 
+  for development and be [started](./docker/compose/start.sh) and [stopped](./docker/compose/down.sh) using shell 
+  scripts.
 
 Here are the components:
 

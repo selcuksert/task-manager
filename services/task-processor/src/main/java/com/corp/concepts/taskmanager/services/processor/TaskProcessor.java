@@ -5,13 +5,13 @@ import com.corp.concepts.taskmanager.models.Task;
 import com.corp.concepts.taskmanager.models.TaskState;
 import com.corp.concepts.taskmanager.models.User;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.streams.kstream.GlobalKTable;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.common.header.Headers;
+import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.processor.ProcessorContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.KafkaStreamBrancher;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.function.BiConsumer;
@@ -66,8 +66,33 @@ public class TaskProcessor {
                     dt.setId(task.getId());
                     dt.setTitle(task.getTitle());
                     dt.setStatus(task.getStatus());
-
                     return dt;
-                }).toTable(Materialized.as(detailTable));
+                }).transformValues(TaskTransformer::new).toTable(Materialized.as(detailTable));
+    }
+}
+
+class TaskTransformer implements ValueTransformerWithKey<String, DetailedTask, DetailedTask> {
+
+    ProcessorContext context;
+
+    @Override
+    public void init(ProcessorContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public DetailedTask transform(String readOnlyKey, DetailedTask value) {
+        Headers headers = context.headers();
+
+        String sentAt = new String(headers.lastHeader("sent_at").value());
+
+        value.setGeneratedat(sentAt);
+
+        return value;
+    }
+
+    @Override
+    public void close() {
+
     }
 }

@@ -29,6 +29,7 @@ class TaskDetailModal extends Component {
     }
 
     render() {
+        Moment.locale('tr');
         return (
             <div>
                 <div className="modal fade" ref={this.modalRef} id="infoModal" tabIndex="1">
@@ -58,6 +59,11 @@ class TaskDetailModal extends Component {
                                     <div className="row">
                                         <div className="col-md-2 d-inline p-2 bg-primary text-white">Title:</div>
                                         <div className="col-md-10 ml-auto d-inline p-2 bg-light text-dark">{this.props.task.title}</div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-2 d-inline p-2 bg-primary text-white">Updated At:</div>
+                                        <div
+                                            className="col-md-10 ml-auto d-inline p-2 bg-light text-dark">{Moment(parseInt(this.props.task.generatedat)).format('DD.MM.YYYY HH:mm:ss')}</div>
                                     </div>
                                     <div className="row">
                                         <div className="col-md-2 d-inline p-2 bg-primary text-white">Details:</div>

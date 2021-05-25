@@ -72,6 +72,10 @@
                 "type": "string"
             },
             {
+                "name": "generatedat",
+                "type": "string"
+            },
+            {
                 "name": "status",
                 "type": "TaskState"
             }

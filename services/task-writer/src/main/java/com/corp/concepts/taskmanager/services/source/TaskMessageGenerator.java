@@ -13,6 +13,7 @@ import reactor.core.publisher.Sinks;
 import reactor.core.publisher.Sinks.EmitFailureHandler;
 import reactor.core.publisher.Sinks.Many;
 
+import java.time.Instant;
 import java.util.function.Supplier;
 
 @Service
@@ -22,7 +23,9 @@ public class TaskMessageGenerator {
     private final Many<Message<?>> processor = Sinks.many().multicast().onBackpressureBuffer();
 
     public void emitMessage(Task task) {
-        Message<Task> message = MessageBuilder.withPayload(task).setHeader(KafkaHeaders.MESSAGE_KEY, task.getId()).build();
+        Message<Task> message = MessageBuilder.withPayload(task)
+                .setHeader(KafkaHeaders.MESSAGE_KEY, task.getId())
+                .setHeader("sent_at", Instant.now().toEpochMilli()).build();
 
         processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 

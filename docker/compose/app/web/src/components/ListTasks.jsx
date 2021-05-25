@@ -2,7 +2,7 @@ import {faCheck, faPlay, faRedo, faSpinner, faTimes, faTrash} from '@fortawesome
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Moment from 'moment';
 import {Component, useContext, useEffect, useState} from 'react';
-import {deleteTaskById, getTaskById, getAllTasks, updateTask, getOwnedTasks} from '../utilities/TaskService';
+import {deleteTaskById, getAllTasks, getOwnedTasks, getTaskById, updateTask} from '../utilities/TaskService';
 import {Context} from "../Store";
 import InfoModal from "./InfoModal";
 import TaskDetailModal from "./TaskDetailModal";
@@ -24,7 +24,7 @@ const ListTasksHook = () => {
     const getTaskList = () => {
         setLoading(true);
         setShowInfo(false);
-        if(secObj.hasRealmRole('manager')) {
+        if (secObj.hasRealmRole('manager')) {
             getAllTasks(secObj).then(tasks => {
                 if (!tasks) {
                     setTasks([]);
@@ -38,8 +38,7 @@ const ListTasksHook = () => {
                 setShowInfo(true);
                 setLoading(false);
             });
-        }
-        else {
+        } else {
             getOwnedTasks(secObj).then(tasks => {
                 if (!tasks) {
                     setTasks([]);
@@ -117,7 +116,7 @@ const ListTasksHook = () => {
                 setModalTitle('Error')
                 setModalText('Unable to get task details: ' + res.message);
                 setShowInfo(true);
-            } else if (res) {
+            } else if (res && res.id != null) {
                 setTaskToShow(res);
                 setShowDetails(true);
             }

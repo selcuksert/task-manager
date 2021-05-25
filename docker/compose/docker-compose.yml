@@ -128,7 +128,7 @@ services:
       - zookeeper
     environment:
       PROM_AGENT_PORT: 1123
-    command: ["zookeeper", "2181", "3", "localhost", "9093"]
+    command: ["zookeeper", "2181", "3", "localhost ", "9093"]
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.kb3.rule=HostSNI(`*`)"
@@ -237,7 +237,7 @@ services:
       - dbservice
       - schemaregistry
     environment:
-      TOPIC_NAMES: tasks,users,tasksd
+      TOPIC_NAMES: tasks,users
       PK_FIELDS: id
       DB_NAME: appdb
       CONNECTION_USER: dbuser

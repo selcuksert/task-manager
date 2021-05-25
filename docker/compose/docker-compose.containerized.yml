@@ -232,7 +232,7 @@ services:
       - dbservice
       - schemaregistry
     environment:
-      TOPIC_NAMES: tasks,users,tasksd
+      TOPIC_NAMES: tasks,users
       PK_FIELDS: id
       DB_NAME: appdb
       CONNECTION_USER: dbuser
@@ -339,7 +339,7 @@ services:
       context: ./app/service
       dockerfile: Dockerfile
     image: custom/app/service
-    container_name: task-processor
+    scale: 3
     depends_on:
       - traefik
       - kafka-broker-1

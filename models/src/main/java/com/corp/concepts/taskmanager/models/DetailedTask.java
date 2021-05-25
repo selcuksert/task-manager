@@ -14,8 +14,8 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 4326291880681008137L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DetailedTask\",\"namespace\":\"com.corp.concepts.taskmanager.models\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"firstname\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastname\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"duedate\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"details\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"status\",\"type\":{\"type\":\"enum\",\"name\":\"TaskState\",\"symbols\":[\"COMPLETED\",\"STARTED\",\"NOTSTARTED\",\"DEFERRED\",\"INPROGRESS\"]}}]}");
+  private static final long serialVersionUID = 8084716558699082806L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"DetailedTask\",\"namespace\":\"com.corp.concepts.taskmanager.models\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"firstname\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastname\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"duedate\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"title\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"details\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"generatedat\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"status\",\"type\":{\"type\":\"enum\",\"name\":\"TaskState\",\"symbols\":[\"COMPLETED\",\"STARTED\",\"NOTSTARTED\",\"DEFERRED\",\"INPROGRESS\"]}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -77,6 +77,7 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
    private java.lang.String duedate;
    private java.lang.String title;
    private java.lang.String details;
+   private java.lang.String generatedat;
    private com.corp.concepts.taskmanager.models.TaskState status;
 
   /**
@@ -94,15 +95,17 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
    * @param duedate The new value for duedate
    * @param title The new value for title
    * @param details The new value for details
+   * @param generatedat The new value for generatedat
    * @param status The new value for status
    */
-  public DetailedTask(java.lang.String id, java.lang.String firstname, java.lang.String lastname, java.lang.String duedate, java.lang.String title, java.lang.String details, com.corp.concepts.taskmanager.models.TaskState status) {
+  public DetailedTask(java.lang.String id, java.lang.String firstname, java.lang.String lastname, java.lang.String duedate, java.lang.String title, java.lang.String details, java.lang.String generatedat, com.corp.concepts.taskmanager.models.TaskState status) {
     this.id = id;
     this.firstname = firstname;
     this.lastname = lastname;
     this.duedate = duedate;
     this.title = title;
     this.details = details;
+    this.generatedat = generatedat;
     this.status = status;
   }
 
@@ -117,7 +120,8 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
     case 3: return duedate;
     case 4: return title;
     case 5: return details;
-    case 6: return status;
+    case 6: return generatedat;
+    case 7: return status;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -132,7 +136,8 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
     case 3: duedate = value$ != null ? value$.toString() : null; break;
     case 4: title = value$ != null ? value$.toString() : null; break;
     case 5: details = value$ != null ? value$.toString() : null; break;
-    case 6: status = (com.corp.concepts.taskmanager.models.TaskState)value$; break;
+    case 6: generatedat = value$ != null ? value$.toString() : null; break;
+    case 7: status = (com.corp.concepts.taskmanager.models.TaskState)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -240,6 +245,23 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
   }
 
   /**
+   * Gets the value of the 'generatedat' field.
+   * @return The value of the 'generatedat' field.
+   */
+  public java.lang.String getGeneratedat() {
+    return generatedat;
+  }
+
+
+  /**
+   * Sets the value of the 'generatedat' field.
+   * @param value the value to set.
+   */
+  public void setGeneratedat(java.lang.String value) {
+    this.generatedat = value;
+  }
+
+  /**
    * Gets the value of the 'status' field.
    * @return The value of the 'status' field.
    */
@@ -303,6 +325,7 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
     private java.lang.String duedate;
     private java.lang.String title;
     private java.lang.String details;
+    private java.lang.String generatedat;
     private com.corp.concepts.taskmanager.models.TaskState status;
 
     /** Creates a new Builder */
@@ -340,9 +363,13 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
         this.details = data().deepCopy(fields()[5].schema(), other.details);
         fieldSetFlags()[5] = other.fieldSetFlags()[5];
       }
-      if (isValidValue(fields()[6], other.status)) {
-        this.status = data().deepCopy(fields()[6].schema(), other.status);
+      if (isValidValue(fields()[6], other.generatedat)) {
+        this.generatedat = data().deepCopy(fields()[6].schema(), other.generatedat);
         fieldSetFlags()[6] = other.fieldSetFlags()[6];
+      }
+      if (isValidValue(fields()[7], other.status)) {
+        this.status = data().deepCopy(fields()[7].schema(), other.status);
+        fieldSetFlags()[7] = other.fieldSetFlags()[7];
       }
     }
 
@@ -376,9 +403,13 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
         this.details = data().deepCopy(fields()[5].schema(), other.details);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.status)) {
-        this.status = data().deepCopy(fields()[6].schema(), other.status);
+      if (isValidValue(fields()[6], other.generatedat)) {
+        this.generatedat = data().deepCopy(fields()[6].schema(), other.generatedat);
         fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.status)) {
+        this.status = data().deepCopy(fields()[7].schema(), other.status);
+        fieldSetFlags()[7] = true;
       }
     }
 
@@ -623,6 +654,46 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
     }
 
     /**
+      * Gets the value of the 'generatedat' field.
+      * @return The value.
+      */
+    public java.lang.String getGeneratedat() {
+      return generatedat;
+    }
+
+
+    /**
+      * Sets the value of the 'generatedat' field.
+      * @param value The value of 'generatedat'.
+      * @return This builder.
+      */
+    public com.corp.concepts.taskmanager.models.DetailedTask.Builder setGeneratedat(java.lang.String value) {
+      validate(fields()[6], value);
+      this.generatedat = value;
+      fieldSetFlags()[6] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'generatedat' field has been set.
+      * @return True if the 'generatedat' field has been set, false otherwise.
+      */
+    public boolean hasGeneratedat() {
+      return fieldSetFlags()[6];
+    }
+
+
+    /**
+      * Clears the value of the 'generatedat' field.
+      * @return This builder.
+      */
+    public com.corp.concepts.taskmanager.models.DetailedTask.Builder clearGeneratedat() {
+      generatedat = null;
+      fieldSetFlags()[6] = false;
+      return this;
+    }
+
+    /**
       * Gets the value of the 'status' field.
       * @return The value.
       */
@@ -637,9 +708,9 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
       * @return This builder.
       */
     public com.corp.concepts.taskmanager.models.DetailedTask.Builder setStatus(com.corp.concepts.taskmanager.models.TaskState value) {
-      validate(fields()[6], value);
+      validate(fields()[7], value);
       this.status = value;
-      fieldSetFlags()[6] = true;
+      fieldSetFlags()[7] = true;
       return this;
     }
 
@@ -648,7 +719,7 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
       * @return True if the 'status' field has been set, false otherwise.
       */
     public boolean hasStatus() {
-      return fieldSetFlags()[6];
+      return fieldSetFlags()[7];
     }
 
 
@@ -658,7 +729,7 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
       */
     public com.corp.concepts.taskmanager.models.DetailedTask.Builder clearStatus() {
       status = null;
-      fieldSetFlags()[6] = false;
+      fieldSetFlags()[7] = false;
       return this;
     }
 
@@ -673,7 +744,8 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
         record.duedate = fieldSetFlags()[3] ? this.duedate : (java.lang.String) defaultValue(fields()[3]);
         record.title = fieldSetFlags()[4] ? this.title : (java.lang.String) defaultValue(fields()[4]);
         record.details = fieldSetFlags()[5] ? this.details : (java.lang.String) defaultValue(fields()[5]);
-        record.status = fieldSetFlags()[6] ? this.status : (com.corp.concepts.taskmanager.models.TaskState) defaultValue(fields()[6]);
+        record.generatedat = fieldSetFlags()[6] ? this.generatedat : (java.lang.String) defaultValue(fields()[6]);
+        record.status = fieldSetFlags()[7] ? this.status : (com.corp.concepts.taskmanager.models.TaskState) defaultValue(fields()[7]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -718,6 +790,8 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
 
     out.writeString(this.details);
 
+    out.writeString(this.generatedat);
+
     out.writeEnum(this.status.ordinal());
 
   }
@@ -739,10 +813,12 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
 
       this.details = in.readString();
 
+      this.generatedat = in.readString();
+
       this.status = com.corp.concepts.taskmanager.models.TaskState.values()[in.readEnum()];
 
     } else {
-      for (int i = 0; i < 7; i++) {
+      for (int i = 0; i < 8; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
           this.id = in.readString();
@@ -769,6 +845,10 @@ public class DetailedTask extends org.apache.avro.specific.SpecificRecordBase im
           break;
 
         case 6:
+          this.generatedat = in.readString();
+          break;
+
+        case 7:
           this.status = com.corp.concepts.taskmanager.models.TaskState.values()[in.readEnum()];
           break;
 

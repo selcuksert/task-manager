@@ -14,7 +14,6 @@ custom:
         claim:
           key: realm_access
 
-
 spring:
   cloud:
     stream:
@@ -53,6 +52,7 @@ spring:
               '[default.deserialization.exception.handler]': org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
               '[processing.guarantee]': exactly_once
               '[state.dir]': /tmp/state/kafka-streams
+              '[application.server]': ${HOSTNAME:localhost}:${SERVER_PORT:8094}
             autoCreateTopics: false
             autoAddPartitions: false
             brokers:

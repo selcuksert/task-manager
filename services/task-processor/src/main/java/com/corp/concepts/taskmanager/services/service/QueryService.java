@@ -34,7 +34,8 @@ public class QueryService {
      * <p>
      * With this information the function builds the correct REST endpoint for this instance
      * and invokes an HTTP GET request with it and returns response if it cannot find it in
-     * local KTable store.
+     * local KTable store as local state only represents a partial view of the entire application
+     * state which in fact is the nature of a KTable.
      *
      * @param kTableName KTable name to query
      * @param key        taskId

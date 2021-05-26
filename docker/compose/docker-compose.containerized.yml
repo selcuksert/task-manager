@@ -388,6 +388,7 @@ services:
       DB_NAME: appdb
       DB_USER: dbuser
       DB_PASS: db1234
+      RESET_TABLES: "true"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.task-reader.rule=Host(`web.poc.local`) && PathPrefix(`/api/task/reader`)"
@@ -449,6 +450,7 @@ services:
       DB_NAME: appdb
       DB_USER: dbuser
       DB_PASS: db1234
+      RESET_TABLES: "true"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.user-reader.rule=Host(`web.poc.local`) && PathPrefix(`/api/user/reader`)"

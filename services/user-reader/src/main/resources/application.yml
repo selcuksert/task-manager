@@ -3,6 +3,8 @@ server:
   port: ${SERVER_PORT:8092}
 
 custom:
+  reset:
+    tables: ${RESET_TABLES:false}
   security:
     provider:
       jwt:

@@ -1,12 +1,18 @@
-{"properties": [
-  {
-    "name": "custom.security.provider.jwt.role.key",
-    "type": "java.lang.String",
-    "description": "A description for 'custom.security.provider.jwt.role.key'"
-  },
-  {
-    "name": "custom.security.provider.jwt.claim.key",
-    "type": "java.lang.String",
-    "description": "A description for 'custom.security.provider.jwt.claim.key'"
+{
+  "properties": [
+    {
+      "name": "custom.security.provider.jwt.role.key",
+      "type": "java.lang.String",
+      "description": "A description for 'custom.security.provider.jwt.role.key'"
+    },
+    {
+      "name": "custom.security.provider.jwt.claim.key",
+      "type": "java.lang.String",
+      "description": "A description for 'custom.security.provider.jwt.claim.key'"
+    },
+    {
+      "name": "custom.reset.tables",
+      "type": "java.lang.String",
+      "description": "Description for custom.reset.tables."
   }
 ]}

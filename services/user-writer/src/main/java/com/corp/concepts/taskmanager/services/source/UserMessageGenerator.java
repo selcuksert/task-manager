@@ -26,7 +26,7 @@ public class UserMessageGenerator {
 
         processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 
-        log.info("Message sent");
+        log.info("Message sent: {}", message);
     }
 
     public void deleteMessage(String id) {
@@ -36,7 +36,7 @@ public class UserMessageGenerator {
 
         processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 
-        log.info("Message sent");
+        log.info("Message sent: {}", message);
     }
 
     @Bean

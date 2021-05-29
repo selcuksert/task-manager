@@ -1,5 +1,6 @@
 package com.corp.concepts.taskmanager.services.source;
 
+import com.corp.concepts.taskmanager.common.CustomMessageHeaders;
 import com.corp.concepts.taskmanager.models.Task;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +26,11 @@ public class TaskMessageGenerator {
     public void emitMessage(Task task) {
         Message<Task> message = MessageBuilder.withPayload(task)
                 .setHeader(KafkaHeaders.MESSAGE_KEY, task.getId())
-                .setHeader("sent_at", Instant.now().toEpochMilli()).build();
+                .setHeader(CustomMessageHeaders.MSG_SENT_AT, Instant.now().toEpochMilli()).build();
 
         processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 
-        log.info("Message sent");
+        log.info("Message sent: {}", message);
     }
 
     public void deleteMessage(String taskId) {
@@ -39,7 +40,7 @@ public class TaskMessageGenerator {
 
         processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 
-        log.info("Message sent");
+        log.info("Message sent: {}", message);
     }
 
     @Bean

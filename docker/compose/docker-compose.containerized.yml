@@ -340,11 +340,6 @@ services:
       dockerfile: Dockerfile
     image: custom/app/service
     scale: 3
-    depends_on:
-      - traefik
-      - kafka-broker-1
-      - kafka-broker-2
-      - kafka-broker-3
     volumes:
       - ./app/service/bin/task-processor-0.0.1-SNAPSHOT.jar:/home/app.jar
     environment:
@@ -372,9 +367,6 @@ services:
       dockerfile: Dockerfile
     image: custom/app/service
     container_name: task-reader
-    depends_on:
-      - traefik
-      - dbservice
     volumes:
       - ./app/service/bin/task-reader-0.0.1-SNAPSHOT.jar:/home/app.jar
     environment:
@@ -402,11 +394,6 @@ services:
       dockerfile: Dockerfile
     image: custom/app/service
     container_name: task-writer
-    depends_on:
-      - traefik
-      - kafka-broker-1
-      - kafka-broker-2
-      - kafka-broker-3
     volumes:
       - ./app/service/bin/task-writer-0.0.1-SNAPSHOT.jar:/home/app.jar
     environment:
@@ -434,9 +421,6 @@ services:
       dockerfile: Dockerfile
     image: custom/app/service
     container_name: user-reader
-    depends_on:
-      - traefik
-      - dbservice
     volumes:
       - ./app/service/bin/user-reader-0.0.1-SNAPSHOT.jar:/home/app.jar
     environment:
@@ -464,11 +448,6 @@ services:
       dockerfile: Dockerfile
     image: custom/app/service
     container_name: user-writer
-    depends_on:
-      - traefik
-      - kafka-broker-1
-      - kafka-broker-2
-      - kafka-broker-3
     volumes:
       - ./app/service/bin/user-writer-0.0.1-SNAPSHOT.jar:/home/app.jar
     environment:

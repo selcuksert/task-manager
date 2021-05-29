@@ -6,7 +6,11 @@ import com.corp.concepts.taskmanager.models.TaskState;
 import com.corp.concepts.taskmanager.models.User;
 import com.corp.concepts.taskmanager.services.transformer.TaskHeaderTransformer;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.GlobalKTable;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.processor.TimestampExtractor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.KafkaStreamBrancher;
@@ -66,6 +70,17 @@ public class TaskProcessor {
                     dt.setStatus(task.getStatus());
                     return dt;
                 }).transformValues(TaskHeaderTransformer::new).toTable(Materialized.as(detailTable));
+    }
+
+    @Bean
+    public TimestampExtractor timestampExtractor() {
+        return (record, partitionTime) -> {
+            if(record!= null) {
+                return record.timestamp();
+            }
+
+            return partitionTime;
+        };
     }
 }
 

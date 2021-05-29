@@ -73,7 +73,7 @@
             },
             {
                 "name": "generatedat",
-                "type": "string"
+                "type": "long"
             },
             {
                 "name": "status",

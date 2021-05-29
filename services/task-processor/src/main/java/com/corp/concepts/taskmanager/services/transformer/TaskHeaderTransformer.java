@@ -1,5 +1,6 @@
 package com.corp.concepts.taskmanager.services.transformer;
 
+import com.corp.concepts.taskmanager.common.CustomMessageHeaders;
 import com.corp.concepts.taskmanager.models.DetailedTask;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
@@ -18,9 +19,9 @@ public class TaskHeaderTransformer implements ValueTransformerWithKey<String, De
     public DetailedTask transform(String readOnlyKey, DetailedTask value) {
         Headers headers = context.headers();
 
-        String sentAt = new String(headers.lastHeader("sent_at").value());
+        String sentAt = new String(headers.lastHeader(CustomMessageHeaders.MSG_SENT_AT).value());
 
-        value.setGeneratedat(sentAt);
+        value.setGeneratedat(Long.valueOf(sentAt));
 
         return value;
     }

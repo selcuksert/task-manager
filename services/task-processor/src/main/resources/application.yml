@@ -39,6 +39,13 @@ spring:
             materialized-as: user-table
       kafka:
         streams:
+          bindings:
+            detail-in-0:
+              consumer:
+                timestampExtractorBeanName: "timestampExtractor"
+            detail-in-1:
+              consumer:
+                timestampExtractorBeanName: "timestampExtractor"
           binder:
             functions:
               log:

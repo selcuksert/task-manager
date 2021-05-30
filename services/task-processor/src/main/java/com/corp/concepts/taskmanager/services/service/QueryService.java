@@ -52,7 +52,7 @@ public class QueryService {
 
             if (currentHostInfo != null && metadata != null) {
                 String currentHost = currentHostInfo.host();
-                String otherHost = metadata.getActiveHost().host();
+                String otherHost = metadata.activeHost().host();
 
                 log.debug("Current Host: {}", currentHost);
                 log.debug("Other Host: {}", otherHost);

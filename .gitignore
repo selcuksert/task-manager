@@ -34,8 +34,5 @@ build/
 
 .DS_Store
 
-### PostgreSQL DB Data content
-/docker/compose/db/data/**
-
 ### SpringBoot JAR files for containerized mode
 /docker/compose/app/service/bin/*.jar

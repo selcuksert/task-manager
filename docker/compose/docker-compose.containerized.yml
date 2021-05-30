@@ -66,7 +66,7 @@ services:
     depends_on:
       - traefik
     environment:
-      PROM_AGENT_PORT: 1123
+      PROM_AGENT_PORT: ${PROM_AGENT_PORT}
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.zk.rule=HostSNI(`*`)"
@@ -84,7 +84,7 @@ services:
       - traefik
       - zookeeper
     environment:
-      PROM_AGENT_PORT: 1123
+      PROM_AGENT_PORT: ${PROM_AGENT_PORT}
     command: [ "zookeeper", "2181", "1", "kafka-broker-1", "9091" ]
     labels:
       - "traefik.enable=true"
@@ -103,7 +103,7 @@ services:
       - traefik
       - zookeeper
     environment:
-      PROM_AGENT_PORT: 1123
+      PROM_AGENT_PORT: ${PROM_AGENT_PORT}
     command: [ "zookeeper", "2181", "2", "kafka-broker-2", "9092" ]
     labels:
       - "traefik.enable=true"
@@ -122,7 +122,7 @@ services:
       - traefik
       - zookeeper
     environment:
-      PROM_AGENT_PORT: 1123
+      PROM_AGENT_PORT: ${PROM_AGENT_PORT}
     command: [ "zookeeper", "2181", "3", "kafka-broker-3", "9093" ]
     labels:
       - "traefik.enable=true"
@@ -143,12 +143,12 @@ services:
     depends_on:
       - traefik
     environment:
-      POSTGRES_USER: dbuser
-      POSTGRES_PASSWORD: db1234
-      POSTGRES_DB: appdb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
       TZ: Europe/Istanbul
     volumes:
-      - ./db/data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.db.rule=HostSNI(`*`)"
@@ -164,10 +164,10 @@ services:
     volumes:
       - ./pgadmin/config/servers.json:/pgadmin4/servers.json
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@corp.com
-      PGADMIN_DEFAULT_PASSWORD: pg1234
+      PGADMIN_DEFAULT_EMAIL: ${PG_ADM_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_ADM_PASS}
       PGADMIN_LISTEN_ADDRESS: 0.0.0.0
-      PGADMIN_LISTEN_PORT: 9080
+      PGADMIN_LISTEN_PORT: ${PG_ADM_PORT}
       PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
       TZ: Europe/Istanbul
     labels:
@@ -232,11 +232,11 @@ services:
       - dbservice
       - schemaregistry
     environment:
-      TOPIC_NAMES: tasks,users
-      PK_FIELDS: id
-      DB_NAME: appdb
-      CONNECTION_USER: dbuser
-      CONNECTION_PASSWORD: db1234
+      TOPIC_NAMES: ${KCON_TOPIC_NAMES}
+      PK_FIELDS: ${KCON_PK_FIELDS}
+      DB_NAME: ${DB_NAME}
+      CONNECTION_USER: ${DB_USER}
+      CONNECTION_PASSWORD: ${DB_PASS}
       KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
     labels:
@@ -297,13 +297,13 @@ services:
     container_name: keycloak
     image: jboss/keycloak
     environment:
-      KEYCLOAK_USER: kcadm
-      KEYCLOAK_PASSWORD: Kc1234
+      KEYCLOAK_USER: ${KCL_ADM_USER}
+      KEYCLOAK_PASSWORD: ${KCL_ADM_PASS}
       DB_ADDR: dbservice
       DB_PORT: 5432
-      DB_USER: dbuser
-      DB_PASSWORD: db1234
-      DB_DATABASE: appdb
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASS}
+      DB_DATABASE: ${DB_NAME}
     depends_on:
       - traefik
       - dbservice
@@ -321,11 +321,11 @@ services:
       - ./ldap/config/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
       - ./ldap/config/modify.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/modify.ldif
     environment:
-      - LDAP_ORGANISATION=The Corporation
-      - LDAP_DOMAIN=corp.com
-      - LDAP_ADMIN_PASSWORD=Ladm1234
-      - LDAP_LOG_LEVEL=256
-      - TZ=Europe/Istanbul
+      LDAP_ORGANISATION: ${LDAP_ORG_NAME}
+      LDAP_DOMAIN: ${LDAP_DOMAIN}
+      LDAP_ADMIN_PASSWORD: ${LDAP_ADMIN_PASSWORD}
+      LDAP_LOG_LEVEL: 256
+      TZ: Europe/Istanbul
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.ldap.rule=HostSNI(`*`)"
@@ -342,6 +342,7 @@ services:
     scale: 3
     volumes:
       - ./app/service/bin/task-processor-0.0.1-SNAPSHOT.jar:/home/app.jar
+      - ks-state:/var/lib/ks-state
     environment:
       DEPS: "kafka-broker-1:19091, kafka-broker-2:19092, kafka-broker-3:19093, schemaregistry:8081, keycloak:8080"
       SERVER_PORT: 8080
@@ -377,10 +378,9 @@ services:
       IDP_PORT: 8080
       DB_HOST: dbservice
       DB_PORT: 5432
-      DB_NAME: appdb
-      DB_USER: dbuser
-      DB_PASS: db1234
-      RESET_TABLES: "true"
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.task-reader.rule=Host(`web.poc.local`) && PathPrefix(`/api/task/reader`)"
@@ -431,10 +431,9 @@ services:
       IDP_PORT: 8080
       DB_HOST: dbservice
       DB_PORT: 5432
-      DB_NAME: appdb
-      DB_USER: dbuser
-      DB_PASS: db1234
-      RESET_TABLES: "true"
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.user-reader.rule=Host(`web.poc.local`) && PathPrefix(`/api/user/reader`)"
@@ -468,3 +467,11 @@ services:
       - "traefik.http.routers.user-writer.entrypoints=http"
       - "traefik.http.routers.user-writer.service=user-writer-service"
       - "traefik.http.services.user-writer-service.loadbalancer.server.port=8080"
+
+volumes:
+  ks-state:
+    name: ks-state
+    driver: local
+  db-data:
+    name: db-data
+    driver: local

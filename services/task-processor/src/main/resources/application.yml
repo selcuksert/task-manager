@@ -58,7 +58,7 @@ spring:
               '[default.value.serde]': io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
               '[default.deserialization.exception.handler]': org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
               '[processing.guarantee]': exactly_once
-              '[state.dir]': /var/lib/ks-state/${CONTAINER_NAME:${HOSTNAME}}
+              '[state.dir]': ${STATE_DIR_ROOT:/tmp/ks-state}/${CONTAINER_NAME:local}
               '[application.server]': ${HOSTNAME:localhost}:${SERVER_PORT:8094}
             autoCreateTopics: false
             autoAddPartitions: false

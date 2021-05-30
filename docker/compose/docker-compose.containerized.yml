@@ -355,6 +355,7 @@ services:
       IDP_PROT: http
       IDP_HOST: keycloak
       IDP_PORT: 8080
+      STATE_DIR_ROOT: /var/lib/ks-state
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.task-processor.rule=Host(`web.poc.local`) && PathPrefix(`/api/task/processor`)"

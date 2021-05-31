@@ -36,7 +36,6 @@ services:
       - "--entrypoints.sr.address=:8081"
       - "--entrypoints.rp.address=:8082"
       - "--entrypoints.kc.address=:8083"
-      - "--entrypoints.keyc.address=:8180"
       - "--entrypoints.ldap.address=:389"
     volumes:
       - "./traefik/config/rules.toml:/etc/traefik/rules.toml"    
@@ -58,7 +57,6 @@ services:
       - "3000:3000"
       - "9090:9090"
       - "9080:9080"
-      - "8180:8180"
       - "389:389"
 
   zookeeper:
@@ -304,6 +302,7 @@ services:
     environment:
       KEYCLOAK_USER: ${KCL_ADM_USER}
       KEYCLOAK_PASSWORD: ${KCL_ADM_PASS}
+      PROXY_ADDRESS_FORWARDING: ${PROXY_ADDRESS_FORWARDING}
       DB_ADDR: dbservice
       DB_PORT: 5432
       DB_USER: ${DB_USER}
@@ -314,8 +313,8 @@ services:
       - dbservice
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.keycloak.rule=Host(`web.poc.local`)"
-      - "traefik.http.routers.keycloak.entrypoints=keyc"
+      - "traefik.http.routers.keycloak.rule=Host(`idp.poc.local`)"
+      - "traefik.http.routers.keycloak.entrypoints=http"
       - "traefik.http.routers.keycloak.service=keycloak-service"
       - "traefik.http.services.keycloak-service.loadbalancer.server.port=8080"
 

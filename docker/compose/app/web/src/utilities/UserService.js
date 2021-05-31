@@ -47,7 +47,7 @@ export function getUsers(secObj) {
 }
 
 export function getUsersFromIdp(secObj) {
-    return fetch(`http://${window.location.hostname}:8180/auth/admin/realms/${secObj.realm}/users`, {
+    return fetch(`${secObj.authServerUrl}admin/realms/${secObj.realm}/users`, {
         method: 'get',
         headers: {
             "Content-Type": "application/json",

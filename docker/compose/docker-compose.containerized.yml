@@ -33,7 +33,6 @@ services:
       - "--entrypoints.sr.address=:8081"
       - "--entrypoints.rp.address=:8082"
       - "--entrypoints.kc.address=:8083"
-      - "--entrypoints.keyc.address=:8180"
       - "--entrypoints.ldap.address=:389"
     depends_on:
       - socket-proxy
@@ -53,7 +52,6 @@ services:
       - "3000:3000"
       - "9090:9090"
       - "9080:9080"
-      - "8180:8180"
       - "389:389"
 
   zookeeper:
@@ -309,8 +307,8 @@ services:
       - dbservice
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.keycloak.rule=Host(`web.poc.local`)"
-      - "traefik.http.routers.keycloak.entrypoints=keyc"
+      - "traefik.http.routers.keycloak.rule=Host(`idp.poc.local`)"
+      - "traefik.http.routers.keycloak.entrypoints=http"
       - "traefik.http.routers.keycloak.service=keycloak-service"
       - "traefik.http.services.keycloak-service.loadbalancer.server.port=8080"
 

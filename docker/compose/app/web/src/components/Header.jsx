@@ -31,7 +31,7 @@ const HeaderHook = () => {
                 window.open(`${window.location.origin}:9090`, "_blank");
                 break;
             case 'KC_ADM':
-                window.open(`${window.location.origin}:8180/auth/admin`, "_blank");
+                window.open(`${secObj.authServerUrl}admin`, "_blank");
                 break;
             default:
                 window.location = '#';

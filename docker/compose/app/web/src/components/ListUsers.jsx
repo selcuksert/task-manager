@@ -1,13 +1,18 @@
 import {Component, useContext, useEffect, useState} from 'react';
 import {getUsers} from '../utilities/UserService';
+import {getTaskCountByUserId} from '../utilities/TaskService';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faRedo, faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {Context} from "../Store";
+import InfoModal from "./InfoModal";
 
 const ListUsersHook = () => {
 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalText, setModalText] = useState("");
+    const [showInfo, setShowInfo] = useState(false);
 
     const [state, dispatch] = useContext(Context);
 
@@ -22,6 +27,19 @@ const ListUsersHook = () => {
                 setUsers(users);
             }
             setLoading(false);
+        }).catch(error => {
+            setLoading(false);
+        });
+    }
+
+    const getTaskCount = (userId) => (e) => {
+        setLoading(true);
+        setShowInfo(false);
+        getTaskCountByUserId(userId, secObj).then(count => {
+            setLoading(false);
+            setModalTitle('Number of tasks in last hour');
+            setModalText(count);
+            setShowInfo(true);
         }).catch(error => {
             setLoading(false);
         });
@@ -62,7 +80,10 @@ const ListUsersHook = () => {
                         <tbody>
                         {users.map((user) =>
                             <tr key={user.id}>
-                                <th scope="row">{user.id}</th>
+                                <th scope="row">
+                                    <a href="#" onClick={getTaskCount(user.id)}
+                                       key={`${user.id}-count`}>{user.id}</a>
+                                </th>
                                 <td>{user.firstname}</td>
                                 <td>{user.lastname}</td>
                             </tr>
@@ -71,6 +92,7 @@ const ListUsersHook = () => {
                     }
                 </table>
             </div>
+            <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>
         </div>
     )
 }

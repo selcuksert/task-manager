@@ -119,9 +119,9 @@ export function getOwnedTasks(secObj) {
         .catch(err => console.error(err));
 }
 
-export function getTaskById(_taskId, secObj) {
-    let url = new URL(`http://${window.location.hostname}/api/task/processor`);
-    url.searchParams.set('taskId', _taskId);
+export function getTaskById(taskId, secObj) {
+    let url = new URL(`http://${window.location.hostname}/api/task/processor/detail`);
+    url.searchParams.set('taskId', taskId);
 
     return fetch(url, {
         method: 'get',
@@ -142,3 +142,28 @@ export function getTaskById(_taskId, secObj) {
         })
         .catch(err => console.error(err));
 }
+
+export function getTaskCountByUserId(userId, secObj) {
+    let url = new URL(`http://${window.location.hostname}/api/task/processor/count`);
+    url.searchParams.set('userId', userId);
+
+    return fetch(url, {
+        method: 'get',
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": `Bearer ${secObj.token}`
+        }
+    })
+        .then(res => {
+            if (res.status === 200) {
+                return res.json();
+            } else if (res.status === 401) {
+                secObj.logout();
+            } else if (res.status === 403) {
+                return {error: 'Forbidden', message: 'Forbidden to get task count'};
+            }
+        })
+        .catch(err => console.error(err));
+}
+

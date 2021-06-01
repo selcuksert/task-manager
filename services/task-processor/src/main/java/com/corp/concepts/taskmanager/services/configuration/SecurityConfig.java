@@ -20,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().disable().authorizeRequests()
-		.antMatchers("/api/task/processor").hasAnyRole("manager", "user")
+		.antMatchers("/api/task/processor/*").hasAnyRole("manager", "user")
 		.anyRequest().denyAll().and()
 		.oauth2ResourceServer().jwt()
 		.jwtAuthenticationConverter(converter);

@@ -6,6 +6,7 @@ server:
 custom:
   ktable:
     detail: detail-ktable
+    count: count-ktable
   security:
     provider:
       jwt:
@@ -18,7 +19,7 @@ spring:
   cloud:
     stream:
       function:
-        definition: log;detail
+        definition: log;detail;activity
       bindings:
         log-in-0:
           destination: tasks
@@ -37,13 +38,14 @@ spring:
           consumer:
             use-native-decoding: true
             materialized-as: user-table
+        activity-in-0:
+          destination: tasks
+          consumer:
+            use-native-decoding: true
       kafka:
         streams:
           bindings:
-            detail-in-0:
-              consumer:
-                timestampExtractorBeanName: "timestampExtractor"
-            detail-in-1:
+            activity-in-0:
               consumer:
                 timestampExtractorBeanName: "timestampExtractor"
           binder:
@@ -52,6 +54,8 @@ spring:
                 applicationId: ${spring.application.name}-log
               detail:
                 applicationId: ${spring.application.name}-detail
+              activity:
+                applicationId: ${spring.application.name}-activity
             configuration:
               '[schema.registry.url]': ${SR_PROT:http}://${SR_HOST:web.poc.local}:${SR_PORT:8081}
               '[default.key.serde]': org.apache.kafka.common.serialization.Serdes$StringSerde

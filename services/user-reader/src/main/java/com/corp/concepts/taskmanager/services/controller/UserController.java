@@ -1,20 +1,16 @@
 package com.corp.concepts.taskmanager.services.controller;
 
-import java.util.Collections;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.corp.concepts.taskmanager.services.model.User;
 import com.corp.concepts.taskmanager.services.repo.UserRepository;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/user/reader")
+@CrossOrigin(originPatterns = "*.poc.local")
 public class UserController {
 	private final UserRepository userRepository;
 

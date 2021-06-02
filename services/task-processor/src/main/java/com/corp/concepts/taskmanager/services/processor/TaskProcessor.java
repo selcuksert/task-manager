@@ -4,7 +4,7 @@ import com.corp.concepts.taskmanager.models.DetailedTask;
 import com.corp.concepts.taskmanager.models.Task;
 import com.corp.concepts.taskmanager.models.TaskState;
 import com.corp.concepts.taskmanager.models.User;
-import com.corp.concepts.taskmanager.services.transformer.TaskHeaderTransformer;
+import com.corp.concepts.taskmanager.services.transformer.TaskValueTransformer;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -77,7 +77,7 @@ public class TaskProcessor {
                             dt.setTitle(task.getTitle());
                             dt.setStatus(task.getStatus());
                             return dt;
-                        }).transformValues(TaskHeaderTransformer::new).toTable(Materialized.as(detailTable)).toStream();
+                        }).transformValues(TaskValueTransformer::new).toTable(Materialized.as(detailTable)).toStream();
     }
 
     /**

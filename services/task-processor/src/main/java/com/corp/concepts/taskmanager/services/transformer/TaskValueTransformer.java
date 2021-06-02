@@ -1,12 +1,10 @@
 package com.corp.concepts.taskmanager.services.transformer;
 
-import com.corp.concepts.taskmanager.common.CustomMessageHeaders;
 import com.corp.concepts.taskmanager.models.DetailedTask;
-import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
 import org.apache.kafka.streams.processor.ProcessorContext;
 
-public class TaskHeaderTransformer implements ValueTransformerWithKey<String, DetailedTask, DetailedTask> {
+public class TaskValueTransformer implements ValueTransformerWithKey<String, DetailedTask, DetailedTask> {
 
     ProcessorContext context;
 
@@ -17,11 +15,9 @@ public class TaskHeaderTransformer implements ValueTransformerWithKey<String, De
 
     @Override
     public DetailedTask transform(String readOnlyKey, DetailedTask value) {
-        Headers headers = context.headers();
+        long timestamp = context.timestamp();
 
-        String sentAt = new String(headers.lastHeader(CustomMessageHeaders.MSG_SENT_AT).value());
-
-        value.setGeneratedat(Long.valueOf(sentAt));
+        value.setGeneratedat(timestamp);
 
         return value;
     }

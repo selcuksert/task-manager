@@ -1,6 +1,5 @@
 package com.corp.concepts.taskmanager.services.source;
 
-import com.corp.concepts.taskmanager.common.CustomMessageHeaders;
 import com.corp.concepts.taskmanager.models.Task;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +13,6 @@ import reactor.core.publisher.Sinks;
 import reactor.core.publisher.Sinks.EmitFailureHandler;
 import reactor.core.publisher.Sinks.Many;
 
-import java.time.Instant;
 import java.util.function.Supplier;
 
 @Service
@@ -25,8 +23,7 @@ public class TaskMessageGenerator {
 
     public void emitMessage(Task task) {
         Message<Task> message = MessageBuilder.withPayload(task)
-                .setHeader(KafkaHeaders.MESSAGE_KEY, task.getId())
-                .setHeader(CustomMessageHeaders.MSG_SENT_AT, Instant.now().toEpochMilli()).build();
+                .setHeader(KafkaHeaders.MESSAGE_KEY, task.getId()).build();
 
         processor.emitNext(message, EmitFailureHandler.FAIL_FAST);
 

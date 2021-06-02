@@ -28,7 +28,7 @@ public class TaskController {
 	@ResponseBody
 	public Response add(@RequestBody Task task) {
 		try {
-			task.setStatus(TaskState.NOTSTARTED);
+			task.setStatus(TaskState.ASSIGNED);
 			task.setId(UUID.randomUUID().toString());
 			taskMessageGenerator.emitMessage(task);
 			return new Response(100, SUCCESS_MESSAGE, false);

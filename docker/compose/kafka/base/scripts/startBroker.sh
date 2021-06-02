@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $# -ne 5 ]]; then
-    echo "Illegal number of parameters"
+    echo "Illegal number of parameters: $#"
     exit 2
 fi
 ZOOKEEPER_HOST=$1

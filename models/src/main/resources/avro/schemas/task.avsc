@@ -4,11 +4,10 @@
         "name": "TaskState",
         "namespace": "com.corp.concepts.taskmanager.models",
         "symbols": [
-            "COMPLETED",
+            "ASSIGNED",
             "STARTED",
-            "NOTSTARTED",
-            "DEFERRED",
-            "INPROGRESS"
+            "COMPLETED",
+            "PENDING"
         ]
     },
     {

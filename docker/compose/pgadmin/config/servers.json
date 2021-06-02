@@ -3,9 +3,18 @@
         "1": {
             "Name": "taskdb",
             "Group": "Servers",
-            "Host": "dbservice",
+            "Host": "appdb",
             "Port": 5432,
             "MaintenanceDB": "appdb",
+            "Username": "dbuser",
+            "SSLMode": "prefer"
+        },
+        "2": {
+            "Name": "idpdb",
+            "Group": "Servers",
+            "Host": "idpdb",
+            "Port": 5432,
+            "MaintenanceDB": "idpdb",
             "Username": "dbuser",
             "SSLMode": "prefer"
         }

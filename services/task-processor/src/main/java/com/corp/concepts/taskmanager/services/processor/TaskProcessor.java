@@ -63,7 +63,7 @@ public class TaskProcessor {
      * @return KTable of detailed task table.
      */
     @Bean
-    public BiFunction<KStream<String, Task>, GlobalKTable<String, User>, KTable<String, DetailedTask>> detail() {
+    public BiFunction<KStream<String, Task>, GlobalKTable<String, User>, KStream<String, DetailedTask>> detail() {
         return (taskStream, userTable) ->
                 taskStream
                         .filter((taskId, task) -> task != null)
@@ -77,7 +77,7 @@ public class TaskProcessor {
                             dt.setTitle(task.getTitle());
                             dt.setStatus(task.getStatus());
                             return dt;
-                        }).transformValues(TaskHeaderTransformer::new).toTable(Materialized.as(detailTable));
+                        }).transformValues(TaskHeaderTransformer::new).toTable(Materialized.as(detailTable)).toStream();
     }
 
     /**
@@ -89,20 +89,20 @@ public class TaskProcessor {
      * @return KTable of detailed task count.
      */
     @Bean
-    public Function<KStream<String, Task>, KTable<String, Long>> activity() {
+    public Function<KStream<String, Task>, KStream<String, Long>> activity() {
         return (taskStream) -> {
-            KTable<String, Long> taskCount = taskStream
-                    .filter((taskId, task) -> task != null)
+            KStream<String, Long> taskCount = taskStream
+                    .filter((taskId, task) -> (task != null && task.getStatus().compareTo(TaskState.ASSIGNED) == 0))
                     .map((taskId, task) -> KeyValue.pair(task.getUserid(), task))
                     .groupByKey()
                     .windowedBy(TimeWindows.of(Duration.ofHours(1)))
                     .count().toStream().map((userId, task) -> KeyValue.pair(userId.key(), task))
                     .toTable(Materialized.<String, Long, KeyValueStore<Bytes, byte[]>>as(countTable)
                             .withKeySerde(Serdes.String())
-                            .withValueSerde(Serdes.Long()));
+                            .withValueSerde(Serdes.Long())).toStream();
 
             if (log.isDebugEnabled()) {
-                taskCount.toStream().peek((k, v) -> log.debug("Task Count: {}->{}", k, v));
+                taskCount.peek((k, v) -> log.debug("Task Count: {}->{}", k, v));
             }
 
             return taskCount;

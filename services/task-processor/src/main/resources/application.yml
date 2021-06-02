@@ -38,9 +38,17 @@ spring:
           consumer:
             use-native-decoding: true
             materialized-as: user-table
+        detail-out-0:
+          destination: taskdetails
+          producer:
+            use-native-decoding: true
         activity-in-0:
           destination: tasks
           consumer:
+            use-native-decoding: true
+        activity-out-0:
+          destination: taskcount
+          producer:
             use-native-decoding: true
       kafka:
         streams:

@@ -185,7 +185,7 @@ const ListTasksHook = () => {
                                 </td>
                                 <td id="setreset"><FontAwesomeIcon key={`${task.id}-not-completed`} icon={faTimes}
                                                                    style={{marginLeft: "2vmin"}}
-                                                                   onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'NOTSTARTED')}/>
+                                                                   onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'PENDING')}/>
                                 </td>
                                 <td id="delete"><FontAwesomeIcon key={`${task.id}-delete`} icon={faTrash}
                                                                  style={{marginLeft: "2vmin"}}

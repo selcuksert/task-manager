@@ -9,7 +9,10 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.kstream.GlobalKTable;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.processor.TimestampExtractor;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,9 +87,8 @@ public class TaskProcessor {
      * Processor topology to count number of tasks per user in 1 hour timeframe.
      * Tumbling window is used to group events.
      *
-     * @see TimeWindows
-     *
      * @return KTable of detailed task count.
+     * @see TimeWindows
      */
     @Bean
     public Function<KStream<String, Task>, KStream<String, Long>> activity() {

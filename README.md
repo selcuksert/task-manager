@@ -58,5 +58,5 @@ Keycloak Identity Provider for OAuth2 & OIDC based AAA enablement. The IdP is ba
   <img src="./docs/images/keycloak/users.png" width="49%" />
 </p>
 
-The task user list on Add User screen is retrieved via Keycloak REST API that is populated from LDAP. To enable this functionality Keycloak admin should assign `view-users` role of `realm-management` client to default realm role set:
+The task user list on Add User screen is retrieved via Keycloak REST API that is populated from LDAP. To enable this functionality Keycloak admin should assign `view-users` role of `realm-management` client to all client users:
 ![view-users](./docs/images/keycloak/view-users.png)

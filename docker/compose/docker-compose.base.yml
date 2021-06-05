@@ -216,6 +216,10 @@ services:
       dockerfile: Dockerfile
     image: custom/kafka/ksql
     container_name: ksqlserver
+    environment:
+      KAFKA_CONNECT_PROT: http
+      KAFKA_CONNECT_HOST: kafkaconnect
+      KAFKA_CONNECT_PORT: 8083
     depends_on:
       - zookeeper
       - kafka-broker-1

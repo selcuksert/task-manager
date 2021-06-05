@@ -11,6 +11,7 @@ cp $KSQL_HOME/config/ksql-server.properties $KSQL_HOME/config/ksql-server-update
 
 sed "s/bootstrap.servers=localhost:9092/bootstrap.servers=$KAFKA_BS_SERVERS/g" -i $KSQL_HOME/config/ksql-server-updated.properties
 sed "s/# ksql.schema.registry.url=http:\/\/localhost:8081/ksql.schema.registry.url=http:\/\/$SR_HOST:$SR_PORT/g" -i $KSQL_HOME/config/ksql-server-updated.properties
+echo -e "\nksql.connect.url=${KAFKA_CONNECT_PROT}://${KAFKA_CONNECT_HOST}:${KAFKA_CONNECT_PORT}" >> $KSQL_HOME/config/ksql-server-updated.properties
 
 until nc -z -v $ZOOKEEPER_HOST $ZOOKEEPER_PORT
 do
@@ -21,6 +22,12 @@ done
 until nc -z -v $SR_HOST $SR_PORT
 do
     echo "$SR_HOST:$SR_PORT is NOT Alive"
+	sleep 3
+done
+
+until nc -z -v $KAFKA_CONNECT_HOST $KAFKA_CONNECT_PORT
+do
+    echo "$KAFKA_CONNECT_HOST:$KAFKA_CONNECT_PORT is NOT Alive"
 	sleep 3
 done
 

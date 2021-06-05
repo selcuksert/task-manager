@@ -26,6 +26,7 @@ services:
       - "--entrypoints.sr.address=:8081"
       - "--entrypoints.rp.address=:8082"
       - "--entrypoints.kc.address=:8083"
+      - "--entrypoints.ksql.address=:8088"
       - "--entrypoints.gf.address=:3000"
     depends_on:
       - socket-proxy
@@ -42,6 +43,8 @@ services:
       - "8082:8082"
       # Kafka Connect
       - "8083:8083"
+      # ksqlDB
+      - "8088:8088"
       # Grafana
       - "3000:3000"
 
@@ -206,6 +209,26 @@ services:
       - "traefik.http.routers.kafkaconnect.service=kafkaconnect-service"
       - "traefik.http.services.kafkaconnect-service.loadbalancer.server.port=8083"
     command: [ "zookeeper", "2181", "kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093", "http://schemaregistry:8081" , "appdb", "5432", "postgresql" ]
+
+  ksql:
+    build:
+      context: ./kafka/ksql
+      dockerfile: Dockerfile
+    image: custom/kafka/ksql
+    container_name: ksqlserver
+    depends_on:
+      - zookeeper
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - schemaregistry
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ksql.rule=Host(`web.poc.local`)"
+      - "traefik.http.routers.ksql.entrypoints=ksql"
+      - "traefik.http.routers.ksql.service=ksql-service"
+      - "traefik.http.services.ksql-service.loadbalancer.server.port=8088"
+    command: ["zookeeper", "2181", "kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093", "schemaregistry", "8081"]
 
   kmonitor:
     build:

@@ -190,6 +190,31 @@ ksql> SELECT USERID, COUNT(*) AS task_count
 Query terminated
 ```
 
+Following query emits task count per user and status (grouped):
+
+```sh
+ksql> SELECT USERID, STATUS, COUNT(*) AS task_count
+>FROM task_table
+>GROUP BY USERID, STATUS
+>EMIT CHANGES;
+
++----------------------------------------------------------------------+----------------------------------------------------------------------+----------------------------------------------------------------------+
+|USERID                                                                |STATUS                                                                |TASK_COUNT                                                            |
++----------------------------------------------------------------------+----------------------------------------------------------------------+----------------------------------------------------------------------+
+|sdone                                                                 |ASSIGNED                                                              |2                                                                     |
+|sdone                                                                 |STARTED                                                               |1                                                                     |
+|jsmith                                                                |ASSIGNED                                                              |4                                                                     |
+|jsmith                                                                |STARTED                                                               |2                                                                     |
+|jsmith                                                                |ASSIGNED                                                              |3                                                                     |
+|jsmith                                                                |STARTED                                                               |3                                                                     |
+|jsmith                                                                |ASSIGNED                                                              |2                                                                     |
+|jsmith                                                                |COMPLETED                                                             |1                                                                     |
+|jsmith                                                                |PENDING                                                               |1                                                                     |
+|jsmith                                                                |STARTED                                                               |2                                                                     |
+>CTRL+C
+Query terminated
+```
+
 ### Task Status Change Count per User
 Following query emits task status change count per user as streams logs every update:
 

@@ -63,3 +63,5 @@ functionality Keycloak admin should assign `view-users` role of `realm-managemen
   <img src="./docs/images/keycloak/users.png" width="49%" />
 </p>
 
+## ksqlDB
+There exists a [documentation](./docker/compose/kafka/ksql/README.md) on ksql statements used in this projects.

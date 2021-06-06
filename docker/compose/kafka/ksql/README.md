@@ -4,7 +4,7 @@ This one documents sample ksql queries used in this project.
 ## Read from beginning:
 Following ksql statement leads to read data from the beginning of the underlying Kafka topics:
 
-```shell
+```sh
 ksql> SET 'auto.offset.reset' = 'earliest';
 Successfully changed local property 'auto.offset.reset' to 'earliest'. Use the UNSET command to revert your change.
 ```
@@ -14,7 +14,7 @@ Successfully changed local property 'auto.offset.reset' to 'earliest'. Use the U
 ### Generate Task Stream
 Following ksql generates a stream on `tasks` topic:
 
-```genericsql
+```sql
 CREATE STREAM task_stream (
     ROWKEY VARCHAR KEY,
     USERID VARCHAR,
@@ -31,7 +31,7 @@ WITH (
 );
 ```
 
-```shell
+```sh
 ksql> DESCRIBE EXTENDED task_stream;
 
 Name                 : TASK_STREAM
@@ -56,7 +56,7 @@ Statement            : CREATE STREAM TASK_STREAM (ROWKEY STRING KEY, USERID STRI
 ### Generate Assigned Tasks Stream
 Following ksql generates a derived stream (CSAS) on `tasks` topic to capture assigned tasks that writes results back to another Kafka topic to survive values after ksql server restarts:
 
-```genericsql
+```sql
 CREATE STREAM assigned_tasks_stream
 WITH (
     KAFKA_TOPIC = 'assigned_tasks',
@@ -73,7 +73,7 @@ FROM task_stream
 WHERE STATUS = 'ASSIGNED' EMIT CHANGES;
 ```
 
-```shell
+```sh
 ksql> DESCRIBE EXTENDED ASSIGNED_TASKS_STREAM;
 
 Name                 : ASSIGNED_TASKS_STREAM
@@ -123,7 +123,7 @@ Consumer Group       : _confluent-ksql-default_query_CSAS_ASSIGNED_TASKS_STREAM_
 ### Generate Task Table
 Following ksql generates a table on `tasks` topic to store latest value for given key:
 
-```genericsql
+```sql
 CREATE TABLE task_table
 (
     ID      VARCHAR PRIMARY KEY,
@@ -139,7 +139,7 @@ WITH (
 );
 ```
 
-```shell
+```sh
 ksql> DESCRIBE EXTENDED TASK_TABLE;
 
 Name                 : TASK_TABLE
@@ -172,7 +172,7 @@ Local runtime statistics
 ### Task Count per User
 Following query emits task count per user (tables store latest value):
 
-```shell
+```sh
 ksql> SELECT USERID, COUNT(*) AS task_count
 >FROM task_table
 >GROUP BY USERID EMIT CHANGES;
@@ -193,7 +193,7 @@ Query terminated
 ### Task Status Change Count per User
 Following query emits task status change count per user as streams logs every update:
 
-```shell
+```sh
 ksql> SELECT USERID, COUNT(*) AS task_count
 >FROM task_stream
 >GROUP BY USERID EMIT CHANGES;

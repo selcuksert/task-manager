@@ -1,4 +1,4 @@
-# kafkaSQL Sample Statements
+# ksqlDB Sample Statements
 This one documents sample ksql queries used in this project.
 
 ## Read from beginning:

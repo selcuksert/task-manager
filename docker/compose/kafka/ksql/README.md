@@ -277,24 +277,105 @@ ksql> SELECT USERID, COUNT(*) AS task_count
 Query terminated
 ```
 
-### Task Status Change Count within 2 hours per User
+### Task Status Change Count within 2 hour windows per User
+
+```sql
+CREATE TABLE task_count_table
+    WITH (
+        KAFKA_TOPIC = 'task_count_topic',
+        VALUE_FORMAT = 'AVRO',
+        PARTITIONS = 3
+        ) AS
+SELECT
+    ts.userid,
+    LATEST_BY_OFFSET(ut.firstname) AS firstname,
+    LATEST_BY_OFFSET(ut.lastname) AS lastname,
+    COUNT(*) AS assigned_tasks_count
+FROM assigned_tasks_stream ts
+         LEFT JOIN user_table ut
+                   ON ts.userid = ut.id
+    WINDOW TUMBLING (
+    SIZE 2 HOURS,
+    RETENTION 1 DAY,
+    GRACE PERIOD 10 MINUTES
+)
+GROUP BY ts.userid
+EMIT CHANGES;
+```
 
 ```sh
-ksql> SELECT USERID, COUNT(*) AS assigned_tasks_in_2_hrs_count
->FROM assigned_tasks_stream
->WINDOW TUMBLING (SIZE 2 HOURS)
->GROUP BY USERID
->EMIT CHANGES;
+ksql> DESCRIBE EXTENDED TASK_COUNT_TABLE;
 
-+----------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
-|USERID                                                                                                    |ASSIGNED_TASKS_IN_2_HRS_COUNT                                                                             |
-+----------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
-|rdark                                                                                                     |2                                                                                                         |
-|sdone                                                                                                     |4                                                                                                         |
-|jsmith                                                                                                    |4                                                                                                         |
-|sdone                                                                                                     |6                                                                                                         |
+Name                 : TASK_COUNT_TABLE
+Type                 : TABLE
+Timestamp field      : Not set - using <ROWTIME>
+Key format           : KAFKA
+Value format         : AVRO
+Kafka topic          : task_count_topic (partitions: 3, replication: 3)
+Statement            : CREATE TABLE TASK_COUNT_TABLE WITH (KAFKA_TOPIC='task_count_topic', PARTITIONS=3, REPLICAS=3, VALUE_FORMAT='AVRO') AS SELECT
+  TS.USERID USERID,
+  LATEST_BY_OFFSET(UT.FIRSTNAME) FIRSTNAME,
+  LATEST_BY_OFFSET(UT.LASTNAME) LASTNAME,
+  COUNT(*) ASSIGNED_TASKS_COUNT
+FROM ASSIGNED_TASKS_STREAM TS
+LEFT OUTER JOIN USER_TABLE UT ON ((TS.USERID = UT.ID))
+WINDOW TUMBLING ( SIZE 2 HOURS , RETENTION 1 DAYS , GRACE PERIOD 10 MINUTES ) 
+GROUP BY TS.USERID
+EMIT CHANGES;
 
-Press CTRL-C to interrupt
+ Field                | Type                                                   
+-------------------------------------------------------------------------------
+ USERID               | VARCHAR(STRING)  (primary key) (Window type: TUMBLING) 
+ FIRSTNAME            | VARCHAR(STRING)                                        
+ LASTNAME             | VARCHAR(STRING)                                        
+ ASSIGNED_TASKS_COUNT | BIGINT                                                 
+-------------------------------------------------------------------------------
+
+Queries that write from this TABLE
+-----------------------------------
+CTAS_TASK_COUNT_TABLE_35 (RUNNING) : CREATE TABLE TASK_COUNT_TABLE WITH (KAFKA_TOPIC='task_count_topic', PARTITIONS=3, REPLICAS=3, VALUE_FORMAT='AVRO') AS SELECT   TS.USERID USERID,   LATEST_BY_OFFSET(UT.FIRSTNAME) FIRSTNAME,   LATEST_BY_OFFSET(UT.LASTNAME) LASTNAME,   COUNT(*) ASSIGNED_TASKS_COUNT FROM ASSIGNED_TASKS_STREAM TS LEFT OUTER JOIN USER_TABLE UT ON ((TS.USERID = UT.ID)) WINDOW TUMBLING ( SIZE 2 HOURS , RETENTION 1 DAYS , GRACE PERIOD 10 MINUTES )  GROUP BY TS.USERID EMIT CHANGES;
+
+For query topology and execution plan please run: EXPLAIN <QueryId>
+
+Local runtime statistics
+------------------------
+messages-per-sec:      0.03   total-messages:         3     last-message: 2021-06-06T18:08:08.412Z
+
+(Statistics of the local KSQL server interaction with the Kafka topic task_count_topic)
+
+Consumer Groups summary:
+
+Consumer Group       : _confluent-ksql-default_query_CTAS_TASK_COUNT_TABLE_35
+
+Kafka topic          : _confluent-ksql-default_query_CTAS_TASK_COUNT_TABLE_35-Join-repartition
+Max lag              : 0
+
+ Partition | Start Offset | End Offset | Offset | Lag 
+------------------------------------------------------
+ 0         | 0            | 0          | 0      | 0   
+ 1         | 16           | 16         | 16     | 0   
+ 2         | 0            | 0          | 0      | 0   
+------------------------------------------------------
+
+Kafka topic          : assigned_tasks
+Max lag              : 0
+
+ Partition | Start Offset | End Offset | Offset | Lag 
+------------------------------------------------------
+ 0         | 0            | 4          | 4      | 0   
+ 1         | 0            | 4          | 4      | 0   
+ 2         | 0            | 8          | 8      | 0   
+------------------------------------------------------
+
+Kafka topic          : users
+Max lag              : 0
+
+ Partition | Start Offset | End Offset | Offset | Lag 
+------------------------------------------------------
+ 0         | 0            | 0          | 0      | 0   
+ 1         | 0            | 3          | 3      | 0   
+ 2         | 0            | 0          | 0      | 0   
+------------------------------------------------------
 ```
 
 ```sh
@@ -317,5 +398,24 @@ ksql> SELECT
 |sdone                                               |Sally                                               |Done                                                |4                                                   |
 |sdone                                               |Sally                                               |Done                                                |6                                                   |
 |jsmith                                              |John                                                |Smith                                               |4                                                   |
+```
 
+```sh
+ksql> SELECT
+>    userid,
+>    TIMESTAMPTOSTRING(windowstart, 'dd-MM-yyyy HH:mm:ss. SSS') AS window_start,
+>    TIMESTAMPTOSTRING(windowend, 'dd-MM-yyyy HH:mm:ss. SSS') AS window_end,
+>    firstname,
+>    lastname,
+>    assigned_tasks_count
+>FROM task_count_table
+>EMIT CHANGES;
+
++----------------------------------+----------------------------------+----------------------------------+----------------------------------+----------------------------------+----------------------------------+
+|USERID                            |WINDOW_START                      |WINDOW_END                        |FIRSTNAME                         |LASTNAME                          |ASSIGNED_TASKS_COUNT              |
++----------------------------------+----------------------------------+----------------------------------+----------------------------------+----------------------------------+----------------------------------+
+|sdone                             |06-06-2021 15:00:00. 000          |06-06-2021 17:00:00. 000          |Sally                             |Done                              |1                                 |
+|rdark                             |06-06-2021 19:00:00. 000          |06-06-2021 21:00:00. 000          |Richard                           |Dark                              |2                                 |
+|sdone                             |06-06-2021 19:00:00. 000          |06-06-2021 21:00:00. 000          |Sally                             |Done                              |6                                 |
+Press CTRL-C to interrupt
 ```

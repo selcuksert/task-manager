@@ -53,6 +53,48 @@ Statement            : CREATE STREAM TASK_STREAM (ROWKEY STRING KEY, USERID STRI
 ----------------------------------
 ```
 
+### Generate User Table
+Following ksql generates a table on `users` topic:
+
+```sql
+CREATE TABLE user_table (
+    ID VARCHAR PRIMARY KEY,
+    FIRSTNAME VARCHAR,
+    LASTNAME VARCHAR
+)
+WITH (
+    KAFKA_TOPIC='users',
+    VALUE_FORMAT='AVRO',
+    PARTITIONS=3,
+    REPLICAS=3 
+);
+```
+
+```sh
+ksql> DESCRIBE EXTENDED USER_TABLE;
+
+Name                 : USER_TABLE
+Type                 : TABLE
+Timestamp field      : Not set - using <ROWTIME>
+Key format           : KAFKA
+Value format         : AVRO
+Kafka topic          : users (partitions: 3, replication: 3)
+Statement            : CREATE TABLE USER_TABLE (ID STRING PRIMARY KEY, FIRSTNAME STRING, LASTNAME STRING) WITH (KAFKA_TOPIC='users', KEY_FORMAT='KAFKA', PARTITIONS=3, REPLICAS=3, VALUE_FORMAT='AVRO');
+
+ Field     | Type                           
+--------------------------------------------
+ ID        | VARCHAR(STRING)  (primary key) 
+ FIRSTNAME | VARCHAR(STRING)                
+ LASTNAME  | VARCHAR(STRING)                
+--------------------------------------------
+
+Local runtime statistics
+------------------------
+
+
+(Statistics of the local KSQL server interaction with the Kafka topic users)
+```
+
 ### Generate Assigned Tasks Stream
 Following ksql generates a derived stream (CSAS) on `tasks` topic to capture assigned tasks that writes results back to another Kafka topic to survive values after ksql server restarts:
 
@@ -233,4 +275,47 @@ ksql> SELECT USERID, COUNT(*) AS task_count
 
 >CTRL+C
 Query terminated
+```
+
+### Task Status Change Count within 2 hours per User
+
+```sh
+ksql> SELECT USERID, COUNT(*) AS assigned_tasks_in_2_hrs_count
+>FROM assigned_tasks_stream
+>WINDOW TUMBLING (SIZE 2 HOURS)
+>GROUP BY USERID
+>EMIT CHANGES;
+
++----------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
+|USERID                                                                                                    |ASSIGNED_TASKS_IN_2_HRS_COUNT                                                                             |
++----------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
+|rdark                                                                                                     |2                                                                                                         |
+|sdone                                                                                                     |4                                                                                                         |
+|jsmith                                                                                                    |4                                                                                                         |
+|sdone                                                                                                     |6                                                                                                         |
+
+Press CTRL-C to interrupt
+```
+
+```sh
+ksql> SELECT
+>    ts.userid,
+>    ut.firstname,
+>    ut.lastname,
+>    COUNT(*) AS tasks_count
+>FROM assigned_tasks_stream ts
+>LEFT JOIN user_table ut
+>ON ts.userid = ut.id
+>WINDOW TUMBLING (SIZE 2 HOURS)
+>GROUP BY ts.userid, ut.firstname, ut.lastname
+>EMIT CHANGES;
+
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+|USERID                                              |FIRSTNAME                                           |LASTNAME                                            |TASKS_COUNT                                         |
++----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
+|rdark                                               |Richard                                             |Dark                                                |2                                                   |
+|sdone                                               |Sally                                               |Done                                                |4                                                   |
+|sdone                                               |Sally                                               |Done                                                |6                                                   |
+|jsmith                                              |John                                                |Smith                                               |4                                                   |
+
 ```

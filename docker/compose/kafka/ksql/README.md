@@ -290,114 +290,143 @@ SELECT
     ts.userid,
     LATEST_BY_OFFSET(ut.firstname) AS firstname,
     LATEST_BY_OFFSET(ut.lastname) AS lastname,
-    COUNT(*) AS assigned_tasks_count
+    COUNT_DISTINCT(*) AS assigned_tasks_count
 FROM assigned_tasks_stream ts
-         LEFT JOIN user_table ut
-                   ON ts.userid = ut.id
-    WINDOW TUMBLING (
+INNER JOIN user_table ut
+ON ts.userid = ut.id
+WINDOW TUMBLING (
     SIZE 2 HOURS,
     RETENTION 1 DAY,
     GRACE PERIOD 10 MINUTES
 )
 GROUP BY ts.userid
-EMIT CHANGES;
+    EMIT CHANGES;
 ```
 
 ```sh
-ksql> DESCRIBE EXTENDED TASK_COUNT_TABLE;
+ksql> EXPLAIN CTAS_TASK_COUNT_TABLE_73;
 
-Name                 : TASK_COUNT_TABLE
-Type                 : TABLE
-Timestamp field      : Not set - using <ROWTIME>
-Key format           : KAFKA
-Value format         : AVRO
-Kafka topic          : task_count_topic (partitions: 3, replication: 3)
-Statement            : CREATE TABLE TASK_COUNT_TABLE WITH (KAFKA_TOPIC='task_count_topic', PARTITIONS=3, REPLICAS=3, VALUE_FORMAT='AVRO') AS SELECT
+ID                   : CTAS_TASK_COUNT_TABLE_73
+Query Type           : PERSISTENT
+SQL                  : CREATE TABLE TASK_COUNT_TABLE WITH (KAFKA_TOPIC='task_count_topic', PARTITIONS=3, REPLICAS=3, VALUE_FORMAT='AVRO') AS SELECT
   TS.USERID USERID,
   LATEST_BY_OFFSET(UT.FIRSTNAME) FIRSTNAME,
   LATEST_BY_OFFSET(UT.LASTNAME) LASTNAME,
-  COUNT(*) ASSIGNED_TASKS_COUNT
+  COUNT_DISTINCT() ASSIGNED_TASKS_COUNT
 FROM ASSIGNED_TASKS_STREAM TS
-LEFT OUTER JOIN USER_TABLE UT ON ((TS.USERID = UT.ID))
+INNER JOIN USER_TABLE UT ON ((TS.USERID = UT.ID))
 WINDOW TUMBLING ( SIZE 2 HOURS , RETENTION 1 DAYS , GRACE PERIOD 10 MINUTES ) 
 GROUP BY TS.USERID
 EMIT CHANGES;
+Host Query Status    : {fa99db426ac3:8088=RUNNING}
 
- Field                | Type                                                   
--------------------------------------------------------------------------------
- USERID               | VARCHAR(STRING)  (primary key) (Window type: TUMBLING) 
- FIRSTNAME            | VARCHAR(STRING)                                        
- LASTNAME             | VARCHAR(STRING)                                        
- ASSIGNED_TASKS_COUNT | BIGINT                                                 
--------------------------------------------------------------------------------
+ Field                | Type                                           
+-----------------------------------------------------------------------
+ USERID               | VARCHAR(STRING)  (key) (Window type: TUMBLING) 
+ FIRSTNAME            | VARCHAR(STRING)                                
+ LASTNAME             | VARCHAR(STRING)                                
+ ASSIGNED_TASKS_COUNT | BIGINT                                         
+-----------------------------------------------------------------------
 
-Queries that write from this TABLE
+Sources that this query reads from: 
 -----------------------------------
-CTAS_TASK_COUNT_TABLE_35 (RUNNING) : CREATE TABLE TASK_COUNT_TABLE WITH (KAFKA_TOPIC='task_count_topic', PARTITIONS=3, REPLICAS=3, VALUE_FORMAT='AVRO') AS SELECT   TS.USERID USERID,   LATEST_BY_OFFSET(UT.FIRSTNAME) FIRSTNAME,   LATEST_BY_OFFSET(UT.LASTNAME) LASTNAME,   COUNT(*) ASSIGNED_TASKS_COUNT FROM ASSIGNED_TASKS_STREAM TS LEFT OUTER JOIN USER_TABLE UT ON ((TS.USERID = UT.ID)) WINDOW TUMBLING ( SIZE 2 HOURS , RETENTION 1 DAYS , GRACE PERIOD 10 MINUTES )  GROUP BY TS.USERID EMIT CHANGES;
+ASSIGNED_TASKS_STREAM
+USER_TABLE
 
-For query topology and execution plan please run: EXPLAIN <QueryId>
+For source description please run: DESCRIBE [EXTENDED] <SourceId>
 
-Local runtime statistics
-------------------------
-messages-per-sec:      0.03   total-messages:         3     last-message: 2021-06-06T18:08:08.412Z
+Sinks that this query writes to: 
+-----------------------------------
+TASK_COUNT_TABLE
 
-(Statistics of the local KSQL server interaction with the Kafka topic task_count_topic)
+For sink description please run: DESCRIBE [EXTENDED] <SinkId>
 
-Consumer Groups summary:
+Execution plan      
+--------------      
+ > [ SINK ] | Schema: USERID STRING KEY, FIRSTNAME STRING, LASTNAME STRING, ASSIGNED_TASKS_COUNT BIGINT | Logger: CTAS_TASK_COUNT_TABLE_73.TASK_COUNT_TABLE
+                 > [ PROJECT ] | Schema: USERID STRING KEY, FIRSTNAME STRING, LASTNAME STRING, ASSIGNED_TASKS_COUNT BIGINT | Logger: CTAS_TASK_COUNT_TABLE_73.Aggregate.Project
+                                 > [ AGGREGATE ] | Schema: TS_USERID STRING KEY, TS_USERID STRING, UT_FIRSTNAME STRING, UT_LASTNAME STRING, TS_ROWTIME BIGINT, KSQL_AGG_VARIABLE_0 STRING, KSQL_AGG_VARIABLE_1 STRING, KSQL_AGG_VARIABLE_2 BIGINT, WINDOWSTART BIGINT, WINDOWEND BIGINT | Logger: CTAS_TASK_COUNT_TABLE_73.Aggregate.Aggregate
+                                                 > [ GROUP_BY ] | Schema: TS_USERID STRING KEY, TS_USERID STRING, UT_FIRSTNAME STRING, UT_LASTNAME STRING, TS_ROWTIME BIGINT | Logger: CTAS_TASK_COUNT_TABLE_73.Aggregate.GroupBy
+                                                                 > [ PROJECT ] | Schema: TS_USERID STRING KEY, TS_USERID STRING, UT_FIRSTNAME STRING, UT_LASTNAME STRING, TS_ROWTIME BIGINT | Logger: CTAS_TASK_COUNT_TABLE_73.Aggregate.Prepare
+                                                                                 > [ JOIN ] | Schema: TS_USERID STRING KEY, TS_USERID STRING, TS_TITLE STRING, TS_DETAILS STRING, TS_DUEDATE STRING, TS_ROWTIME BIGINT, TS_ID STRING, UT_FIRSTNAME STRING, UT_LASTNAME STRING, UT_ROWTIME BIGINT, UT_ID STRING | Logger: CTAS_TASK_COUNT_TABLE_73.Join
+                                                                                                 > [ PROJECT ] | Schema: TS_USERID STRING KEY, TS_USERID STRING, TS_TITLE STRING, TS_DETAILS STRING, TS_DUEDATE STRING, TS_ROWTIME BIGINT, TS_ID STRING | Logger: CTAS_TASK_COUNT_TABLE_73.PrependAliasLeft
+                                                                                                                 > [ REKEY ] | Schema: USERID STRING KEY, USERID STRING, TITLE STRING, DETAILS STRING, DUEDATE STRING, ROWTIME BIGINT, ID STRING | Logger: CTAS_TASK_COUNT_TABLE_73.LeftSourceKeyed
+                                                                                                                                 > [ SOURCE ] | Schema: ID STRING KEY, USERID STRING, TITLE STRING, DETAILS STRING, DUEDATE STRING, ROWTIME BIGINT, ID STRING | Logger: CTAS_TASK_COUNT_TABLE_73.KafkaTopic_Left.Source
+                                                                                                 > [ PROJECT ] | Schema: UT_ID STRING KEY, UT_FIRSTNAME STRING, UT_LASTNAME STRING, UT_ROWTIME BIGINT, UT_ID STRING | Logger: CTAS_TASK_COUNT_TABLE_73.PrependAliasRight
+                                                                                                                 > [ SOURCE ] | Schema: ID STRING KEY, FIRSTNAME STRING, LASTNAME STRING, ROWTIME BIGINT, ID STRING | Logger: CTAS_TASK_COUNT_TABLE_73.KafkaTopic_Right.Source
 
-Consumer Group       : _confluent-ksql-default_query_CTAS_TASK_COUNT_TABLE_35
 
-Kafka topic          : _confluent-ksql-default_query_CTAS_TASK_COUNT_TABLE_35-Join-repartition
-Max lag              : 0
+Processing topology 
+------------------- 
+Topologies:
+   Sub-topology: 0
+    Source: Join-repartition-source (topics: [Join-repartition])
+      --> Join
+    Processor: Join (stores: [KafkaTopic_Right-Reduce])
+      --> Aggregate-Prepare
+      <-- Join-repartition-source
+    Processor: Aggregate-Prepare (stores: [])
+      --> KSTREAM-AGGREGATE-0000000015
+      <-- Join
+    Processor: KSTREAM-AGGREGATE-0000000015 (stores: [Aggregate-Aggregate-Materialize])
+      --> Aggregate-Aggregate-ToOutputSchema
+      <-- Aggregate-Prepare
+    Processor: Aggregate-Aggregate-ToOutputSchema (stores: [])
+      --> Aggregate-Aggregate-WindowSelect
+      <-- KSTREAM-AGGREGATE-0000000015
+    Source: KSTREAM-SOURCE-0000000001 (topics: [users])
+      --> KTABLE-SOURCE-0000000002
+    Processor: Aggregate-Aggregate-WindowSelect (stores: [])
+      --> Aggregate-Project
+      <-- Aggregate-Aggregate-ToOutputSchema
+    Processor: KTABLE-SOURCE-0000000002 (stores: [])
+      --> KTABLE-MAPVALUES-0000000003
+      <-- KSTREAM-SOURCE-0000000001
+    Processor: Aggregate-Project (stores: [])
+      --> KTABLE-TOSTREAM-0000000019
+      <-- Aggregate-Aggregate-WindowSelect
+    Processor: KTABLE-MAPVALUES-0000000003 (stores: [KafkaTopic_Right-Reduce])
+      --> KTABLE-TRANSFORMVALUES-0000000004
+      <-- KTABLE-SOURCE-0000000002
+    Processor: KTABLE-TOSTREAM-0000000019 (stores: [])
+      --> KSTREAM-SINK-0000000020
+      <-- Aggregate-Project
+    Processor: KTABLE-TRANSFORMVALUES-0000000004 (stores: [])
+      --> PrependAliasRight
+      <-- KTABLE-MAPVALUES-0000000003
+    Sink: KSTREAM-SINK-0000000020 (topic: task_count_topic)
+      <-- KTABLE-TOSTREAM-0000000019
+    Processor: PrependAliasRight (stores: [])
+      --> none
+      <-- KTABLE-TRANSFORMVALUES-0000000004
 
- Partition | Start Offset | End Offset | Offset | Lag 
-------------------------------------------------------
- 0         | 0            | 0          | 0      | 0   
- 1         | 16           | 16         | 16     | 0   
- 2         | 0            | 0          | 0      | 0   
-------------------------------------------------------
+  Sub-topology: 1
+    Source: KSTREAM-SOURCE-0000000006 (topics: [assigned_tasks])
+      --> KSTREAM-TRANSFORMVALUES-0000000007
+    Processor: KSTREAM-TRANSFORMVALUES-0000000007 (stores: [])
+      --> LeftSourceKeyed-SelectKey
+      <-- KSTREAM-SOURCE-0000000006
+    Processor: LeftSourceKeyed-SelectKey (stores: [])
+      --> PrependAliasLeft
+      <-- KSTREAM-TRANSFORMVALUES-0000000007
+    Processor: PrependAliasLeft (stores: [])
+      --> Join-repartition-filter
+      <-- LeftSourceKeyed-SelectKey
+    Processor: Join-repartition-filter (stores: [])
+      --> Join-repartition-sink
+      <-- PrependAliasLeft
+    Sink: Join-repartition-sink (topic: Join-repartition)
+      <-- Join-repartition-filter
 
-Kafka topic          : assigned_tasks
-Max lag              : 0
 
- Partition | Start Offset | End Offset | Offset | Lag 
-------------------------------------------------------
- 0         | 0            | 4          | 4      | 0   
- 1         | 0            | 4          | 4      | 0   
- 2         | 0            | 8          | 8      | 0   
-------------------------------------------------------
 
-Kafka topic          : users
-Max lag              : 0
+Overridden Properties
+---------------------
+ Property          | Value    
+------------------------------
+ auto.offset.reset | earliest 
+------------------------------
 
- Partition | Start Offset | End Offset | Offset | Lag 
-------------------------------------------------------
- 0         | 0            | 0          | 0      | 0   
- 1         | 0            | 3          | 3      | 0   
- 2         | 0            | 0          | 0      | 0   
-------------------------------------------------------
-```
-
-```sh
-ksql> SELECT
->    ts.userid,
->    ut.firstname,
->    ut.lastname,
->    COUNT(*) AS tasks_count
->FROM assigned_tasks_stream ts
->LEFT JOIN user_table ut
->ON ts.userid = ut.id
->WINDOW TUMBLING (SIZE 2 HOURS)
->GROUP BY ts.userid, ut.firstname, ut.lastname
->EMIT CHANGES;
-
-+----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
-|USERID                                              |FIRSTNAME                                           |LASTNAME                                            |TASKS_COUNT                                         |
-+----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+----------------------------------------------------+
-|rdark                                               |Richard                                             |Dark                                                |2                                                   |
-|sdone                                               |Sally                                               |Done                                                |4                                                   |
-|sdone                                               |Sally                                               |Done                                                |6                                                   |
-|jsmith                                              |John                                                |Smith                                               |4                                                   |
 ```
 
 ```sh
@@ -414,8 +443,15 @@ ksql> SELECT
 +----------------------------------+----------------------------------+----------------------------------+----------------------------------+----------------------------------+----------------------------------+
 |USERID                            |WINDOW_START                      |WINDOW_END                        |FIRSTNAME                         |LASTNAME                          |ASSIGNED_TASKS_COUNT              |
 +----------------------------------+----------------------------------+----------------------------------+----------------------------------+----------------------------------+----------------------------------+
+|ccole                             |06-06-2021 21:00:00. 000          |06-06-2021 23:00:00. 000          |Claudia                           |Cole                              |5                                 |
+|ccole                             |06-06-2021 21:00:00. 000          |06-06-2021 23:00:00. 000          |Claudia                           |Cole                              |6                                 |
 |sdone                             |06-06-2021 15:00:00. 000          |06-06-2021 17:00:00. 000          |Sally                             |Done                              |1                                 |
-|rdark                             |06-06-2021 19:00:00. 000          |06-06-2021 21:00:00. 000          |Richard                           |Dark                              |2                                 |
-|sdone                             |06-06-2021 19:00:00. 000          |06-06-2021 21:00:00. 000          |Sally                             |Done                              |6                                 |
+|sdone                             |06-06-2021 19:00:00. 000          |06-06-2021 21:00:00. 000          |Sally                             |Done                              |1                                 |
+|sdone                             |06-06-2021 21:00:00. 000          |06-06-2021 23:00:00. 000          |Sally                             |Done                              |1                                 |
+|ccole                             |06-06-2021 21:00:00. 000          |06-06-2021 23:00:00. 000          |Claudia                           |Cole                              |7                                 |
+|rdark                             |06-06-2021 21:00:00. 000          |06-06-2021 23:00:00. 000          |Richard                           |Dark                              |1                                 |
+|sdone                             |06-06-2021 21:00:00. 000          |06-06-2021 23:00:00. 000          |Sally                             |Done                              |2                                 |
+|jsmith                            |06-06-2021 21:00:00. 000          |06-06-2021 23:00:00. 000          |John                              |Smith                             |8                                 |
+
 Press CTRL-C to interrupt
 ```

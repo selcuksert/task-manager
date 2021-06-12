@@ -8,6 +8,7 @@ import ListUsers from "./ListUsers";
 import AddUser from "./AddUser";
 import Keycloak from "keycloak-js";
 import {Context} from "../Store";
+import Stats from "./Stats";
 
 const MainHook = () => {
 
@@ -50,6 +51,9 @@ const MainHook = () => {
                             </Route>
                             <Route key="add-user" path="/add/user">
                                 <AddUser/>
+                            </Route>
+                            <Route key="stats" path="/stats">
+                                <Stats/>
                             </Route>
                         </Switch>
                     </main>

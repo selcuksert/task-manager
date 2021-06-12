@@ -205,10 +205,6 @@ const ListTasksHook = () => {
 
 class ListTasks extends Component {
 
-    export
-    default
-    ListTasks;
-
     constructor(props) {
         super(props);
         this.state = {

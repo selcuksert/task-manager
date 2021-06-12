@@ -71,6 +71,12 @@ const HeaderHook = () => {
                             </li>
                             : ''
                         }
+                        {manager ?
+                            <li className="nav-item">
+                                <Link to="/stats" className="nav-link">Statistics</Link>
+                            </li>
+                            : ''
+                        }
                         <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

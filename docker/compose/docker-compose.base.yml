@@ -231,6 +231,10 @@ services:
       - "traefik.http.routers.ksql.rule=Host(`web.poc.local`)"
       - "traefik.http.routers.ksql.entrypoints=ksql"
       - "traefik.http.routers.ksql.service=ksql-service"
+      - "traefik.http.routers.ksql.middlewares=ksql-cors"
+      - "traefik.http.middlewares.ksql-cors.headers.accessControlAllowMethods=GET,OPTIONS,PUT,POST"
+      - "traefik.http.middlewares.ksql-cors.headers.accessControlAllowOriginList=*"
+      - "traefik.http.middlewares.ksql-cors.headers.accessControlAllowHeaders=*"
       - "traefik.http.services.ksql-service.loadbalancer.server.port=8088"
     command: ["zookeeper", "2181", "kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093", "schemaregistry", "8081"]
 
@@ -266,7 +270,7 @@ services:
       TZ: Europe/Istanbul
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`web.poc.local`) && PathPrefix (`/`)"
+      - "traefik.http.routers.web.rule=Host(`web.poc.local`) && PathPrefix(`/`)"
       - "traefik.http.routers.web.entrypoints=http"
       - "traefik.http.routers.web.service=web-service"
       - "traefik.http.services.web-service.loadbalancer.server.port=80"

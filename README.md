@@ -56,7 +56,7 @@ PostgreSQL RDBMS to persist event data on user and task topics for viewing on UI
 Prometheus and Grafana based monitoring stack is available to view status of Kafka brokers:
 ![monitoring](./docs/images/monitoring.png)
 
-There exists a [sample Grafana dashboard](./docker/compose/kafka/monitor/dashboard/Kafka Dashboard-1627452376401.json) in JSON format that can be imported into Grafana.
+There exists a [sample Grafana dashboard](./docker/compose/kafka/monitor/dashboard/Kafka%20Dashboard-1628163620261.json) in JSON format that can be imported into Grafana.
 
 ### Identity Provider for OAuth2 & OIDC
 Keycloak Identity Provider for OAuth2 & OIDC based AAA enablement. The IdP is backed by an OpenLDAP instance which is initiated by a designated [user database](./docker/compose/ldap/config/bootstrap.ldif).

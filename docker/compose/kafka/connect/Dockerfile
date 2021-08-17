@@ -5,7 +5,7 @@ LABEL mail="selcuk.sert@gmail.com"
 LABEL version="1.0"
 LABEL description="Custom image based on Kafka Connect"
 
-ARG CONFL_KAFKA_VERSION=6.1.1
+ARG CONFL_KAFKA_VERSION=6.2.0
 ARG AVRO_KAFKA_VERSION=1.10.2
 ARG PGSQL_JDBC_VER=42.2.20
 ARG DEBEZIUM_CON_KAFKA_VERSION=1.5.0.Final

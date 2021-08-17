@@ -1,9 +1,9 @@
-import {faCheck, faPlay, faRedo, faSpinner, faTimes, faTrash} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faCheck, faPlay, faRedo, faSpinner, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Moment from 'moment';
-import {Component, useContext, useEffect, useState} from 'react';
-import {deleteTaskById, getAllTasks, getOwnedTasks, getTaskById, updateTask} from '../utilities/TaskService';
-import {Context} from "../Store";
+import { Component, useContext, useEffect, useState } from 'react';
+import { deleteTaskById, getAllTasks, getOwnedTasks, getTaskById, updateTask } from '../utilities/TaskService';
+import { Context } from "../Store";
 import InfoModal from "./InfoModal";
 import TaskDetailModal from "./TaskDetailModal";
 
@@ -141,63 +141,63 @@ const ListTasksHook = () => {
             <h1 className="mb-2">
                 Task List
                 {!loading ? <FontAwesomeIcon key="refresh" icon={faRedo}
-                                             title="Refresh"
-                                             id="refresh-icon"
-                                             style={{marginLeft: "2vmin"}}
-                                             onClick={refreshTaskList}/> : ''}
+                    title="Refresh"
+                    id="refresh-icon"
+                    style={{ marginLeft: "2vmin" }}
+                    onClick={refreshTaskList} /> : ''}
             </h1>
             <div className="table-responsive">
                 <table className="table table-hover">
                     <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">User</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Details</th>
-                        <th scope="col">Due Date</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Start Task</th>
-                        <th scope="col">Complete Task</th>
-                        <th scope="col">Reset Task</th>
-                        <th scope="col">Delete Task</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Details</th>
+                            <th scope="col">Due Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Start Task</th>
+                            <th scope="col">Complete Task</th>
+                            <th scope="col">Reset Task</th>
+                            <th scope="col">Delete Task</th>
+                        </tr>
                     </thead>
-                    {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
+                    {loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
                         <tbody>
-                        {tasks.map((task) =>
-                            <tr key={task.id}>
-                                <th scope="row">
-                                    <a href="#" onClick={getTaskDetail(task.id)}
-                                       key={`${task.id}-detail`}>{task.id}</a>
-                                </th>
-                                <td>{task.userid}</td>
-                                <td>{task.title}</td>
-                                <td>{task.details}</td>
-                                <td>{Moment(task.duedate).format('DD.MM.YYYY')}</td>
-                                <td>{task.status}</td>
-                                <td id="setstart"><FontAwesomeIcon key={`${task.id}-started`} icon={faPlay}
-                                                                   style={{marginRight: "2vmin"}}
-                                                                   onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'STARTED')}/>
-                                </td>
-                                <td id="setcomplete"><FontAwesomeIcon key={`${task.id}-completed`} icon={faCheck}
-                                                                      style={{marginRight: "2vmin"}}
-                                                                      onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'COMPLETED')}/>
-                                </td>
-                                <td id="setreset"><FontAwesomeIcon key={`${task.id}-not-completed`} icon={faTimes}
-                                                                   style={{marginLeft: "2vmin"}}
-                                                                   onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'PENDING')}/>
-                                </td>
-                                <td id="delete"><FontAwesomeIcon key={`${task.id}-delete`} icon={faTrash}
-                                                                 style={{marginLeft: "2vmin"}}
-                                                                 onClick={deleteTask(task.id)}/>
-                                </td>
-                            </tr>
-                        )}
+                            {tasks.map((task) =>
+                                <tr key={task.id}>
+                                    <th scope="row">
+                                        <a href="#" onClick={getTaskDetail(task.id)}
+                                            key={`${task.id}-detail`}>{task.id}</a>
+                                    </th>
+                                    <td>{task.userid}</td>
+                                    <td>{task.title}</td>
+                                    <td>{task.details}</td>
+                                    <td>{Moment(task.duedate).format('DD.MM.YYYY')}</td>
+                                    <td>{task.status}</td>
+                                    <td id="setstart"><FontAwesomeIcon key={`${task.id}-started`} icon={faPlay}
+                                        style={{ marginRight: "2vmin" }}
+                                        onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'STARTED')} />
+                                    </td>
+                                    <td id="setcomplete"><FontAwesomeIcon key={`${task.id}-completed`} icon={faCheck}
+                                        style={{ marginRight: "2vmin" }}
+                                        onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'COMPLETED')} />
+                                    </td>
+                                    <td id="setreset"><FontAwesomeIcon key={`${task.id}-not-completed`} icon={faTimes}
+                                        style={{ marginLeft: "2vmin" }}
+                                        onClick={setStatus(task.id, task.userid, task.title, task.details, task.duedate, 'PENDING')} />
+                                    </td>
+                                    <td id="delete"><FontAwesomeIcon key={`${task.id}-delete`} icon={faTrash}
+                                        style={{ marginLeft: "2vmin" }}
+                                        onClick={deleteTask(task.id)} />
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     }
                 </table>
-                <TaskDetailModal showModal={showDetails} task={taskToShow}/>
-                <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>
+                <TaskDetailModal showModal={showDetails} task={taskToShow} />
+                <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle} />
             </div>
         </div>
     )
@@ -220,7 +220,7 @@ class ListTasks extends Component {
 
     render() {
         return (
-            <ListTasksHook/>
+            <ListTasksHook />
         )
     }
 }

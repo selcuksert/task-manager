@@ -1,14 +1,18 @@
 package com.corp.concepts.taskmanager.services.controller;
 
-import com.corp.concepts.taskmanager.services.model.Task;
-import com.corp.concepts.taskmanager.services.repo.TaskRepository;
-import lombok.extern.log4j.Log4j2;
+import java.util.Collections;
+
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-import java.util.Collections;
+import com.corp.concepts.taskmanager.services.model.Task;
+import com.corp.concepts.taskmanager.services.repo.TaskRepository;
+
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController

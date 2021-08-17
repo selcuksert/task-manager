@@ -1,9 +1,9 @@
-import {Component, useContext, useEffect, useState} from 'react';
-import {addUser, getUsersFromIdp} from '../utilities/UserService';
+import { Component, useContext, useEffect, useState } from 'react';
+import { addUser, getUsersFromIdp } from '../utilities/UserService';
 import InfoModal from './InfoModal';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSpinner} from '@fortawesome/free-solid-svg-icons'
-import {Context} from "../Store";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { Context } from "../Store";
 
 const AddUserHook = () => {
     const [modalTitle, setModalTitle] = useState("");
@@ -71,7 +71,7 @@ const AddUserHook = () => {
                 <div className="form-group">
                     <label htmlFor="user">Select user</label>
                     <select className="form-control" id="user" aria-describedby="usernameHelp"
-                            onChange={setUserDataOnSelect}>
+                        onChange={setUserDataOnSelect}>
                         {users.map(user =>
                             <option key={user.id} value={user.id}>{user.firstName} {user.lastName}</option>
                         )}
@@ -110,14 +110,14 @@ const AddUserHook = () => {
                     </input>
                 </div>
 
-                {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
+                {loading ? <FontAwesomeIcon icon={faSpinner} spin /> :
                     <button
                         type="button"
                         className="btn btn-primary"
                         onClick={submitUser}>Submit</button>
                 }
             </form>
-            <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>
+            <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle} />
         </div>
     )
 }
@@ -140,7 +140,7 @@ class AddUser extends Component {
     render() {
         return (
             <div>
-                <AddUserHook/>
+                <AddUserHook />
             </div>
         )
     }

@@ -14,7 +14,7 @@ services:
   traefik:
     container_name: "traefik"
     # The official v2 Traefik docker image
-    image: "traefik:v2.4"
+    image: "traefik:v2.5"
     command:
       #- "--log.level=DEBUG"
       - "--api.insecure=true"
@@ -26,7 +26,7 @@ services:
       - "--entrypoints.sr.address=:8081"
       - "--entrypoints.rp.address=:8082"
       - "--entrypoints.kc.address=:8083"
-      - "--entrypoints.ksql.address=:8088"
+      - "--entrypoints.ksql.address=:8098"
       - "--entrypoints.gf.address=:3000"
     depends_on:
       - socket-proxy
@@ -44,7 +44,7 @@ services:
       # Kafka Connect
       - "8083:8083"
       # ksqlDB
-      - "8088:8088"
+      - "8098:8098"
       # Grafana
       - "3000:3000"
 
@@ -54,6 +54,8 @@ services:
       dockerfile: Dockerfile
     image: custom/kafka/base
     container_name: zookeeper
+    volumes:
+      - zk-data:/tmp/zookeeper
     environment:
       PROM_AGENT_PORT: ${PROM_AGENT_PORT}
     entrypoint: [ "startKeeper.sh" ]
@@ -64,6 +66,8 @@ services:
       dockerfile: Dockerfile
     image: custom/kafka/base
     container_name: kafka-broker-1
+    volumes:
+      - kafka-data:/var/lib/kafka/logs
     depends_on:
       - zookeeper
     environment:
@@ -75,6 +79,8 @@ services:
       dockerfile: Dockerfile
     image: custom/kafka/base
     container_name: kafka-broker-2
+    volumes:
+      - kafka-data:/var/lib/kafka/logs
     depends_on:
       - zookeeper
     environment:
@@ -86,6 +92,8 @@ services:
       dockerfile: Dockerfile
     image: custom/kafka/base
     container_name: kafka-broker-3
+    volumes:
+      - kafka-data:/var/lib/kafka/logs
     depends_on:
       - zookeeper
     environment:
@@ -121,7 +129,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:5
-    container_name: pgadmin
+    container_name: pgadmin-kafka
     depends_on:
       - traefik
     volumes:
@@ -172,7 +180,7 @@ services:
       - kafka-broker-1
       - kafka-broker-2
       - kafka-broker-3
-    command: [ "zookeeper", "2181", "PLAINTEXT:\\/\\/kafka-broker-1:9091, PLAINTEXT:\\/\\/kafka-broker-2:9092, PLAINTEXT:\\/\\/kafka-broker-3:9093" ]
+    command: [ "zookeeper", "2181", "schemaregistry", "8081", "PLAINTEXT:\\/\\/kafka-broker-1:9091, PLAINTEXT:\\/\\/kafka-broker-2:9092, PLAINTEXT:\\/\\/kafka-broker-3:9093" ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.restproxy.rule=Host(`web.poc.local`)"
@@ -215,7 +223,7 @@ services:
       context: ./kafka/ksql
       dockerfile: Dockerfile
     image: custom/kafka/ksql
-    container_name: ksqlserver
+    scale: 2
     environment:
       KAFKA_CONNECT_PROT: http
       KAFKA_CONNECT_HOST: kafkaconnect
@@ -270,7 +278,7 @@ services:
       TZ: Europe/Istanbul
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`web.poc.local`) && PathPrefix(`/`)"
+      - "traefik.http.routers.web.rule=Host(`web.poc.local`) && PathPrefix (`/`)"
       - "traefik.http.routers.web.entrypoints=http"
       - "traefik.http.routers.web.service=web-service"
       - "traefik.http.services.web-service.loadbalancer.server.port=80"
@@ -319,3 +327,9 @@ volumes:
   idp-db-data:
     name: idp-db-data
     driver: local
+  zk-data:
+    name: zk-data
+    driver: local
+  kafka-data:
+    name: kafka-data
+    driver: local    

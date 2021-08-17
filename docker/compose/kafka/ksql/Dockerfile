@@ -5,7 +5,7 @@ LABEL mail="selcuk.sert@gmail.com"
 LABEL version="1.0"
 LABEL description="Custom image based on Confluent ksqlDB"
 
-ARG VERSION=v6.1.1
+ARG VERSION=v6.2.0
 ARG PROJECT_NAME=ksql
 ARG KSQL_SRC_HOME=https://github.com/confluentinc/${PROJECT_NAME}.git
 
@@ -24,11 +24,10 @@ RUN git clone ${KSQL_SRC_HOME}
 
 WORKDIR ${KSQL_HOME}
 
-RUN git checkout ${VERSION} && mvn -DskipTests=true -Dcheckstyle.skip=true -Dmaven.test.skip=true -Dmaven.site.skip=true -Dmaven.javadoc.skip=true -Dspotbugs.skip=true clean install
+RUN git checkout ${VERSION} && \
+    mvn -DskipTests=true -Dcheckstyle.skip=true -Dmaven.test.skip=true -Dmaven.site.skip=true -Dmaven.javadoc.skip=true -Dspotbugs.skip=true clean install
 
 COPY ./scripts/start.sh ${KSQL_HOME}/bin/
-
-RUN apt-get update && apt-get install -y netcat
 
 RUN rm -rf $HOME/.m2/repository
 

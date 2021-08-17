@@ -12,6 +12,11 @@ const Reducer = (state, action) => {
                 keycloak: null,
                 authenticated: false
             };
+        case 'KSQL_QUERY':
+            return {
+                ...state,
+                ksqlQueryId: action.payload.ksqlQueryId
+            };
         default:
             return state;
     }

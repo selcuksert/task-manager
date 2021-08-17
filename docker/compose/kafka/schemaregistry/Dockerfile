@@ -5,7 +5,7 @@ LABEL mail="selcuk.sert@gmail.com"
 LABEL version="1.0"
 LABEL description="Custom image based on Confluent Schema Registry"
 
-ARG VERSION=v6.1.1
+ARG VERSION=v6.2.0
 ARG PROJECT_NAME=schema-registry
 ARG SR_SRC_HOME=https://github.com/confluentinc/${PROJECT_NAME}.git
 

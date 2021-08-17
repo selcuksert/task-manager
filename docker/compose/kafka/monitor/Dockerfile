@@ -5,7 +5,7 @@ LABEL mail="selcuk.sert@gmail.com"
 LABEL version="1.0"
 LABEL description="Custom image for monitoring Kafka stack via Prometheus and Grafana"
 
-ARG PRM_RELEASE=2.26.0
+ARG PRM_RELEASE=2.28.1
 ENV TZ=Europe/Istanbul
 
 RUN apt-get update && \

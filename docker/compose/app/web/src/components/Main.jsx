@@ -9,6 +9,8 @@ import AddUser from "./AddUser";
 import Keycloak from "keycloak-js";
 import {Context} from "../Store";
 import Stats from "./Stats";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const MainHook = () => {
 
@@ -60,7 +62,7 @@ const MainHook = () => {
                 </Router>
             </div>
             :
-            <div>Logging in to system</div>
+            <div><FontAwesomeIcon icon={faSpinner} spin /></div>
     )
 }
 

@@ -4,7 +4,8 @@ import Reducer from './Reducer';
 const initialState = {
     keycloak: null,
     authenticated: false,
-    updateTimeout: 1000
+    updateTimeout: 1000,
+    ksqlQueryId: ''
 }
 
 export const Context = createContext(initialState);

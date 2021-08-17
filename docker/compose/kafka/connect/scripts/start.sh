@@ -49,4 +49,14 @@ do
 	sleep 3
 done
 
+TOPIC_NAME_LIST=$(echo $TOPIC_NAMES | tr "," "\n")
+for TOPIC_NAME in $TOPIC_NAME_LIST
+do
+  until $KAFKA_HOME/bin/kafka-topics.sh --list --zookeeper zookeeper:2181 | grep "$TOPIC_NAME"
+  do
+      echo "Topic $TOPIC_NAME is not added yet"
+	  sleep 3
+  done
+done
+
 connect-standalone.sh $KAFKA_HOME/config/custom-connect-standalone.properties $KAFKA_HOME/config/jdbc-sink-connector.properties

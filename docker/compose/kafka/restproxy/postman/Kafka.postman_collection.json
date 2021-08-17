@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "0572d459-0859-474d-bc52-b5f8e2432a87",
+		"name": "Kafka",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "restproxy",
+			"item": [
+				{
+					"name": "v2",
+					"item": [
+						{
+							"name": "Add Consumer",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.kafka.json.v2+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"task-consumer\",\r\n    \"format\": \"avro\",\r\n    \"auto.offset.reset\": \"earliest\"\r\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8082/consumers/consumer-group",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"consumers",
+										"consumer-group"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Subscribe to Topic",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.kafka.json.v2+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"topics\": [\"tasks\"]\r\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8082/consumers/consumer-group/instances/task-consumer/subscription",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"consumers",
+										"consumer-group",
+										"instances",
+										"task-consumer",
+										"subscription"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Consume Events",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/vnd.kafka.avro.v2+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/consumers/consumer-group/instances/task-consumer/records",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"consumers",
+										"consumer-group",
+										"instances",
+										"task-consumer",
+										"records"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Produce Event",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.kafka.avro.v2+json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/vnd.kafka.v2+json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"key_schema\": \"{\\\"name\\\":\\\"task_key\\\",\\\"type\\\":\\\"string\\\"}\",\r\n    \"value_schema_id\": \"2\",\r\n    \"records\": [\r\n        {\r\n            \"key\": \"test\",\r\n            \"value\": {\r\n                \"id\": \"test\",\r\n                \"userid\": \"jsmith\",\r\n                \"duedate\": \"05-08-2021\",\r\n                \"title\": \"Test Task\",\r\n                \"details\": \"Task assigned via REST Proxy\",\r\n                \"status\": \"ASSIGNED\"\r\n            }\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://web.poc.local:8082/topics/tasks",
+									"protocol": "http",
+									"host": [
+										"web",
+										"poc",
+										"local"
+									],
+									"port": "8082",
+									"path": [
+										"topics",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "v3",
+					"item": [
+						{
+							"name": "Produce Event",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var uuid = require('uuid');\r",
+											"pm.variables.set('task_uuid', uuid.v4());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json; charset=UTF-8",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"key\": {\r\n        \"type\": \"JSON\",\r\n        \"data\": \"{{task_uuid}}\"\r\n    },\r\n    \"value\": {\r\n        \"data\": {\r\n            \"id\": \"{{task_uuid}}\",\r\n            \"userid\": \"jsmith\",\r\n            \"duedate\": \"01-08-2021\",\r\n            \"title\": \"Test Task\",\r\n            \"details\": \"Task assigned via REST Proxy\",\r\n            \"status\": \"ASSIGNED\"\r\n        }\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "http://web.poc.local:8082/v3/clusters/dnpx_UsRRtGnNqNvBsfz2w/topics/tasks/records",
+									"protocol": "http",
+									"host": [
+										"web",
+										"poc",
+										"local"
+									],
+									"port": "8082",
+									"path": [
+										"v3",
+										"clusters",
+										"dnpx_UsRRtGnNqNvBsfz2w",
+										"topics",
+										"tasks",
+										"records"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Cluster Info",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://web.poc.local:8082/v3/clusters",
+									"protocol": "http",
+									"host": [
+										"web",
+										"poc",
+										"local"
+									],
+									"port": "8082",
+									"path": [
+										"v3",
+										"clusters"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

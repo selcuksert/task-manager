@@ -168,8 +168,36 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"var uuid = require('uuid');\r",
-											"pm.variables.set('task_uuid', uuid.v4());"
+											"const moment = require('moment');\r",
+											"\r",
+											"const userIdArray = new Array();\r",
+											"userIdArray.push('jsmith', 'ccole', 'sdone', 'rdark');\r",
+											"\r",
+											"const randomUserIdx = pm.variables.replaceIn('{{$randomInt}}') % 4;\r",
+											"\r",
+											"const randomDate = moment(pm.variables.replaceIn('{{$randomDateFuture}}')).format('YYYY-MM-DD');\r",
+											"\r",
+											"pm.variables.set('task_uuid', pm.variables.replaceIn('{{$randomUUID}}'));\r",
+											"pm.variables.set('userId', userIdArray[randomUserIdx]);\r",
+											"pm.variables.set('randomDate', randomDate);\r",
+											"\r",
+											"pm.sendRequest(\"http://web.poc.local:8082/v3/clusters\", function (err, response) {\r",
+											"    let topicUrl = response.json().data[0].topics.related;\r",
+											"    pm.variables.set('topicUrl', topicUrl);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
 										],
 										"type": "text/javascript"
 									}
@@ -191,22 +219,14 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"key\": {\r\n        \"type\": \"JSON\",\r\n        \"data\": \"{{task_uuid}}\"\r\n    },\r\n    \"value\": {\r\n        \"data\": {\r\n            \"id\": \"{{task_uuid}}\",\r\n            \"userid\": \"jsmith\",\r\n            \"duedate\": \"01-08-2021\",\r\n            \"title\": \"Test Task\",\r\n            \"details\": \"Task assigned via REST Proxy\",\r\n            \"status\": \"ASSIGNED\"\r\n        }\r\n    }\r\n}"
+									"raw": "{\r\n    \"key\": {\r\n        \"type\": \"JSON\",\r\n        \"data\": \"{{task_uuid}}\"\r\n    },\r\n    \"value\": {\r\n        \"data\": {\r\n            \"id\": \"{{task_uuid}}\",\r\n            \"userid\": \"{{userId}}\",\r\n            \"duedate\": \"{{randomDate}}\",\r\n            \"title\": \"Task assigned via REST Proxy\",\r\n            \"details\": \"{{$randomPhrase}}\",\r\n            \"status\": \"ASSIGNED\"\r\n        }\r\n    }\r\n}"
 								},
 								"url": {
-									"raw": "http://web.poc.local:8082/v3/clusters/dnpx_UsRRtGnNqNvBsfz2w/topics/tasks/records",
-									"protocol": "http",
+									"raw": "{{topicUrl}}/tasks/records",
 									"host": [
-										"web",
-										"poc",
-										"local"
+										"{{topicUrl}}"
 									],
-									"port": "8082",
 									"path": [
-										"v3",
-										"clusters",
-										"dnpx_UsRRtGnNqNvBsfz2w",
-										"topics",
 										"tasks",
 										"records"
 									]
@@ -250,6 +270,27 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "Get Schemas from SchemaRegistry",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://web.poc.local:8081/schemas",
+					"protocol": "http",
+					"host": [
+						"web",
+						"poc",
+						"local"
+					],
+					"port": "8081",
+					"path": [
+						"schemas"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

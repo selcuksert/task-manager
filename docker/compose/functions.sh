@@ -13,5 +13,6 @@ function deleteFolder() {
 
     if [ -d $folderName ]; then
       rm -rf $folderName
+      echo "Deleted ${folderName}"
     fi
 }

@@ -18,7 +18,7 @@ services:
     scale: 3
     volumes:
       - ./app/service/bin/task-processor-0.0.1-SNAPSHOT.jar:/opt/app/bin/app.jar
-      - ks-state:/var/lib/ks-state
+      - ./app/service/ks-state:/var/lib/ks-state
     environment:
       DEPS: "kafka-broker-1:19091, kafka-broker-2:19092, kafka-broker-3:19093, schemaregistry:8081, keycloak:8080"
       SERVER_PORT: 8080
@@ -144,8 +144,3 @@ services:
       - "traefik.http.routers.user-writer.entrypoints=http"
       - "traefik.http.routers.user-writer.service=user-writer-service"
       - "traefik.http.services.user-writer-service.loadbalancer.server.port=8080"
-
-volumes:
-  ks-state:
-    name: ks-state
-    driver: local

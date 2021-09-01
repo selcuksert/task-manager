@@ -36,3 +36,6 @@ build/
 
 ### SpringBoot JAR files for containerized mode
 /docker/compose/app/service/bin/*.jar
+
+# Kafka Streams State Directory
+/docker/compose/app/service/ks-state/

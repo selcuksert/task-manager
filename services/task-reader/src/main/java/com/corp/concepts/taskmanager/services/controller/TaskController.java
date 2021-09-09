@@ -2,6 +2,7 @@ package com.corp.concepts.taskmanager.services.controller;
 
 import java.util.Collections;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +27,9 @@ public class TaskController {
 
 	@GetMapping("/all")
 	@ResponseBody
-	public Iterable<Task> getAll() {
+	public Iterable<Task> getAll(Pageable pageable) {
 		try {
-			return taskRepository.findAll();
+			return taskRepository.findAll(pageable);
 		} catch (Exception e) {
 			log.error("Error during getting user list:", e);
 		}

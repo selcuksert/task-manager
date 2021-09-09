@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import {Component, useContext, useEffect, useState} from 'react';
 import {getUsers} from '../utilities/UserService';
 import {getTaskCountByUserId} from '../utilities/TaskService';
@@ -14,6 +15,7 @@ const ListUsersHook = () => {
     const [modalText, setModalText] = useState("");
     const [showInfo, setShowInfo] = useState(false);
 
+    // eslint-disable-next-line no-unused-vars
     const [state, dispatch] = useContext(Context);
 
     let secObj = state.keycloak;
@@ -55,6 +57,7 @@ const ListUsersHook = () => {
         } else {
             getUserList();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

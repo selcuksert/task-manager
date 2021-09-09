@@ -1,13 +1,14 @@
-import {Component, useContext, useEffect} from "react";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { Component, useContext, useEffect } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Header from "./Header";
 import Home from "./Home";
 import ListTasks from "./ListTasks";
 import AddTask from "./AddTask";
 import ListUsers from "./ListUsers";
 import AddUser from "./AddUser";
+import Topology from "./Topology";
 import Keycloak from "keycloak-js";
-import {Context} from "../Store";
+import { Context } from "../Store";
 import Stats from "./Stats";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,16 +19,17 @@ const MainHook = () => {
 
     useEffect(() => {
         let keycloak = Keycloak('/keycloak.json');
-        keycloak.init({onLoad: 'login-required'}).then(authenticated => {
-            dispatch({type: 'LOGGED_IN', payload: {keycloak: keycloak, authenticated: authenticated}})
+        keycloak.init({ onLoad: 'login-required' }).then(authenticated => {
+            dispatch({ type: 'LOGGED_IN', payload: { keycloak: keycloak, authenticated: authenticated } })
         })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
         (state.keycloak && state.authenticated) ?
             <div>
                 <Router>
-                    <Header/>
+                    <Header />
                     <main role="main" className="flex-shrink-0">
                         {
                             /*
@@ -40,22 +42,25 @@ const MainHook = () => {
                         }
                         <Switch>
                             <Route key="root" exact path="/">
-                                <Home/>
+                                <Home />
                             </Route>
                             <Route key="list-tasks" path="/list/tasks">
-                                <ListTasks/>
+                                <ListTasks />
                             </Route>
                             <Route key="add-task" path="/add/task">
-                                <AddTask/>
+                                <AddTask />
                             </Route>
                             <Route key="list-users" path="/list/users">
-                                <ListUsers/>
+                                <ListUsers />
                             </Route>
                             <Route key="add-user" path="/add/user">
-                                <AddUser/>
+                                <AddUser />
                             </Route>
                             <Route key="stats" path="/stats">
-                                <Stats/>
+                                <Stats />
+                            </Route>
+                            <Route key="topology" path="/topology">
+                                <Topology topoUrl={`http://${window.location.hostname}/api/task/processor/actuator/kafkastreamstopology`} />
                             </Route>
                         </Switch>
                     </main>
@@ -69,7 +74,7 @@ const MainHook = () => {
 class Main extends Component {
     render() {
         return (
-            <MainHook/>
+            <MainHook />
         )
     }
 }

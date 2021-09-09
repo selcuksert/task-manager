@@ -13,6 +13,7 @@ const AddUserHook = () => {
     const [selectedUser, setSelectedUser] = useState({});
     const [users, setUsers] = useState([]);
 
+    // eslint-disable-next-line no-unused-vars
     const [state, dispatch] = useContext(Context);
 
     let secObj = state.keycloak;
@@ -34,6 +35,7 @@ const AddUserHook = () => {
 
     useEffect(() => {
         loadUsersFromIdp()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const submitUser = () => {

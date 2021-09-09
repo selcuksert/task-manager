@@ -20,7 +20,7 @@ export function addTask(_username, _title, _details, _date, secObj) {
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return {error: 'Forbidden', message: 'Forbidden to add task'};
+                return { error: 'Forbidden', message: 'Forbidden to add task' };
             }
         })
         .catch(err => console.error(err));
@@ -42,7 +42,7 @@ export function deleteTaskById(id, secObj) {
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return {error: 'Forbidden', message: 'Forbidden to delete task'};
+                return { error: 'Forbidden', message: 'Forbidden to delete task' };
             }
         })
         .catch(err => console.error(err));
@@ -71,14 +71,15 @@ export function updateTask(_id, _username, _title, _details, _date, _status, sec
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return {error: 'Forbidden', message: 'Forbidden to update task'};
+                return { error: 'Forbidden', message: 'Forbidden to update task' };
             }
         })
         .catch(err => console.error(err));
 }
 
-export function getAllTasks(secObj) {
-    return fetch(`http://${window.location.hostname}/api/task/reader/all`, {
+export function getAllTasks(secObj, pageSize, pageNumber) {
+    // Spring Data JPA starts page number from 0
+    return fetch(`http://${window.location.hostname}/api/task/reader/all?size=${pageSize}&page=${parseInt(pageNumber) - 1}`, {
         method: 'get',
         headers: {
             "Content-Type": "application/json",
@@ -137,7 +138,7 @@ export function getTaskById(taskId, secObj) {
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return {error: 'Forbidden', message: 'Forbidden to get task details'};
+                return { error: 'Forbidden', message: 'Forbidden to get task details' };
             }
         })
         .catch(err => console.error(err));
@@ -161,7 +162,7 @@ export function getTaskCountByUserId(userId, secObj) {
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return {error: 'Forbidden', message: 'Forbidden to get task count'};
+                return { error: 'Forbidden', message: 'Forbidden to get task count' };
             }
         })
         .catch(err => console.error(err));

@@ -30,6 +30,7 @@ const StatsHook = () => {
     const [showTpuProgress, setShowTpuProgress] = useState(false);
     const [showDistProgress, setShowDistProgress] = useState(false);
 
+    // eslint-disable-next-line no-unused-vars
     const [state, dispatch] = useContext(Context);
 
     const readTpuChunkCallback = useCallback((reader) => {
@@ -74,6 +75,7 @@ const StatsHook = () => {
                 readTpuChunkCallback(reader);
             }
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setTpuUserId, setTaskCount]);
 
     const readDistChunkCallback = useCallback((reader) => {
@@ -117,6 +119,7 @@ const StatsHook = () => {
                 readDistChunkCallback(reader);
             }
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setDistKsqlData]);
 
     const startTpuStream = () => {
@@ -319,6 +322,7 @@ const StatsHook = () => {
             }
             setShowTpuGraph(true);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tpuUserId, taskCount]);
 
     useEffect(() => {

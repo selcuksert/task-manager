@@ -44,3 +44,11 @@ code {
 .dropdown-item:hover {
   cursor: pointer;
 }
+
+#graphviz-code, #svg-container {
+  display: none;
+}
+
+#ks-topology {
+  white-space: pre;
+}

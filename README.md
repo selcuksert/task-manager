@@ -10,8 +10,8 @@ The Kafka Stream source, processor and sink implementations are based on Spring 
 
 ## References
 To have a solid baseline and understanding on Apache Kafka ecosystem following e-books are should read references (they are DRM free and freely distributed by Confluent):
-* [Kafka Definitive Guide](https://www.confluent.io/resources/kafka-the-definitive-guide/)
-* [Designing Event Driven Systems](https://www.confluent.io/designing-event-driven-systems/)
+* [Kafka Definitive Guide](./docs/books/20170707-EB-Confluent_Kafka_Definitive-Guide_Complete.pdf)
+* [Designing Event Driven Systems](./docs/books/20180328-EB-Confluent_Designing_Event_Driven_Systems.pdf)
 
 ## Basic Setup
 As this is a PoC project a local domain is used for Traefik edge router. Following entries should be entered for web and identity provider access in `/etc/hosts`:
@@ -25,14 +25,20 @@ As this is a PoC project a local domain is used for Traefik edge router. Followi
 Here is the architecture model of project:
 ![arch_model](./docs/arch/task-manager.png)
 
+## Processor Topology
+The application utilizes Spring Boot Actuator endpoint `kafkastreamstopology` to retrieve topology definition for **task-processor** Kafka Streams app. The *Processor Topology* button on header menu renders this in image format using [kafka-streams-viz](https://github.com/zz85/kafka-streams-viz):
+![topology](./docs/images/topology.png)
+
 ## Components
 The project is shipped with of two different deployment modes as [fully containerized deployment](./docker/compose/docker-compose.containerized.yml) and [hybrid deployment](./docker/compose/docker-compose.yml):
 
 * ***Fully Containerized:*** All of the components including SpringBoot based microservices are containerized. Can 
-  be [started](./docker/compose/start-cont.sh) and [stopped](./docker/compose/down-cont.sh) using shell scripts.
+  be [started](./docker/compose/cont-up.ps1) and [stopped](./docker/compose/cont-down.ps1) using shell scripts.
 * ***Hybrid Mode:*** All of the components **except** SpringBoot based microservices are containerized. Can be used 
-  for development and be [started](./docker/compose/start.sh) and [stopped](./docker/compose/down.sh) using shell 
+  for development and be [started](./docker/compose/dev-up.ps1) and [stopped](./docker/compose/dev-down.ps1) using shell 
   scripts.
+
+Before starting `mvn clean install` should be invoked for top-level project in order to generate app binaries. See [bin](./docker/compose/app/service/bin/README.md).
 
 Here are the components:
 
@@ -56,7 +62,7 @@ PostgreSQL RDBMS to persist event data on user and task topics for viewing on UI
 Prometheus and Grafana based monitoring stack is available to view status of Kafka brokers:
 ![monitoring](./docs/images/monitoring.png)
 
-There exists a [sample Grafana dashboard](./docker/compose/kafka/monitor/dashboard/Kafka%20Dashboard-1628163620261.json) in JSON format that can be imported into Grafana.
+There exists a [sample Grafana dashboard](./docker/compose/kafka/monitor/dashboard/Kafka Dashboard-1627452376401.json) in JSON format that can be imported into Grafana.
 
 ### Identity Provider for OAuth2 & OIDC
 Keycloak Identity Provider for OAuth2 & OIDC based AAA enablement. The IdP is backed by an OpenLDAP instance which is initiated by a designated [user database](./docker/compose/ldap/config/bootstrap.ldif).

@@ -18,6 +18,7 @@ const AddTaskHook = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    // eslint-disable-next-line no-unused-vars
     const [state, dispatch] = useContext(Context);
 
     let secObj = state.keycloak;
@@ -38,6 +39,7 @@ const AddTaskHook = () => {
             }
             setLoading(false);
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [username])
 
     const setUsernameOnSelect = (e) => {

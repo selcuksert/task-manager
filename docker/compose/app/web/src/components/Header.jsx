@@ -1,9 +1,11 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import {Component, useContext, useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 import {Context} from "../Store";
 
 const HeaderHook = () => {
 
+    // eslint-disable-next-line no-unused-vars
     const [state, dispatch] = useContext(Context);
     const [manager, setManager] = useState(false);
     const [name, setName] = useState("");
@@ -13,6 +15,7 @@ const HeaderHook = () => {
     useEffect(() => {
         setManager(secObj.hasRealmRole('manager'));
         setName(secObj.tokenParsed.name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const logout = () => {
@@ -74,6 +77,12 @@ const HeaderHook = () => {
                         {manager ?
                             <li className="nav-item">
                                 <Link to="/stats" className="nav-link">Statistics</Link>
+                            </li>
+                            : ''
+                        }
+                        {manager ?
+                            <li className="nav-item">
+                                <Link to="/topology" className="nav-link">Processor Topology</Link>
                             </li>
                             : ''
                         }

@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/anchor-has-content */
 import {faCheck, faPlay, faRedo, faSpinner, faTimes, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Moment from 'moment';
@@ -6,6 +8,7 @@ import {deleteTaskById, getAllTasks, getOwnedTasks, getTaskById, updateTask} fro
 import {Context} from "../Store";
 import InfoModal from "./InfoModal";
 import TaskDetailModal from "./TaskDetailModal";
+import Pagination from './Pagination';
 
 const ListTasksHook = () => {
 
@@ -16,20 +19,47 @@ const ListTasksHook = () => {
     const [showInfo, setShowInfo] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const [taskToShow, setTaskToShow] = useState({});
+    const [start, setStart] = useState(1);
+    const [end, setEnd] = useState(1);
+    const [activePage, setActivePage] = useState(1);
+    const [firstPage, setFirstPage] = useState(false);
+    const [lastPage, setLastPage] = useState(false);
+    const [maxNoOfPages, setMaxNoOfPages] = useState(1);
 
+    // eslint-disable-next-line no-unused-vars
     const [state, dispatch] = useContext(Context);
 
     let secObj = state.keycloak;
+    const maxPaginationNum = 5;
+    const pageSize = 10
 
-    const getTaskList = () => {
+    /**
+     *
+     * @param {Number} pageNumber
+     */
+    const getTaskList = (pageNumber) => {
         setLoading(true);
         setShowInfo(false);
         if (secObj.hasRealmRole('manager')) {
-            getAllTasks(secObj).then(tasks => {
-                if (!tasks) {
+            getAllTasks(secObj, pageSize, pageNumber).then(tasks => {
+                if (!tasks || !tasks.content) {
                     setTasks([]);
                 } else {
-                    setTasks(tasks);
+                    let pageStart = pageNumber % maxPaginationNum === 0 ?
+                        (Math.floor(pageNumber / maxPaginationNum) - 1) * maxPaginationNum + 1 :
+                        Math.floor(pageNumber / maxPaginationNum) * maxPaginationNum + 1;
+                    let pageEnd = pageNumber % maxPaginationNum === 0 ?
+                        Math.floor(pageNumber / maxPaginationNum) * maxPaginationNum :
+                        (Math.floor(pageNumber / maxPaginationNum) + 1) * maxPaginationNum;
+
+                    // Spring Data JPA starts page number from 0
+                    setActivePage(parseInt(tasks.number) + 1);
+                    setFirstPage(tasks.first);
+                    setLastPage(tasks.last);
+                    setStart(pageStart);
+                    setEnd(tasks["totalPages"] < pageEnd ? tasks["totalPages"] : pageEnd);
+                    setMaxNoOfPages(tasks["totalPages"]);
+                    setTasks(tasks.content);
                 }
                 setLoading(false);
             }).catch(err => {
@@ -56,7 +86,7 @@ const ListTasksHook = () => {
     }
 
     const refreshTaskList = (e) => {
-        getTaskList();
+        getTaskList(activePage);
     }
 
     const setStatus = (_id, _username, _title, _details, _date, _status) => (e) => {
@@ -75,7 +105,7 @@ const ListTasksHook = () => {
                     setShowInfo(true);
                     setLoading(false);
 
-                    getTaskList();
+                    getTaskList(activePage);
                 }, state.updateTimeout);
             }
         }).catch(err => {
@@ -97,7 +127,7 @@ const ListTasksHook = () => {
                 setLoading(false);
             } else {
                 setTimeout(() => {
-                    getTaskList();
+                    getTaskList(activePage);
                     setLoading(false);
                 }, state.updateTimeout);
             }
@@ -131,8 +161,9 @@ const ListTasksHook = () => {
         if (!state.authenticated) {
             state.keycloak.logout();
         } else {
-            getTaskList();
+            getTaskList(activePage);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     Moment.locale('tr');
@@ -146,6 +177,15 @@ const ListTasksHook = () => {
                                              style={{marginLeft: "2vmin"}}
                                              onClick={refreshTaskList}/> : ''}
             </h1>
+            <div class="mr-3">
+                <Pagination start={start}
+                            end={end}
+                            activePage={activePage}
+                            firstPage={firstPage}
+                            lastPage={lastPage}
+                            maxNoOfPages={maxNoOfPages}
+                            pageChangeHandler={getTaskList}/>
+            </div>
             <div className="table-responsive">
                 <table className="table table-hover">
                     <thead>
@@ -168,7 +208,7 @@ const ListTasksHook = () => {
                             <tr key={task.id}>
                                 <th scope="row">
                                     <a href="#" onClick={getTaskDetail(task.id)}
-                                       key={`${task.id}-detail`}>{task.id.replaceAll("\"","")}</a>
+                                       key={`${task.id}-detail`}>{task.id.includes("\"") ? task.id.replaceAll("\"", "") : task.id}</a>
                                 </th>
                                 <td>{task.userid}</td>
                                 <td>{task.title}</td>

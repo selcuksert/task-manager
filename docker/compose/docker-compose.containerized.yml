@@ -15,7 +15,6 @@ services:
       context: ./app/service
       dockerfile: Dockerfile
     image: custom/app/service
-    scale: 3
     volumes:
       - ./app/service/bin/task-processor-0.0.1-SNAPSHOT.jar:/opt/app/bin/app.jar
       - ./app/service/ks-state:/var/lib/ks-state
@@ -44,7 +43,6 @@ services:
       context: ./app/service
       dockerfile: Dockerfile
     image: custom/app/service
-    container_name: task-reader
     volumes:
       - ./app/service/bin/task-reader-0.0.1-SNAPSHOT.jar:/opt/app/bin/app.jar
     environment:
@@ -70,7 +68,6 @@ services:
       context: ./app/service
       dockerfile: Dockerfile
     image: custom/app/service
-    container_name: task-writer
     volumes:
       - ./app/service/bin/task-writer-0.0.1-SNAPSHOT.jar:/opt/app/bin/app.jar
     environment:
@@ -97,7 +94,6 @@ services:
       context: ./app/service
       dockerfile: Dockerfile
     image: custom/app/service
-    container_name: user-reader
     volumes:
       - ./app/service/bin/user-reader-0.0.1-SNAPSHOT.jar:/opt/app/bin/app.jar
     environment:
@@ -123,7 +119,6 @@ services:
       context: ./app/service
       dockerfile: Dockerfile
     image: custom/app/service
-    container_name: user-writer
     volumes:
       - ./app/service/bin/user-writer-0.0.1-SNAPSHOT.jar:/opt/app/bin/app.jar
     environment:

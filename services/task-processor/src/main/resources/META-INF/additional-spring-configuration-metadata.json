@@ -1,53 +1,57 @@
-{
-  "properties": [
-    {
-      "name": "custom.item.datasource.url",
-      "type": "java.lang.String",
-      "description": "A description for 'custom.item.datasource.url'"
-    },
-    {
-      "name": "custom.item.datasource.username",
-      "type": "java.lang.String",
-      "description": "A description for 'custom.item.datasource.username'"
-    },
-    {
-      "name": "custom.item.datasource.maximum-pool-size",
-      "type": "java.lang.String",
-      "description": "A description for 'custom.item.datasource.maximum-pool-size'"
-    },
-    {
-      "name": "custom.item.datasource.connection-timeout",
-      "type": "java.lang.String",
-      "description": "A description for 'custom.item.datasource.connection-timeout'"
-    },
-    {
-      "name": "custom.item.datasource.url",
-      "type": "java.lang.String",
-      "description": "A description for 'custom.item.datasource.url'"
-    },
-    {
-      "name": "custom.item.datasource.password",
-      "type": "java.lang.String",
-      "description": "A description for 'custom.item.datasource.password'"
-    },
-    {
-      "name": "custom.item.datasource.use",
-      "type": "java.lang.String",
-      "description": "A description for 'custom.item.datasource.use'"
-    },
-    {
-      "name": "custom.security.provider.jwt.role.key",
-      "type": "java.lang.String",
-      "description": "Description for custom.security.provider.jwt.role.key."
-    },
-    {
-      "name": "custom.security.provider.jwt.claim.key",
-      "type": "java.lang.String",
-      "description": "Description for custom.security.provider.jwt.claim.key."
-    },
-    {
-      "name": "custom.ktable.detail",
-      "type": "java.lang.String",
-      "description": "Description for custom.ktable.detail."
-    }
-  ]}
+{"properties": [
+  {
+    "name": "custom.item.datasource.url",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.item.datasource.url'"
+  },
+  {
+    "name": "custom.item.datasource.username",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.item.datasource.username'"
+  },
+  {
+    "name": "custom.item.datasource.maximum-pool-size",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.item.datasource.maximum-pool-size'"
+  },
+  {
+    "name": "custom.item.datasource.connection-timeout",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.item.datasource.connection-timeout'"
+  },
+  {
+    "name": "custom.item.datasource.url",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.item.datasource.url'"
+  },
+  {
+    "name": "custom.item.datasource.password",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.item.datasource.password'"
+  },
+  {
+    "name": "custom.item.datasource.use",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.item.datasource.use'"
+  },
+  {
+    "name": "custom.security.provider.jwt.role.key",
+    "type": "java.lang.String",
+    "description": "Description for custom.security.provider.jwt.role.key."
+  },
+  {
+    "name": "custom.security.provider.jwt.claim.key",
+    "type": "java.lang.String",
+    "description": "Description for custom.security.provider.jwt.claim.key."
+  },
+  {
+    "name": "custom.ktable.detail",
+    "type": "java.lang.String",
+    "description": "Description for custom.ktable.detail."
+  },
+  {
+    "name": "custom.ktable.count",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.ktable.count'"
+  }
+]}

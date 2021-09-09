@@ -51,7 +51,6 @@ services:
       context: ./kafka/base
       dockerfile: Dockerfile
     image: custom/kafka/base
-    container_name: zookeeper
     volumes:
       - zk-data:/tmp/zookeeper
     environment:
@@ -63,7 +62,6 @@ services:
       context: ./kafka/base
       dockerfile: Dockerfile
     image: custom/kafka/base
-    container_name: kafka-broker-1
     volumes:
       - kafka-data:/var/lib/kafka/logs
     depends_on:
@@ -76,7 +74,6 @@ services:
       context: ./kafka/base
       dockerfile: Dockerfile
     image: custom/kafka/base
-    container_name: kafka-broker-2
     volumes:
       - kafka-data:/var/lib/kafka/logs
     depends_on:
@@ -89,7 +86,6 @@ services:
       context: ./kafka/base
       dockerfile: Dockerfile
     image: custom/kafka/base
-    container_name: kafka-broker-3
     volumes:
       - kafka-data:/var/lib/kafka/logs
     depends_on:
@@ -105,7 +101,6 @@ services:
 
   appdb:
     image: postgres:13-alpine
-    container_name: appdb
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
@@ -116,7 +111,6 @@ services:
 
   idpdb:
     image: postgres:13-alpine
-    container_name: idpdb
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
@@ -126,12 +120,12 @@ services:
       - idp-db-data:/var/lib/postgresql/data
 
   pgadmin:
-    image: dpage/pgadmin4:5
-    container_name: pgadmin-kafka
+    build:
+      context: ./pgadmin
+      dockerfile: Dockerfile
+    image: custom/kafka/pgadmin
     depends_on:
       - traefik
-    volumes:
-      - ./pgadmin/config/servers.json:/pgadmin4/servers.json
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PG_ADM_USER}
       PGADMIN_DEFAULT_PASSWORD: ${PG_ADM_PASS}
@@ -151,7 +145,8 @@ services:
       context: ./kafka/schemaregistry
       dockerfile: Dockerfile
     image: custom/kafka/schemaregistry
-    container_name: schemaregistry
+    environment:
+      DEPS: "zookeeper:2181,kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093"
     depends_on:
       - traefik
       - zookeeper
@@ -221,7 +216,6 @@ services:
       context: ./kafka/ksql
       dockerfile: Dockerfile
     image: custom/kafka/ksql
-    scale: 2
     environment:
       KAFKA_CONNECT_PROT: http
       KAFKA_CONNECT_HOST: kafkaconnect

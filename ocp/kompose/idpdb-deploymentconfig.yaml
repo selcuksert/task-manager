@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: idpdb
+  name: idpdb
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: idpdb
+  strategy:
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: idpdb
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: idpdb
+            - name: POSTGRES_PASSWORD
+              value: db1234
+            - name: POSTGRES_USER
+              value: dbuser
+            - name: TZ
+              value: Europe/Istanbul
+          image: ' '
+          name: idpdb
+          ports:
+            - containerPort: 5432
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: idp-db-data
+      restartPolicy: Always
+      volumes:
+        - name: idp-db-data
+          persistentVolumeClaim:
+            claimName: idp-db-data
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - idpdb
+        from:
+          kind: ImageStreamTag
+          name: idpdb:13-alpine
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

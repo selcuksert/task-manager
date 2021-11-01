@@ -1,0 +1,64 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: pgadmin
+    app.kubernetes.io/part-of: db
+  name: pgadmin
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: pgadmin
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: pgadmin
+    spec:
+      serviceAccountName: runasnonroot
+      securityContext:
+        runAsUser: 5050
+      containers:
+        - env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: pgadmin@corp.com
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: Pgadm1234!
+            - name: PGADMIN_LISTEN_ADDRESS
+              value: 0.0.0.0
+            - name: PGADMIN_LISTEN_PORT
+              value: "9080"
+            - name: PGADMIN_SERVER_JSON_FILE
+              value: /pgadmin4/servers.json
+            - name: TZ
+              value: Europe/Istanbul
+          image: ' '
+          name: pgadmin
+          resources: {}
+          readinessProbe:
+            periodSeconds: 30
+            httpGet:
+              path: /misc/ping
+              port: 9080
+      restartPolicy: Always
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - pgadmin
+        from:
+          kind: ImageStreamTag
+          name: pgadmin:6.1
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

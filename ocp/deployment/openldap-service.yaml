@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: openldap
+  name: openldap
+spec:
+  ports:
+    - name: "389"
+      port: 389
+      targetPort: 389
+  selector:
+    io.kompose.service: openldap
+status:
+  loadBalancer: {}

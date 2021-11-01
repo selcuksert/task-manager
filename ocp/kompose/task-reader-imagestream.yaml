@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: task-reader
+  name: task-reader
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: custom-kafka-java
+      generation: null
+      importPolicy: {}
+      name: ""
+      referencePolicy:
+        type: ""
+status:
+  dockerImageRepository: ""

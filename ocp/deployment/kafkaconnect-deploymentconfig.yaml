@@ -1,0 +1,71 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kafkaconnect
+    app.kubernetes.io/part-of: kafka
+  name: kafkaconnect
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: kafkaconnect
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: kafkaconnect
+    spec:
+      serviceAccountName: runasroot
+      securityContext:
+        runAsUser: 0
+      containers:
+        - args:
+            - zookeeper
+            - "2181"
+            - kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093
+            - http://schemaregistry:8081
+            - appdb
+            - "5432"
+            - postgresql
+          env:
+            - name: CONNECTION_PASSWORD
+              value: db1234
+            - name: CONNECTION_USER
+              value: dbuser
+            - name: DB_NAME
+              value: appdb
+            - name: KEY_CONVERTER
+              value: org.apache.kafka.connect.storage.StringConverter
+            - name: PK_FIELDS
+              value: id
+            - name: TOPIC_NAMES
+              value: tasks,users,taskdetails
+            - name: VALUE_CONVERTER
+              value: io.confluent.connect.avro.AvroConverter
+          image: ' '
+          name: kafkaconnect
+          ports:
+            - containerPort: 8083
+          resources: {}
+      restartPolicy: Always
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - kafkaconnect
+        from:
+          kind: ImageStreamTag
+          name: kafka:connect
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

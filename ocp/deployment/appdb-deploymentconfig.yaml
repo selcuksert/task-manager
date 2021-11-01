@@ -1,0 +1,68 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: appdb
+    app.kubernetes.io/part-of: db
+  name: appdb
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: appdb
+  strategy:
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: appdb
+    spec:
+      containers:
+        - env:
+            - name: POSTGRESQL_DATABASE
+              value: appdb
+            - name: POSTGRESQL_PASSWORD
+              value: db1234
+            - name: POSTGRESQL_USER
+              value: dbuser
+            - name: TZ
+              value: Europe/Istanbul
+          image: ' '
+          name: appdb
+          ports:
+            - containerPort: 5432
+          resources: {}
+          readinessProbe:
+            periodSeconds: 30
+            exec:
+              command:
+                - pg_isready
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: app-db-data
+      restartPolicy: Always
+      volumes:
+        - name: app-db-data
+          persistentVolumeClaim:
+            claimName: app-db-data
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - appdb
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: postgresql:latest
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

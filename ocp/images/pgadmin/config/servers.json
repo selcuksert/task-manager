@@ -1,0 +1,34 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "tasks",
+            "Group": "Servers",
+            "Host": "appdb",
+            "Port": 5432,
+            "MaintenanceDB": "appdb",
+            "Username": "dbuser",
+            "SSLMode": "prefer",
+            "SSLCompression": 0,
+            "Timeout": 10,
+            "UseSSHTunnel": 0,
+            "TunnelPort": 22,
+            "TunnelAuthentication": 0,
+            "PassFile": "/passfile"
+        },
+        "2": {
+            "Name": "IDP",
+            "Group": "Servers",
+            "Host": "idpdb",
+            "Port": 5432,
+            "MaintenanceDB": "idpdb",
+            "Username": "dbuser",
+            "SSLMode": "prefer",
+            "SSLCompression": 0,
+            "Timeout": 10,
+            "UseSSHTunnel": 0,
+            "TunnelPort": 22,
+            "TunnelAuthentication": 0,
+            "PassFile": "/passfile"
+        }
+    }
+}

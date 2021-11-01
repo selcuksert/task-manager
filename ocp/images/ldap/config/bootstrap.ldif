@@ -1,0 +1,67 @@
+dn: ou=People,dc=corp,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=corp,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: Groups
+
+dn: uid=jsmith,ou=People,dc=corp,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: jsmith
+sn: Smith
+cn: John
+userPassword: Js1234!
+mail: jsmith@corp.com
+
+dn: uid=sdone,ou=People,dc=corp,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: sdone
+sn: Done
+cn: Sally
+userPassword: Sd1234!
+mail: sdone@corp.com
+
+dn: uid=rdark,ou=People,dc=corp,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: rdark
+sn: Dark
+cn: Richard
+userPassword: Rd1234!
+mail: rdark@corp.com
+
+dn: uid=ccole,ou=People,dc=corp,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: ccole
+sn: Cole
+cn: Claudia
+userPassword: Cc1234!
+mail: ccole@corp.com
+
+dn: cn=manager,ou=Groups,dc=corp,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: manager
+uniqueMember: uid=jsmith,ou=People,dc=corp,dc=com
+uniqueMember: uid=sdone,ou=People,dc=corp,dc=com
+
+dn: cn=user,ou=Groups,dc=corp,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: user
+uniqueMember: uid=rdark,ou=People,dc=corp,dc=com
+uniqueMember: uid=ccole,ou=People,dc=corp,dc=com

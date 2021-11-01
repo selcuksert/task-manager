@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: task-reader
+  name: task-reader
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: task-reader
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: task-reader
+    spec:
+      containers:
+        - env:
+            - name: DB_HOST
+              value: appdb
+            - name: DB_NAME
+              value: appdb
+            - name: DB_PASS
+              value: db1234
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: dbuser
+            - name: DEPS
+              value: appdb:5432, keycloak:8080
+            - name: IDP_HOST
+              value: keycloak
+            - name: IDP_PORT
+              value: "8080"
+            - name: IDP_PROT
+              value: http
+            - name: SERVER_PORT
+              value: "8080"
+          image: ' '
+          name: task-reader
+          resources: {}
+      restartPolicy: Always
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - task-reader
+        from:
+          kind: ImageStreamTag
+          name: task-reader:latest
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

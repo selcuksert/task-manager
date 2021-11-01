@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kmonitor
+  name: kmonitor
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: kmonitor
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: kmonitor
+    spec:
+      containers:
+        - env:
+            - name: KAFKA_JMX_ADDR
+              value: '''zookeeper:1123'', ''kafka-broker-1:1123'', ''kafka-broker-2:1123'', ''kafka-broker-3:1123'''
+          image: ' '
+          name: kmonitor
+          ports:
+            - containerPort: 3000
+          resources: {}
+      restartPolicy: Always
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - kmonitor
+        from:
+          kind: ImageStreamTag
+          name: kmonitor:latest
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

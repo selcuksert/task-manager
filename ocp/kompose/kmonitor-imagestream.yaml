@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kmonitor
+  name: kmonitor
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: custom-kafka-monitor
+      generation: null
+      importPolicy: {}
+      name: ""
+      referencePolicy:
+        type: ""
+status:
+  dockerImageRepository: ""

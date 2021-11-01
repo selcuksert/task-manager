@@ -1,0 +1,8 @@
+{
+  "realm": "corpauth",
+  "auth-server-url": "https://idp-task-manager.apps-crc.testing/auth/",
+  "ssl-required": "external",
+  "resource": "task-manager",
+  "public-client": true,
+  "confidential-port": 0
+}

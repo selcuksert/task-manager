@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: restproxy
+  name: restproxy
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: restproxy
+  strategy:
+    resources: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: restproxy
+    spec:
+      containers:
+        - args:
+            - zookeeper
+            - "2181"
+            - schemaregistry
+            - "8081"
+            - PLAINTEXT:\/\/kafka-broker-1:9091, PLAINTEXT:\/\/kafka-broker-2:9092, PLAINTEXT:\/\/kafka-broker-3:9093
+          image: ' '
+          name: restproxy
+          ports:
+            - containerPort: 8082
+          resources: {}
+      restartPolicy: Always
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - restproxy
+        from:
+          kind: ImageStreamTag
+          name: restproxy:latest
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

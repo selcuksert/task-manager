@@ -1,0 +1,367 @@
+version: '3'
+
+services:
+  add-topics:
+    depends_on:
+      - kafka-broker-1
+    entrypoint:
+      - addTopic.sh
+      - kafka-broker-1
+      - "9091"
+      - "3"
+      - "3"
+      - tasks,users,taskdetails,taskcount
+    image: custom-kafka-base
+  appdb:
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_PASSWORD: db1234
+      POSTGRES_USER: dbuser
+      TZ: Europe/Istanbul
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - app-db-data:/var/lib/postgresql/data
+  idpdb:
+    environment:
+      POSTGRES_DB: idpdb
+      POSTGRES_PASSWORD: db1234
+      POSTGRES_USER: dbuser
+      TZ: Europe/Istanbul
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - idp-db-data:/var/lib/postgresql/data
+  kafka-broker-1:
+    build:
+      context: ./kafka/base
+      dockerfile: Dockerfile
+    command:
+      - zookeeper
+      - "2181"
+      - "1"
+      - kafka-broker-1
+      - "9091"
+    depends_on:
+      - zookeeper
+    environment:
+      PROM_AGENT_PORT: "1123"
+    image: custom-kafka-base
+    ports:
+      - "9091:9091"
+      - "19091:19091"
+    volumes:
+      - kafka-data:/var/lib/kafka/logs
+  kafka-broker-2:
+    build:
+      context: ./kafka/base
+      dockerfile: Dockerfile
+    command:
+      - zookeeper
+      - "2181"
+      - "2"
+      - kafka-broker-2
+      - "9092"
+    depends_on:
+      - zookeeper
+    environment:
+      PROM_AGENT_PORT: "1123"
+    image: custom-kafka-base
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+    volumes:
+      - kafka-data:/var/lib/kafka/logs
+  kafka-broker-3:
+    build:
+      context: ./kafka/base
+      dockerfile: Dockerfile
+    command:
+      - zookeeper
+      - "2181"
+      - "3"
+      - kafka-broker-3
+      - "9093"
+    depends_on:
+      - zookeeper
+    environment:
+      PROM_AGENT_PORT: "1123"
+    image: custom-kafka-base
+    ports:
+      - "9093:9093"
+      - "19093:19093"
+    volumes:
+      - kafka-data:/var/lib/kafka/logs
+  kafkaconnect:
+    build:
+      context: ./kafka/connect
+      dockerfile: Dockerfile
+    command:
+      - zookeeper
+      - "2181"
+      - kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093
+      - http://schemaregistry:8081
+      - appdb
+      - "5432"
+      - postgresql
+    container_name: kafkaconnect
+    depends_on:
+      - appdb
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - schemaregistry
+      - zookeeper
+    environment:
+      CONNECTION_PASSWORD: db1234
+      CONNECTION_USER: dbuser
+      DB_NAME: appdb
+      KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      PK_FIELDS: id
+      TOPIC_NAMES: tasks,users,taskdetails
+      VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+    ports:
+      - "8083:8083"
+    image: custom-kafka-connect
+  keycloak:
+    container_name: keycloak
+    depends_on:
+      - idpdb
+    environment:
+      DB_ADDR: idpdb
+      DB_DATABASE: idpdb
+      DB_PASSWORD: db1234
+      DB_PORT: "5432"
+      DB_USER: dbuser
+      DB_VENDOR: postgres
+      KEYCLOAK_PASSWORD: Kc1234!
+      KEYCLOAK_USER: kcadm
+    image: jboss/keycloak
+  kmonitor:
+    build:
+      context: ./kafka/monitor
+      dockerfile: Dockerfile
+    container_name: kmonitor
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - schemaregistry
+      - zookeeper
+    environment:
+      KAFKA_JMX_ADDR: '''zookeeper:1123'', ''kafka-broker-1:1123'', ''kafka-broker-2:1123'',
+        ''kafka-broker-3:1123'''
+    ports:
+      - "3000:3000"
+    image: custom-kafka-monitor
+  ksql:
+    build:
+      context: ./kafka/ksql
+      dockerfile: Dockerfile
+    command:
+      - zookeeper
+      - "2181"
+      - kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093
+      - schemaregistry
+      - "8081"
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - schemaregistry
+      - zookeeper
+    environment:
+      KAFKA_CONNECT_HOST: kafkaconnect
+      KAFKA_CONNECT_PORT: "8083"
+      KAFKA_CONNECT_PROT: http
+    ports:
+      - "8088:8088"
+    image: custom-kafka-ksql
+  openldap:
+    command:
+      - --copy-service
+    container_name: openldap
+    environment:
+      LDAP_ADMIN_PASSWORD: Ladm1234!
+      LDAP_DOMAIN: corp.com
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: The Corporation
+      TZ: Europe/Istanbul
+    ports:
+      - "389:389"
+    image: osixia/openldap:1.3.0
+  pgadmin:
+    build:
+      context: ./pgadmin
+      dockerfile: Dockerfile
+    ports:
+      - "9080:9080"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@corp.com
+      PGADMIN_DEFAULT_PASSWORD: Pgadm1234!
+      PGADMIN_LISTEN_ADDRESS: 0.0.0.0
+      PGADMIN_LISTEN_PORT: "9080"
+      PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
+      TZ: Europe/Istanbul
+    image: custom-kafka-pgadmin
+  restproxy:
+    build:
+      context: ./kafka/restproxy
+      dockerfile: Dockerfile
+    command:
+      - zookeeper
+      - "2181"
+      - schemaregistry
+      - "8081"
+      - PLAINTEXT:\/\/kafka-broker-1:9091, PLAINTEXT:\/\/kafka-broker-2:9092, PLAINTEXT:\/\/kafka-broker-3:9093
+    container_name: restproxy
+    ports:
+      - "8082:8082"
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - zookeeper
+    image: custom-kafka-restproxy
+  schemaregistry:
+    build:
+      context: ./kafka/schemaregistry
+      dockerfile: Dockerfile
+    command:
+      - zookeeper
+      - "2181"
+      - avro-schema-topic
+      - PLAINTEXT:\/\/kafka-broker-1:9091, PLAINTEXT:\/\/kafka-broker-2:9092, PLAINTEXT:\/\/kafka-broker-3:9093
+    depends_on:
+      - kafka-broker-1
+      - kafka-broker-2
+      - kafka-broker-3
+      - zookeeper
+    environment:
+      DEPS: zookeeper:2181,kafka-broker-1:9091, kafka-broker-2:9092, kafka-broker-3:9093
+    ports:
+      - "8081:8081"
+    image: custom-kafka-schemaregistry
+  task-processor:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    environment:
+      BROKER_1: kafka-broker-1:19091
+      BROKER_2: kafka-broker-2:19092
+      BROKER_3: kafka-broker-3:19093
+      DEPS: kafka-broker-1:19091, kafka-broker-2:19092, kafka-broker-3:19093, schemaregistry:8081,
+        keycloak:8080
+      IDP_HOST: keycloak
+      IDP_PORT: "8080"
+      IDP_PROT: http
+      SERVER_PORT: "8080"
+      SR_HOST: schemaregistry
+      SR_PORT: "8081"
+      SR_PROT: http
+      STATE_DIR_ROOT: /var/lib/ks-state
+    image: custom-kafka-java
+    volumes:
+      - app-ks-state:/var/lib/ks-state
+  task-reader:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: appdb
+      DB_NAME: appdb
+      DB_PASS: db1234
+      DB_PORT: "5432"
+      DB_USER: dbuser
+      DEPS: appdb:5432, keycloak:8080
+      IDP_HOST: keycloak
+      IDP_PORT: "8080"
+      IDP_PROT: http
+      SERVER_PORT: "8080"
+    image: custom-kafka-java
+  task-writer:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    environment:
+      BROKER_1: kafka-broker-1:19091
+      BROKER_2: kafka-broker-2:19092
+      BROKER_3: kafka-broker-3:19093
+      DEPS: kafka-broker-1:19091, kafka-broker-2:19092, kafka-broker-3:19093, schemaregistry:8081,
+        keycloak:8080
+      IDP_HOST: keycloak
+      IDP_PORT: "8080"
+      IDP_PROT: http
+      SERVER_PORT: "8080"
+      SR_HOST: schemaregistry
+      SR_PORT: "8081"
+      SR_PROT: http
+    image: custom-kafka-java
+  user-reader:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: appdb
+      DB_NAME: appdb
+      DB_PASS: db1234
+      DB_PORT: "5432"
+      DB_USER: dbuser
+      DEPS: appdb:5432, keycloak:8080
+      IDP_HOST: keycloak
+      IDP_PORT: "8080"
+      IDP_PROT: http
+      SERVER_PORT: "8080"
+    image: custom-kafka-java
+  user-writer:
+    build:
+      context: ./app/service
+      dockerfile: Dockerfile
+    environment:
+      BROKER_1: kafka-broker-1:19091
+      BROKER_2: kafka-broker-2:19092
+      BROKER_3: kafka-broker-3:19093
+      DEPS: kafka-broker-1:19091, kafka-broker-2:19092, kafka-broker-3:19093, schemaregistry:8081,
+        keycloak:8080
+      IDP_HOST: keycloak
+      IDP_PORT: "8080"
+      IDP_PROT: http
+      SERVER_PORT: "8080"
+      SR_HOST: schemaregistry
+      SR_PORT: "8081"
+      SR_PROT: http
+    image: custom-kafka-java
+  web:
+    container_name: web
+    environment:
+      NGINX_PORT: "80"
+      TZ: Europe/Istanbul
+    ports:
+      - "80:80"
+    image: nginx:stable-alpine
+  zookeeper:
+    build:
+      context: ./kafka/base
+      dockerfile: Dockerfile
+    entrypoint:
+      - startKeeper.sh
+    ports:
+      - "2181:2181"
+    environment:
+      PROM_AGENT_PORT: "1123"
+    image: custom-kafka-base
+    volumes:
+      - zk-data:/tmp/zookeeper
+volumes:
+  app-db-data:
+    driver: local
+  idp-db-data:
+    driver: local
+  kafka-data:
+    driver: local
+  zk-data:
+    driver: local
+  app-ks-state:
+    driver: local

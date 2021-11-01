@@ -1,0 +1,66 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kafka-broker-3
+    app.kubernetes.io/part-of: kafka
+  name: kafka-broker-3
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: kafka-broker-3
+  strategy:
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: kafka-broker-3
+    spec:
+      serviceAccountName: runasroot
+      securityContext:
+        runAsUser: 0
+      containers:
+        - args:
+            - zookeeper
+            - "2181"
+            - "3"
+            - kafka-broker-3
+            - "9093"
+          env:
+            - name: PROM_AGENT_PORT
+              value: "1123"
+          image: ' '
+          name: kafka-broker-3
+          ports:
+            - containerPort: 9093
+            - containerPort: 19093
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/kafka/logs
+              name: kafka-data
+      restartPolicy: Always
+      volumes:
+        - name: kafka-data
+          persistentVolumeClaim:
+            claimName: kafka-data
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - kafka-broker-3
+        from:
+          kind: ImageStreamTag
+          name: kafka:base
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

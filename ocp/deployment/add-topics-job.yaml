@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: add-topics
+  labels:
+    io.kompose.service: kafkaconnect
+    app.kubernetes.io/part-of: kafka
+spec:
+  parallelism: 1
+  completions: 1
+  activeDeadlineSeconds: 1800
+  backoffLimit: 6
+  template:
+    metadata:
+      name: add-topics
+    spec:
+      serviceAccountName: runasroot
+      securityContext:
+        runAsUser: 0
+      containers:
+        - name: add-topics
+          image: image-registry.openshift-image-registry.svc:5000/task-manager/kafka:base
+          command:
+            - addTopic.sh
+            - kafka-broker-1
+            - "9091"
+            - "3"
+            - "3"
+            - tasks,users,taskdetails,taskcount
+      restartPolicy: OnFailure

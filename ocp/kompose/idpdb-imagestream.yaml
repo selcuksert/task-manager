@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ImageStream
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: idpdb
+  name: idpdb
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: postgres:13-alpine
+      generation: null
+      importPolicy: {}
+      name: ""
+      referencePolicy:
+        type: ""
+status:
+  dockerImageRepository: ""

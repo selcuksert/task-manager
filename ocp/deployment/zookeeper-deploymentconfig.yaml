@@ -1,0 +1,61 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: zookeeper
+    app.kubernetes.io/part-of: kafka
+  name: zookeeper
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: zookeeper
+  strategy:
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: zookeeper
+    spec:
+      serviceAccountName: runasroot
+      securityContext:
+        runAsUser: 0
+      containers:
+        - command:
+            - startKeeper.sh
+          env:
+            - name: PROM_AGENT_PORT
+              value: "1123"
+          image: ' '
+          name: zookeeper
+          ports:
+            - containerPort: 2181
+          resources: {}
+          volumeMounts:
+            - mountPath: /tmp/zookeeper
+              name: zk-data
+      restartPolicy: Always
+      volumes:
+        - name: zk-data
+          persistentVolumeClaim:
+            claimName: zk-data
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - zookeeper
+        from:
+          kind: ImageStreamTag
+          name: kafka:base
+      type: ImageChange
+status:
+  availableReplicas: 0
+  latestVersion: 0
+  observedGeneration: 0
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

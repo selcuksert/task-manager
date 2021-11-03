@@ -25,13 +25,10 @@ const HeaderHook = () => {
     const openTool = (tool) => (e) => {
         switch (tool) {
             case 'PG_ADMIN':
-                window.open(`${window.location.origin}:9080`, "_blank");
+                window.open(`http://pgadmin-task-manager.apps-crc.testing`, "_blank");
                 break;
             case 'GRAFANA':
-                window.open(`${window.location.origin}:3000`, "_blank");
-                break;
-            case 'PROMETHEUS':
-                window.open(`${window.location.origin}:9090`, "_blank");
+                window.open(`http://kmonitor-task-manager.apps-crc.testing`, "_blank");
                 break;
             case 'KC_ADM':
                 window.open(`${secObj.authServerUrl}admin`, "_blank");
@@ -94,7 +91,6 @@ const HeaderHook = () => {
                             <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a className="dropdown-item" onClick={openTool('PG_ADMIN')}>PgAdmin</a>
                                 <a className="dropdown-item" onClick={openTool('GRAFANA')}>Grafana</a>
-                                <a className="dropdown-item" onClick={openTool('PROMETHEUS')}>Prometheus</a>
                                 <a className="dropdown-item" onClick={openTool('KC_ADM')}>Keycloak Admin</a>
                             </div>
                         </li>

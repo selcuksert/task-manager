@@ -1,6 +1,6 @@
 // Utilities
 export function addTask(_username, _title, _details, _date, secObj) {
-    return fetch(`http://${window.location.hostname}/api/task/writer`, {
+    return fetch(`http://task-writer-task-manager.apps-crc.testing/api/task/writer`, {
         method: 'post',
         body: JSON.stringify({
             userid: _username,
@@ -20,14 +20,14 @@ export function addTask(_username, _title, _details, _date, secObj) {
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return { error: 'Forbidden', message: 'Forbidden to add task' };
+                return {error: 'Forbidden', message: 'Forbidden to add task'};
             }
         })
         .catch(err => console.error(err));
 }
 
 export function deleteTaskById(id, secObj) {
-    return fetch(`http://${window.location.hostname}/api/task/writer`, {
+    return fetch(`http://task-writer-task-manager.apps-crc.testing/api/task/writer`, {
         method: 'delete',
         body: id,
         headers: {
@@ -42,14 +42,14 @@ export function deleteTaskById(id, secObj) {
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return { error: 'Forbidden', message: 'Forbidden to delete task' };
+                return {error: 'Forbidden', message: 'Forbidden to delete task'};
             }
         })
         .catch(err => console.error(err));
 }
 
 export function updateTask(_id, _username, _title, _details, _date, _status, secObj) {
-    return fetch(`http://${window.location.hostname}/api/task/writer/update`, {
+    return fetch(`http://task-writer-task-manager.apps-crc.testing/api/task/writer/update`, {
         method: 'put',
         body: JSON.stringify({
             id: _id,
@@ -71,7 +71,7 @@ export function updateTask(_id, _username, _title, _details, _date, _status, sec
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return { error: 'Forbidden', message: 'Forbidden to update task' };
+                return {error: 'Forbidden', message: 'Forbidden to update task'};
             }
         })
         .catch(err => console.error(err));
@@ -79,7 +79,7 @@ export function updateTask(_id, _username, _title, _details, _date, _status, sec
 
 export function getAllTasks(secObj, pageSize, pageNumber) {
     // Spring Data JPA starts page number from 0
-    return fetch(`http://${window.location.hostname}/api/task/reader/all?size=${pageSize}&page=${parseInt(pageNumber) - 1}`, {
+    return fetch(`http://task-reader-task-manager.apps-crc.testing/api/task/reader/all?size=${pageSize}&page=${parseInt(pageNumber) - 1}`, {
         method: 'get',
         headers: {
             "Content-Type": "application/json",
@@ -100,7 +100,7 @@ export function getAllTasks(secObj, pageSize, pageNumber) {
 }
 
 export function getOwnedTasks(secObj) {
-    return fetch(`http://${window.location.hostname}/api/task/reader/owned`, {
+    return fetch(`http://task-reader-task-manager.apps-crc.testing/api/task/reader/owned`, {
         method: 'get',
         headers: {
             "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export function getOwnedTasks(secObj) {
 }
 
 export function getTaskById(taskId, secObj) {
-    let url = new URL(`http://${window.location.hostname}/api/task/processor/detail`);
+    let url = new URL(`http://task-processor-task-manager.apps-crc.testing/api/task/processor/detail`);
     url.searchParams.set('taskId', taskId);
 
     return fetch(url, {
@@ -138,14 +138,14 @@ export function getTaskById(taskId, secObj) {
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return { error: 'Forbidden', message: 'Forbidden to get task details' };
+                return {error: 'Forbidden', message: 'Forbidden to get task details'};
             }
         })
         .catch(err => console.error(err));
 }
 
 export function getTaskCountByUserId(userId, secObj) {
-    let url = new URL(`http://${window.location.hostname}/api/task/processor/count`);
+    let url = new URL(`http://task-processor-task-manager.apps-crc.testing/api/task/processor/count`);
     url.searchParams.set('userId', userId);
 
     return fetch(url, {
@@ -162,7 +162,7 @@ export function getTaskCountByUserId(userId, secObj) {
             } else if (res.status === 401) {
                 secObj.logout();
             } else if (res.status === 403) {
-                return { error: 'Forbidden', message: 'Forbidden to get task count' };
+                return {error: 'Forbidden', message: 'Forbidden to get task count'};
             }
         })
         .catch(err => console.error(err));

@@ -25,7 +25,7 @@ oc project task-manager
 
 applyFileList=""
 
-for fileName in "$scriptPath"/*.yaml; do
+for fileName in "$scriptPath"/deployment/*.yaml; do
   applyFileList+="$fileName,"
 done
 
@@ -40,3 +40,6 @@ oc expose service ksql
 oc expose service kmonitor
 oc expose service user-writer
 oc expose service user-reader
+oc expose service task-writer
+oc expose service task-reader
+oc expose service task-processor

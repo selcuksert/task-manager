@@ -1,5 +1,5 @@
 export function getTaskDataPerUser() {
-    return fetch(`http://${window.location.hostname}:8098/query`, {
+    return fetch(`http://ksql-task-manager.apps-crc.testing/query`, {
         method: 'post',
         headers: {
             "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",
@@ -23,7 +23,7 @@ export function getTaskDataPerUser() {
 }
 
 export function getTaskDistPerUser(windowStartEpoch, windowEndEpoch) {
-    return fetch(`http://${window.location.hostname}:8098/query`, {
+    return fetch(`http://ksql-task-manager.apps-crc.testing/query`, {
         method: 'post',
         headers: {
             "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",
@@ -53,7 +53,7 @@ export function getTaskDistPerUser(windowStartEpoch, windowEndEpoch) {
 
 export function stopQuery(_queryId) {
     console.log(_queryId);
-    return fetch(`http://${window.location.hostname}:8098/close-query`, {
+    return fetch(`http://ksql-task-manager.apps-crc.testing/close-query`, {
         method: 'post',
         headers: {
             "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",
@@ -74,7 +74,7 @@ export function stopQuery(_queryId) {
 }
 
 export function addTaskTableToKSql() {
-    return fetch(`http://${window.location.hostname}:8098/ksql`, {
+    return fetch(`http://ksql-task-manager.apps-crc.testing/ksql`, {
         method: 'post',
         headers: {
             "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",
@@ -112,7 +112,7 @@ export function addTaskTableToKSql() {
 }
 
 export function addTaskStreamToKSql() {
-    return fetch(`http://${window.location.hostname}:8098/ksql`, {
+    return fetch(`http://ksql-task-manager.apps-crc.testing/ksql`, {
         method: 'post',
         headers: {
             "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",
@@ -150,7 +150,7 @@ export function addTaskStreamToKSql() {
 }
 
 export function addTaskHistoryTableToKSql(windowSizeInMinutes) {
-    return fetch(`http://${window.location.hostname}:8098/ksql`, {
+    return fetch(`http://ksql-task-manager.apps-crc.testing/ksql`, {
         method: 'post',
         headers: {
             "Content-Type": "application/vnd.ksql.v1+json; charset=utf-8",

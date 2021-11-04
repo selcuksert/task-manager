@@ -13,30 +13,31 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	private Converter<Jwt, AbstractAuthenticationToken> converter;
-	
-	public SecurityConfig(JwtAuthConverter converter) {
-		this.converter = converter;
-	}
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().authorizeRequests()
-		.antMatchers("/api/task/processor/**").hasAnyRole("manager", "user")
-		.anyRequest().denyAll().and()
-		.oauth2ResourceServer().jwt()
-		.jwtAuthenticationConverter(converter);
-	}
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedMethods("*");
-			}
-		};
-	}
+    private Converter<Jwt, AbstractAuthenticationToken> converter;
+
+    public SecurityConfig(JwtAuthConverter converter) {
+        this.converter = converter;
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable().authorizeRequests()
+                .antMatchers("/api/task/processor/**").hasAnyRole("manager", "user")
+                .antMatchers("/actuator/**").hasAnyRole("manager", "user")
+                .anyRequest().denyAll().and()
+                .oauth2ResourceServer().jwt()
+                .jwtAuthenticationConverter(converter);
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedMethods("*");
+            }
+        };
+    }
 
 }

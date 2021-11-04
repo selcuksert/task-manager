@@ -60,7 +60,7 @@ const MainHook = () => {
                                 <Stats />
                             </Route>
                             <Route key="topology" path="/topology">
-                                <Topology topoUrl={`http://${window.location.hostname}/api/task/processor/actuator/kafkastreamstopology`} />
+                                <Topology topoUrl={`http://task-processor-task-manager.apps-crc.testing/api/task/processor/actuator/kafkastreamstopology`} />
                             </Route>
                         </Switch>
                     </main>

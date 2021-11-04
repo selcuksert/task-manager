@@ -15,8 +15,12 @@ custom:
         claim:
           key: realm_access
 
-management:  endpoints:    web:
-      base-path: /api/task/processor/actuator      exposure:        include:        - "kafkastreamstopology-applicationId"
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - "kafkastreamstopology-applicationId"
         - "kafkastreamstopology"
 
 spring:

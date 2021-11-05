@@ -22,6 +22,11 @@ management:
         include:
         - "kafkastreamstopology-applicationId"
         - "kafkastreamstopology"
+      cors:
+        allowed-origins: '*'
+        allowed-methods: '*'
+        allowed-headers: '*'
+      base-path: '/actuator'
 
 spring:
   cloud:

@@ -89,3 +89,8 @@ There exists a [documentation](./docker/compose/kafka/ksql/README.md) on ksql st
 The project brings a statistics page comprised of React Plotly charts fed with real time data from ksqlDB queries. The task distribution graph has the ability to set window size and historical framing (as a baseline to re-playing) based on date and time:
 
 ![stats](./docs/images/stats.png)
+
+## OpenShift Support
+This project contains deployment objects to activate the task manager application on a RHOCP cluster. These objects are derived from objects [generated](./ocp/kompose/generate.sh) by `kompose` tool using existing `docker-compose.yml` file. The objects were tested on local OCP deployment using CodeReady Containers technology. The [build](./ocp/build.sh) and [deploy](./ocp/deploy.sh) scripts can be used to generate custom images and deploy them on cluster.
+
+![ocp](./docs/images/ocp/topology.png)

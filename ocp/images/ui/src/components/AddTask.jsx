@@ -3,6 +3,7 @@ import {addTask} from '../utilities/TaskService';
 import {getUsers} from '../utilities/UserService';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+import faker from 'faker/locale/en_US';
 
 import InfoModal from './InfoModal';
 import {Context} from "../Store";
@@ -39,7 +40,7 @@ const AddTaskHook = () => {
             }
             setLoading(false);
         });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [username])
 
     const setUsernameOnSelect = (e) => {
@@ -66,6 +67,14 @@ const AddTaskHook = () => {
                 }
                 setLoading(false);
             });
+    }
+
+    const generateRandomValues = () => {
+        let rndTitle = faker.hacker.verb();
+        let rndDetails = faker.hacker.phrase();
+
+        setTitle(rndTitle);
+        setDetails(rndDetails);
     }
 
     return (
@@ -119,10 +128,16 @@ const AddTaskHook = () => {
                     <small id="detailsHelp" className="form-text text-muted">Please enter task details</small>
                 </div>
                 {loading ? <FontAwesomeIcon icon={faSpinner} spin/> :
-                    <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={submitTask}>Submit</button>
+                    <div className="btn-group" role="group" aria-label="Add task buttons">
+                        <button
+                            type="button"
+                            className="btn btn-info"
+                            onClick={generateRandomValues}>Generate Random Values</button>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={submitTask}>Submit</button>
+                    </div>
                 }
             </form>
             <InfoModal showModal={showInfo} modalText={modalText} modalTitle={modalTitle}/>

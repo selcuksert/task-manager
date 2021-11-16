@@ -50,6 +50,7 @@ spec:
           - zookeeper
         from:
           kind: ImageStreamTag
+          namespace: task-manager
           name: kafka:base
       type: ImageChange
 status:

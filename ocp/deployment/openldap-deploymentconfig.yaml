@@ -50,6 +50,7 @@ spec:
           - openldap
         from:
           kind: ImageStreamTag
+          namespace: task-manager
           name: openldap:1.3.0
       type: ImageChange
 status:

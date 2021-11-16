@@ -45,6 +45,7 @@ spec:
           - schemaregistry
         from:
           kind: ImageStreamTag
+          namespace: task-manager
           name: kafka:schemaregistry
       type: ImageChange
 status:

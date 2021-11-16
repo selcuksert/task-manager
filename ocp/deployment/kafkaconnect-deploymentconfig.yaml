@@ -60,6 +60,7 @@ spec:
           - kafkaconnect
         from:
           kind: ImageStreamTag
+          namespace: task-manager
           name: kafka:connect
       type: ImageChange
 status:

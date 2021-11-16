@@ -53,6 +53,7 @@ spec:
           - pgadmin
         from:
           kind: ImageStreamTag
+          namespace: task-manager
           name: pgadmin:6.1
       type: ImageChange
 status:

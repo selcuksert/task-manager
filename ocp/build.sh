@@ -6,10 +6,11 @@ function buildImage() {
   imageName=$1
   buildPath=$2
   imageTag=$3
+  buildName="$imageName-$imageTag"
 
-  oc delete all -l "build=$imageName" &&
-    oc new-build --strategy docker --binary --name "$imageName" --to "$imageName:$imageTag" &&
-    oc start-build "$imageName" --from-dir "$buildPath" --follow --wait
+  oc delete all -l "build=$buildName" &&
+    oc new-build --strategy docker --binary --name "$buildName" --to "$imageName:$imageTag" &&
+    oc start-build "$buildName" --from-dir "$buildPath"
 }
 
 # Login with developer
@@ -80,119 +81,40 @@ oc create secret generic idp-trust --from-file="$scriptPath/images/cert/cacerts"
 
 # Build user-writer service
 oc delete all -l 'build=user-writer'
-oc delete all -l 'app=user-writer'
 oc new-build java:openjdk-11-el7 --binary --name user-writer --to user-writer:latest \
   --env='MAVEN_S2I_ARTIFACT_DIRS=src/services/user-writer/target' \
   --env='MAVEN_ARGS=install -DskipTests -pl services/user-writer -am'
 oc start-build user-writer --from-dir="$scriptPath/../backend" \
   --follow --wait
-oc new-app user-writer \
-  --env='JAVA_APP_JAR=/tmp/artifacts/m2/com/corp/concepts/taskmanager/services/user-writer/0.0.1-SNAPSHOT/user-writer-0.0.1-SNAPSHOT.jar' \
-  --env='IDP_PROT=https' \
-  --env='IDP_HOST=idp-task-manager.apps-crc.testing' \
-  --env='IDP_PORT=443' \
-  --env='SR_HOST=schemaregistry' \
-  --env='SERVER_PORT=8080' \
-  --env='BROKER_1=kafka-broker-1:19091' \
-  --env='BROKER_2=kafka-broker-2:19092' \
-  --env='BROKER_3=kafka-broker-3:19093' \
-  --env='TZ=Europe/Istanbul' \
-  --env='JAVA_OPTS=-Djavax.net.ssl.trustStore=/mnt/trust/cacerts -Djavax.net.ssl.trustStorePassword=changeit'
-oc patch deployment/user-writer -p '{"metadata":{"labels":{"app.kubernetes.io/part-of": "user"}}}'
-oc set volume deployment/user-writer --add --name idp-trust-volume -t secret -m /mnt/trust --secret-name=idp-trust --overwrite
 
 # Build user-reader service
 oc delete all -l 'build=user-reader'
-oc delete all -l 'app=user-reader'
 oc new-build java:openjdk-11-el7 --binary --name user-reader --to user-reader:latest \
   --env='MAVEN_S2I_ARTIFACT_DIRS=src/services/user-reader/target' \
   --env='MAVEN_ARGS=install -DskipTests -pl services/user-reader -am'
 oc start-build user-reader --from-dir="$scriptPath/../backend" \
   --follow --wait
-oc new-app user-reader \
-  --env='JAVA_APP_JAR=/tmp/artifacts/m2/com/corp/concepts/taskmanager/services/user-reader/0.0.1-SNAPSHOT/user-reader-0.0.1-SNAPSHOT.jar' \
-  --env='IDP_PROT=https' \
-  --env='IDP_HOST=idp-task-manager.apps-crc.testing' \
-  --env='IDP_PORT=443' \
-  --env='SERVER_PORT=8080' \
-  --env='DB_HOST=appdb' \
-  --env='DB_PORT=5432' \
-  --env='DB_NAME=appdb' \
-  --env='DB_USER=dbuser' \
-  --env='DB_PASS=db1234' \
-  --env='TZ=Europe/Istanbul' \
-  --env='JAVA_OPTS=-Djavax.net.ssl.trustStore=/mnt/trust/cacerts -Djavax.net.ssl.trustStorePassword=changeit'
-oc patch deployment/user-reader -p '{"metadata":{"labels":{"app.kubernetes.io/part-of": "user"}}}'
-oc set volume deployment/user-reader --add --name idp-trust-volume -t secret -m /mnt/trust --secret-name=idp-trust --overwrite
 
 # Build task-writer service
 oc delete all -l 'build=task-writer'
-oc delete all -l 'app=task-writer'
 oc new-build java:openjdk-11-el7 --binary --name task-writer --to task-writer:latest \
   --env='MAVEN_S2I_ARTIFACT_DIRS=src/services/task-writer/target' \
   --env='MAVEN_ARGS=install -DskipTests -pl services/task-writer -am'
 oc start-build task-writer --from-dir="$scriptPath/../backend" \
   --follow --wait
-oc new-app task-writer \
-  --env='JAVA_APP_JAR=/tmp/artifacts/m2/com/corp/concepts/taskmanager/services/task-writer/0.0.1-SNAPSHOT/task-writer-0.0.1-SNAPSHOT.jar' \
-  --env='IDP_PROT=https' \
-  --env='IDP_HOST=idp-task-manager.apps-crc.testing' \
-  --env='IDP_PORT=443' \
-  --env='SR_HOST=schemaregistry' \
-  --env='SERVER_PORT=8080' \
-  --env='BROKER_1=kafka-broker-1:19091' \
-  --env='BROKER_2=kafka-broker-2:19092' \
-  --env='BROKER_3=kafka-broker-3:19093' \
-  --env='TZ=Europe/Istanbul' \
-  --env='JAVA_OPTS=-Djavax.net.ssl.trustStore=/mnt/trust/cacerts -Djavax.net.ssl.trustStorePassword=changeit'
-oc patch deployment/task-writer -p '{"metadata":{"labels":{"app.kubernetes.io/part-of": "task"}}}'
-oc set volume deployment/task-writer --add --name idp-trust-volume -t secret -m /mnt/trust --secret-name=idp-trust --overwrite
 
 # Build task-reader service
 oc delete all -l 'build=task-reader'
-oc delete all -l 'app=task-reader'
 oc new-build java:openjdk-11-el7 --binary --name task-reader --to task-reader:latest \
   --env='MAVEN_S2I_ARTIFACT_DIRS=src/services/task-reader/target' \
   --env='MAVEN_ARGS=install -DskipTests -pl services/task-reader -am'
 oc start-build task-reader --from-dir="$scriptPath/../backend" \
   --follow --wait
-oc new-app task-reader \
-  --env='JAVA_APP_JAR=/tmp/artifacts/m2/com/corp/concepts/taskmanager/services/task-reader/0.0.1-SNAPSHOT/task-reader-0.0.1-SNAPSHOT.jar' \
-  --env='IDP_PROT=https' \
-  --env='IDP_HOST=idp-task-manager.apps-crc.testing' \
-  --env='IDP_PORT=443' \
-  --env='SERVER_PORT=8080' \
-  --env='DB_HOST=appdb' \
-  --env='DB_PORT=5432' \
-  --env='DB_NAME=appdb' \
-  --env='DB_USER=dbuser' \
-  --env='DB_PASS=db1234' \
-  --env='TZ=Europe/Istanbul' \
-  --env='JAVA_OPTS=-Djavax.net.ssl.trustStore=/mnt/trust/cacerts -Djavax.net.ssl.trustStorePassword=changeit'
-oc patch deployment/task-reader -p '{"metadata":{"labels":{"app.kubernetes.io/part-of": "task"}}}'
-oc set volume deployment/task-reader --add --name idp-trust-volume -t secret -m /mnt/trust --secret-name=idp-trust --overwrite
 
 # Build task-processor service
 oc delete all -l 'build=task-processor'
-oc delete all -l 'app=task-processor'
 oc new-build java:openjdk-11-el7 --binary --name task-processor --to task-processor:latest \
   --env='MAVEN_S2I_ARTIFACT_DIRS=src/services/task-processor/target' \
   --env='MAVEN_ARGS=install -DskipTests -pl services/task-processor -am'
 oc start-build task-processor --from-dir="$scriptPath/../backend" \
   --follow --wait
-oc new-app task-processor \
-  --env='JAVA_APP_JAR=/tmp/artifacts/m2/com/corp/concepts/taskmanager/services/task-processor/0.0.1-SNAPSHOT/task-processor-0.0.1-SNAPSHOT.jar' \
-  --env='IDP_PROT=https' \
-  --env='IDP_HOST=idp-task-manager.apps-crc.testing' \
-  --env='IDP_PORT=443' \
-  --env='SR_HOST=schemaregistry' \
-  --env='SERVER_PORT=8080' \
-  --env='BROKER_1=kafka-broker-1:19091' \
-  --env='BROKER_2=kafka-broker-2:19092' \
-  --env='BROKER_3=kafka-broker-3:19093' \
-  --env='STATE_DIR_ROOT=/var/lib/ks-state' \
-  --env='TZ=Europe/Istanbul' \
-  --env='JAVA_OPTS=-Djavax.net.ssl.trustStore=/mnt/trust/cacerts -Djavax.net.ssl.trustStorePassword=changeit'
-oc patch deployment/task-processor -p '{"metadata":{"labels":{"app.kubernetes.io/part-of": "task"}}}'
-oc set volume deployment/task-processor --add --name idp-trust-volume -t secret -m /mnt/trust --secret-name=idp-trust --overwrite
-oc set volume deployment/task-processor --add --name tp-ks-state-volume -t pvc --claim-size=1G -m /var/lib/ks-state --overwrite

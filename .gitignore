@@ -40,3 +40,4 @@ build/
 
 # Kafka Streams State Directory
 /docker/compose/app/service/ks-state/
+*.cert

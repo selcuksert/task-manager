@@ -43,6 +43,7 @@ spec:
           - restproxy
         from:
           kind: ImageStreamTag
+          namespace: task-manager
           name: kafka:restproxy
       type: ImageChange
 status:

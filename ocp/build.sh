@@ -10,7 +10,7 @@ function buildImage() {
 
   oc delete all -l "build=$buildName" &&
     oc new-build --strategy docker --binary --name "$buildName" --to "$imageName:$imageTag" &&
-    oc start-build "$buildName" --from-dir "$buildPath"
+    oc start-build "$buildName" --from-dir "$buildPath" --follow --wait
 }
 
 # Login with developer

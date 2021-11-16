@@ -27,7 +27,7 @@ Here is the architecture model of project:
 
 ## Processor Topology
 The application utilizes Spring Boot Actuator endpoint `kafkastreamstopology` to retrieve topology definition for **task-processor** Kafka Streams app. The *Processor Topology* button on header menu renders this in image format using [kafka-streams-viz](https://github.com/zz85/kafka-streams-viz):
-![topology](./docs/images/topology.png)
+![topology](./docs/images/ks-topology.png)
 
 ## Components
 The project is shipped with of two different deployment modes as [fully containerized deployment](./docker/compose/docker-compose.containerized.yml) and [hybrid deployment](./docker/compose/docker-compose.yml):

@@ -83,7 +83,7 @@ Other settings:
 </p>
 
 ## ksqlDB
-There exists a [documentation](./docker/compose/kafka/ksql/README.md) on ksql statements used in this projects.
+There exists a [documentation](./docker/compose/kafka/ksql/README.md) on ksql statements used in this project.
 
 ### Statistics Page
 The project brings a statistics page comprised of React Plotly charts fed with real time data from ksqlDB queries. The task distribution graph has the ability to set window size and historical framing (as a baseline to re-playing) based on date and time:
